@@ -42,13 +42,16 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.name),
+        backgroundColor: const Color.fromARGB(255, 78, 20, 166),
+        foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        title: Text(widget.name),
+        centerTitle: true,
       ),
       body: Column(
         children: [

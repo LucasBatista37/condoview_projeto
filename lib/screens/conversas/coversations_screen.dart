@@ -42,20 +42,22 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Conversas'),
+        backgroundColor: const Color.fromARGB(255, 78, 20, 166),
+        foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        actions: const [
-          CircleAvatar(
-            backgroundImage: NetworkImage(
-                'https://via.placeholder.com/150'), // Placeholder image
+        title: const Text(
+          'Conversas',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
-          SizedBox(width: 16),
-        ],
+        ),
+        centerTitle: true,
       ),
       body: Column(
         children: [

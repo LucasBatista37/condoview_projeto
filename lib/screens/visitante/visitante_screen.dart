@@ -11,7 +11,7 @@ class VisitanteScreen extends StatefulWidget {
 
 class _VisitanteScreenState extends State<VisitanteScreen> {
   final TextEditingController _dataController = TextEditingController();
-  final TextEditingController _horaController = TextEditingController();
+  final _horaController = TextEditingController();
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _unidadeController = TextEditingController();
 

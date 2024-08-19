@@ -1,15 +1,20 @@
-// screens/chat_geral_screen.dart
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ChatGeralScreen extends StatefulWidget {
   const ChatGeralScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ChatGeralScreenState createState() => _ChatGeralScreenState();
 }
 
 class _ChatGeralScreenState extends State<ChatGeralScreen> {
+  final TextEditingController _messageController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  File? _image;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +65,10 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
                     child: const Text('Mensagem enviada no chat geral...'),
                   ),
                 ),
+                if (_image != null) ...[
+                  Image.file(_image!),
+                  const SizedBox(height: 8),
+                ],
               ],
             ),
           ),
@@ -67,8 +76,17 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
+                IconButton(
+                  icon: const Icon(Icons.camera_alt),
+                  onPressed: _pickImageFromCamera,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.attach_file),
+                  onPressed: _pickImageFromGallery,
+                ),
                 Expanded(
                   child: TextField(
+                    controller: _messageController,
                     decoration: InputDecoration(
                       hintText: 'Mensagem',
                       border: OutlineInputBorder(
@@ -82,6 +100,10 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
                   icon: const Icon(Icons.send),
                   onPressed: () {
                     // Enviar mensagem
+                    _messageController.clear();
+                    setState(() {
+                      _image = null; // Limpar imagem após envio, se necessário
+                    });
                   },
                 ),
               ],
@@ -90,5 +112,43 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    final status = await Permission.photos.request();
+
+    if (status.isGranted) {
+      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+      }
+    } else {
+      // Handle permission denied case
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Permissão para acessar fotos negada')),
+      );
+    }
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    final status = await Permission.camera.request();
+
+    if (status.isGranted) {
+      final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+      }
+    } else {
+      // Handle permission denied case
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Permissão para acessar a câmera negada')),
+      );
+    }
   }
 }

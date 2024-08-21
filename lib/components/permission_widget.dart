@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionWidget extends StatefulWidget {
-  const PermissionWidget({Key? key}) : super(key: key);
+  const PermissionWidget({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _PermissionWidgetState createState() => _PermissionWidgetState();
 }
 

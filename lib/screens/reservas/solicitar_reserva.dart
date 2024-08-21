@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -15,7 +14,8 @@ class _ReservaScreenState extends State<ReservaScreen> {
   final TextEditingController _motivoController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
   DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
+  TimeOfDay? _startTime;
+  TimeOfDay? _endTime;
   XFile? _image;
 
   @override
@@ -31,7 +31,7 @@ class _ReservaScreenState extends State<ReservaScreen> {
           },
         ),
         title: const Text(
-          'Fazer Reserva',
+          'Solicitar reserva',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -39,66 +39,80 @@ class _ReservaScreenState extends State<ReservaScreen> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Preencher Dados da Reserva',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            _buildTextField(
-                label: 'Motivo da Reserva', controller: _motivoController),
-            const SizedBox(height: 16),
-            _buildTextField(
-                label: 'Descrição',
-                controller: _descricaoController,
-                maxLines: 5),
-            const SizedBox(height: 16),
-            _buildDatePicker(context),
-            const SizedBox(height: 16),
-            _buildTimePicker(context),
-            const SizedBox(height: 16),
-            _buildImagePicker(context),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Lógica para enviar a reserva
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Reserva enviada com sucesso!'),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Preencher Dados da Reserva',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                  label: 'Motivo da Reserva', controller: _motivoController),
+              const SizedBox(height: 16),
+              _buildTextField(
+                  label: 'Descrição',
+                  controller: _descricaoController,
+                  maxLines: 5),
+              const SizedBox(height: 16),
+              _buildDatePicker(context),
+              const SizedBox(height: 16),
+              _buildTimePicker(context, label: 'Horário de Início',
+                  onTimeSelected: (time) {
+                setState(() {
+                  _startTime = time;
+                });
+              }, selectedTime: _startTime),
+              const SizedBox(height: 16),
+              _buildTimePicker(context, label: 'Horário de Fim',
+                  onTimeSelected: (time) {
+                setState(() {
+                  _endTime = time;
+                });
+              }, selectedTime: _endTime),
+              const SizedBox(height: 16),
+              _buildImagePicker(context),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Lógica para enviar a reserva
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Reserva enviada com sucesso!'),
+                      ),
+                    );
+                    Navigator.pop(context); // Fechar a tela de reservas
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(255, 78, 20, 166),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  );
-                  Navigator.pop(context); // Fechar a tela de reservas
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add, size: 24),
-                    SizedBox(width: 8),
-                    Text(
-                      'Fazer Reserva',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add, size: 24),
+                      SizedBox(width: 8),
+                      Text(
+                        'Solicitar Reserva',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -154,17 +168,18 @@ class _ReservaScreenState extends State<ReservaScreen> {
     );
   }
 
-  Widget _buildTimePicker(BuildContext context) {
+  Widget _buildTimePicker(BuildContext context,
+      {required String label,
+      required Function(TimeOfDay) onTimeSelected,
+      TimeOfDay? selectedTime}) {
     return GestureDetector(
       onTap: () async {
         final TimeOfDay? picked = await showTimePicker(
           context: context,
-          initialTime: TimeOfDay.now(),
+          initialTime: selectedTime ?? TimeOfDay.now(),
         );
-        if (picked != null && picked != _selectedTime) {
-          setState(() {
-            _selectedTime = picked;
-          });
+        if (picked != null && picked != selectedTime) {
+          onTimeSelected(picked);
         }
       },
       child: Container(
@@ -177,9 +192,9 @@ class _ReservaScreenState extends State<ReservaScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              _selectedTime == null
-                  ? 'Selecionar Hora'
-                  : 'Hora: ${_selectedTime!.format(context)}',
+              selectedTime == null
+                  ? label
+                  : '$label: ${selectedTime.format(context)}',
             ),
             const Icon(Icons.access_time),
           ],

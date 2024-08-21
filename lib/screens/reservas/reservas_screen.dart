@@ -1,4 +1,4 @@
-import 'package:condoview/screens/reservas/fazer_reserva.dart';
+import 'package:condoview/screens/reservas/solicitar_reserva.dart';
 import 'package:flutter/material.dart';
 
 class ReservasScreen extends StatelessWidget {
@@ -85,7 +85,7 @@ class ReservasScreen extends StatelessWidget {
                     Icon(Icons.add, size: 24), // Ícone de compartilhar
                     SizedBox(width: 8), // Espaço entre o ícone e o texto
                     Text(
-                      'Fazer reserva',
+                      'Solicitar reserva',
                       style: TextStyle(fontSize: 16), // Tamanho da fonte
                     ),
                   ],

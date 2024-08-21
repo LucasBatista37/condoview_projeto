@@ -8,6 +8,7 @@ class ChatGeralScreen extends StatefulWidget {
   const ChatGeralScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ChatGeralScreenState createState() => _ChatGeralScreenState();
 }
 
@@ -137,26 +138,6 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
     );
   }
 
-  Future<void> _pickImageFromGallery() async {
-    final status = await Permission.photos.request();
-
-    if (status.isGranted) {
-      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
-      if (pickedFile != null) {
-        setState(() {
-          _image = File(pickedFile.path);
-          _fileName =
-              null; // Limpar nome do arquivo se uma imagem for selecionada
-        });
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Permissão para acessar fotos negada')),
-      );
-    }
-  }
-
   Future<void> _pickImageFromCamera() async {
     final status = await Permission.camera.request();
 
@@ -166,11 +147,11 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
       if (pickedFile != null) {
         setState(() {
           _image = File(pickedFile.path);
-          _fileName =
-              null; // Limpar nome do arquivo se uma imagem for selecionada
+          _fileName = null;
         });
       }
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Permissão para acessar a câmera negada')),
       );
@@ -186,6 +167,7 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
         _fileName = result.files.single.name;
       });
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Nenhum arquivo selecionado')),
       );
@@ -224,8 +206,8 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
           ),
         );
         _messageController.clear();
-        _image = null; // Limpar imagem após envio
-        _fileName = null; // Limpar nome do arquivo após envio
+        _image = null;
+        _fileName = null;
       });
     }
   }

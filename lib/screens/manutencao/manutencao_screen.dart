@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'agendar_manutencao_screen.dart'; // Importa a tela de agendamento
+import 'solicitar_manutencao_screen.dart';
 
 class ManutencaoScreen extends StatelessWidget {
   const ManutencaoScreen({super.key});
@@ -63,7 +63,7 @@ class ManutencaoScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AgendarManutencaoScreen(),
+                      builder: (context) => const SolicitarManutencaoScreen(),
                     ),
                   );
                 },
@@ -85,7 +85,7 @@ class ManutencaoScreen extends StatelessWidget {
                     Icon(Icons.add, size: 24), // Ícone de adicionar
                     SizedBox(width: 8), // Espaço entre o ícone e o texto
                     Text(
-                      'Agendar manutenção',
+                      'Solicitar Manutenção',
                       style: TextStyle(fontSize: 16), // Tamanho da fonte
                     ),
                   ],

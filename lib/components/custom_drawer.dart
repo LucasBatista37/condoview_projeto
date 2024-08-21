@@ -1,3 +1,6 @@
+import 'package:condoview/screens/editarPerfil/editar_perfil_screen.dart';
+import 'package:condoview/screens/login/login_screen.dart';
+import 'package:condoview/screens/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -52,24 +55,31 @@ class CustomDrawer extends StatelessWidget {
             leading: const Icon(Icons.edit),
             title: const Text('Editar Perfil'),
             onTap: () {
-              // Navegar para a tela de edição de perfil
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const EditarPerfilScreen()),
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Configurações'),
             onTap: () {
-              // Navegar para a tela de configurações
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Sair'),
             onTap: () {
-              // Implementar logout
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
             },
           ),
         ],

@@ -60,7 +60,7 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
             _buildImagePicker(context),
             const SizedBox(height: 16),
             SizedBox(
-              width: double.infinity, // Ocupa toda a largura disponível
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
                   // Lógica para enviar a ocorrência

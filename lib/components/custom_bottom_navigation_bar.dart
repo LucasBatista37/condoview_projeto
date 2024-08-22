@@ -33,13 +33,11 @@ class CustomBottomNavigationBar extends StatelessWidget {
             Navigator.pushNamed(context, '/conversas');
             break;
         }
-        onTap(index); // Notifica o controlador sobre o índice selecionado
+        onTap(index);
       },
-      backgroundColor: Colors.grey[200], // Cor de fundo da barra
-      selectedItemColor: const Color.fromARGB(
-          255, 78, 20, 166), // Cor roxa para o item selecionado
-      unselectedItemColor:
-          Colors.black54, // Cor preta para itens não selecionados
+      backgroundColor: Colors.grey[200],
+      selectedItemColor: const Color.fromARGB(255, 78, 20, 166),
+      unselectedItemColor: Colors.black54,
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),

@@ -16,8 +16,8 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   File? _image;
-  final List<Widget> _messages = []; // Lista de mensagens
-  String? _fileName; // Nome do arquivo selecionado
+  final List<Widget> _messages = [];
+  String? _fileName;
 
   @override
   Widget build(BuildContext context) {
@@ -86,9 +86,7 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
               ),
             ],
           ),
-          if (_image != null ||
-              _fileName !=
-                  null) // Exibir a área sobreposta se houver imagem ou arquivo
+          if (_image != null || _fileName != null)
             Positioned(
               left: 0,
               right: 0,
@@ -102,13 +100,11 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
                     if (_image != null) ...[
                       Image.file(
                         _image!,
-                        height:
-                            200, // Ajuste o tamanho da imagem conforme necessário
+                        height: 200,
                         width: double.infinity,
                         fit: BoxFit.cover,
                       ),
                     ] else if (_fileName != null) ...[
-                      // Exibir uma mensagem ou ícone para arquivos que não são imagens
                       const Icon(Icons.attach_file,
                           color: Colors.white, size: 40),
                       Text(
@@ -122,8 +118,8 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            _image = null; // Limpar imagem
-                            _fileName = null; // Limpar nome do arquivo
+                            _image = null;
+                            _fileName = null;
                           });
                         },
                         child: const Text('Remover'),
@@ -163,7 +159,7 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
 
     if (result != null) {
       setState(() {
-        _image = null; // Limpar imagem se um arquivo for selecionado
+        _image = null;
         _fileName = result.files.single.name;
       });
     } else {

@@ -91,8 +91,7 @@ class EncomendasScreen extends StatelessWidget {
                 title: Text('Detalhes da $title'),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Centraliza os elementos
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Apartamento: $apartment'),
                     Text('Data/Hora: $time'),

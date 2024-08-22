@@ -17,7 +17,6 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   void _onTap(int index) {
     setState(() {
       _currentIndex = index;
-      // Navegue para a tela apropriada com base no índice
       switch (_currentIndex) {
         case 0:
           Navigator.pushNamed(context, '/home');
@@ -108,8 +107,8 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                   itemBuilder: (context, index) {
                     return ListTile(
                       leading: const CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://via.placeholder.com/150'), // Placeholder image
+                        backgroundImage:
+                            NetworkImage('https://via.placeholder.com/150'),
                       ),
                       title: Text('Nome $index'),
                       subtitle: const Text('Última mensagem...'),

@@ -57,7 +57,7 @@ class ReservasScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             SizedBox(
-              width: double.infinity, // Ocupa toda a largura disponível
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -69,24 +69,21 @@ class ReservasScreen extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor:
-                      const Color.fromARGB(255, 78, 20, 166), // Cor do texto
+                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(12), // Borda arredondada
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 16), // Padding interno
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.add, size: 24), // Ícone de compartilhar
-                    SizedBox(width: 8), // Espaço entre o ícone e o texto
+                    Icon(Icons.add, size: 24),
+                    SizedBox(width: 8),
                     Text(
                       'Solicitar reserva',
-                      style: TextStyle(fontSize: 16), // Tamanho da fonte
+                      style: TextStyle(fontSize: 16),
                     ),
                   ],
                 ),
@@ -114,16 +111,7 @@ class ReservasScreen extends StatelessWidget {
           reservedBy,
           style: const TextStyle(color: Colors.grey),
         ),
-        onTap: () {
-          // Navegar para a tela de detalhes da reserva
-          // Substitua `DetalhesReservaScreen` pelo nome da tela de detalhes da reserva, se houver
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => DetalhesReservaScreen(), // Substitua pelo widget de detalhes
-          //   ),
-          // );
-        },
+        onTap: () {},
       ),
     );
   }

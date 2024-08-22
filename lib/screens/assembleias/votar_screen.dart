@@ -11,7 +11,6 @@ class VotacaoScreen extends StatefulWidget {
 }
 
 class _VotacaoScreenState extends State<VotacaoScreen> {
-  // Variável para armazenar a escolha do usuário
   String _votoEscolhido = 'Abstenção';
 
   @override
@@ -44,7 +43,6 @@ class _VotacaoScreenState extends State<VotacaoScreen> {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
-            // Opções de voto
             Column(
               children: [
                 RadioListTile<String>(
@@ -81,26 +79,22 @@ class _VotacaoScreenState extends State<VotacaoScreen> {
             ),
             const SizedBox(height: 16),
             SizedBox(
-              width: double.infinity, // Ocupa toda a largura disponível
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Ação para confirmar o voto
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content: Text('Voto "$_votoEscolhido" confirmado!')),
                   );
-                  Navigator.pop(context); // Fechar a tela de votação
+                  Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor:
-                      const Color.fromARGB(255, 78, 20, 166), // Cor do texto
+                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(12), // Borda arredondada
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 16), // Padding interno
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: const Text(
                   'Confirmar Voto',

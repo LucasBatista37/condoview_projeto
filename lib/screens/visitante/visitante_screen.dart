@@ -156,24 +156,21 @@ class _VisitanteScreenState extends State<VisitanteScreen> {
                 onPressed: _compartilharConvite,
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor:
-                      const Color.fromARGB(255, 78, 20, 166), // Cor do texto
+                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(12), // Borda arredondada
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 16), // Padding interno
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.share, size: 24), // Ícone de compartilhar
-                    SizedBox(width: 8), // Espaço entre o ícone e o texto
+                    Icon(Icons.share, size: 24),
+                    SizedBox(width: 8),
                     Text(
                       'Compartilhar convite',
-                      style: TextStyle(fontSize: 16), // Tamanho da fonte
+                      style: TextStyle(fontSize: 16),
                     ),
                   ],
                 ),

@@ -57,7 +57,7 @@ class ManutencaoScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             SizedBox(
-              width: double.infinity, // Ocupa toda a largura disponível
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -69,24 +69,21 @@ class ManutencaoScreen extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor:
-                      const Color.fromARGB(255, 78, 20, 166), // Cor do texto
+                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(12), // Borda arredondada
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 16), // Padding interno
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.add, size: 24), // Ícone de adicionar
-                    SizedBox(width: 8), // Espaço entre o ícone e o texto
+                    Icon(Icons.add, size: 24),
+                    SizedBox(width: 8),
                     Text(
                       'Solicitar Manutenção',
-                      style: TextStyle(fontSize: 16), // Tamanho da fonte
+                      style: TextStyle(fontSize: 16),
                     ),
                   ],
                 ),
@@ -117,9 +114,7 @@ class ManutencaoScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        onTap: () {
-          // Você pode adicionar ações aqui se necessário
-        },
+        onTap: () {},
       ),
     );
   }

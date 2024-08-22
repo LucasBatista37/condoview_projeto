@@ -1,4 +1,6 @@
+import 'package:condoview/providers/aviso_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AvisosScreen extends StatelessWidget {
   const AvisosScreen({super.key});
@@ -26,27 +28,21 @@ class AvisosScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            _buildAvisoItem(
-              Icons.info, // Ícone à esquerda
-              'Manutenção Programada',
-              'Prezados residentes, informamos que haverá uma manutenção programada no sistema de água do condomínio no dia 15 de julho, das 09h às 17h.',
-              'Enviado dia 10 de julho às 10:30',
-            ),
-            _buildAvisoItem(
-              Icons.event, // Ícone à esquerda
-              'Festa de Confraternização',
-              'Caros condôminos, estamos organizando a nossa festa de confraternização que ocorrerá no dia 20 de julho, a partir das 19h, na área de lazer.',
-              'Enviado dia 10 de julho às 10:30',
-            ),
-            _buildAvisoItem(
-              Icons.help, // Ícone à esquerda
-              'Ajuda com Mudança',
-              'No sábado, 5 de julho, dois moradores estarão se mudando do bloco C e precisarão de ajuda para carregar algumas caixas.',
-              'Enviado dia 10 de julho às 10:30',
-            ),
-          ],
+        child: Consumer<AvisoProvider>(
+          builder: (context, avisoProvider, child) {
+            return ListView.builder(
+              itemCount: avisoProvider.avisos.length,
+              itemBuilder: (context, index) {
+                final aviso = avisoProvider.avisos[index];
+                return _buildAvisoItem(
+                  aviso.icon,
+                  aviso.title,
+                  aviso.description,
+                  aviso.time,
+                );
+              },
+            );
+          },
         ),
       ),
     );

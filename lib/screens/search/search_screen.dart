@@ -29,7 +29,6 @@ class _SearchScreenState extends State<SearchScreen> {
       'anexos': 'Nenhum',
       'status': 'Lido',
     },
-    // Adicione mais itens de exemplo aqui
   ];
 
   List<Map<String, String>> filteredData = [];
@@ -159,10 +158,8 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex:
-            1, // Indica que o índice da barra de navegação é a tela de pesquisa
+        currentIndex: 1,
         onTap: (index) {
-          // Navega para a tela selecionada
           Navigator.pushNamed(context, _getRouteName(index));
         },
       ),

@@ -1,3 +1,4 @@
+import 'package:condoview/screens/createCondo/create_condo_screen.dart';
 import 'package:condoview/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import '../signup/signup_screen.dart';
@@ -18,8 +19,7 @@ class LoginScreen extends StatelessWidget {
                 const CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.transparent,
-                  backgroundImage:
-                      AssetImage('assets/images/logo.png'), // Logo aqui
+                  backgroundImage: AssetImage('assets/images/logo.png'),
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -122,7 +122,11 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    // Funcionalidade de criar condomínio aqui
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CreateCondoScreen()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 78, 20, 166),

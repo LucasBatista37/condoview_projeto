@@ -1,10 +1,11 @@
-import 'package:condoview/screens/avisos/avisos_detalhes_morador_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/aviso_provider.dart';
+import 'package:condoview/screens/administrador/adicionar_avisos_screen.dart';
+import 'package:condoview/screens/administrador/avisos_detalhes_adm_screen.dart';
 
-class AvisosScreen extends StatelessWidget {
-  const AvisosScreen({super.key});
+class VisualizarAvisosScreen extends StatelessWidget {
+  const VisualizarAvisosScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class AvisosScreen extends StatelessWidget {
           },
         ),
         title: const Text(
-          'Avisos',
+          'Visualizar Avisos',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -53,10 +54,55 @@ class AvisosScreen extends StatelessWidget {
                         aviso.title,
                         aviso.description,
                         aviso.time,
+                        () {
+                          // Handle edit action
+                        },
+                        () {
+                          avisoProvider.removeAviso(aviso);
+                        },
                       );
                     },
                   );
                 },
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AdicionarAvisoScreen(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add, size: 24),
+                    SizedBox(width: 8),
+                    Text(
+                      'Adicionar Aviso',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -72,6 +118,8 @@ class AvisosScreen extends StatelessWidget {
     String title,
     String description,
     String time,
+    VoidCallback onEdit,
+    VoidCallback onDelete,
   ) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -95,7 +143,7 @@ class AvisosScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AvisosDetalhesMoradorScreen(id: id),
+              builder: (context) => AvisoDetalhesScreen(id: id),
             ),
           );
         },

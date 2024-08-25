@@ -1,6 +1,6 @@
+import 'package:condoview/screens/avisos/avisos_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:condoview/screens/assembleias/assembleias_screen.dart';
-import 'package:condoview/screens/avisos/avisos_screen.dart';
 import 'package:condoview/screens/depesas/expenses_screen.dart';
 import 'package:condoview/screens/encomendas/encomendas_screen.dart';
 import 'package:condoview/screens/manutencao/manutencao_screen.dart';
@@ -19,8 +19,7 @@ class MenuGrid extends StatelessWidget {
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
       childAspectRatio: 1.2,
-      padding: const EdgeInsets.symmetric(
-          horizontal: 16.0, vertical: 8.0), // Adiciona espaçamento ao redor
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       children: [

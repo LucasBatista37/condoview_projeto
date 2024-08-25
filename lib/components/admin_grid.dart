@@ -1,7 +1,6 @@
-import 'package:condoview/screens/administrador/adicionar_avisos_screen.dart';
 import 'package:condoview/screens/administrador/adicionar_morador_screen.dart';
+import 'package:condoview/screens/administrador/visualizar_avisos_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:condoview/screens/avisos/avisos_screen.dart';
 
 class AdminGrid extends StatelessWidget {
   const AdminGrid({super.key});
@@ -20,21 +19,21 @@ class AdminGrid extends StatelessWidget {
         _buildAdminItem(Icons.person_add, 'Adicionar Morador',
             const AdicionarMoradorScreen(), context),
         _buildAdminItem(Icons.add_alert, 'Adicionar Aviso',
-            const AdicionarAvisoScreen(), context),
+            const VisualizarAvisosScreen(), context),
         _buildAdminItem(Icons.check_circle, 'Aprovar Reservas',
-            const AvisosScreen(), context),
-        _buildAdminItem(
-            Icons.build, 'Aprovar Manutenção', const AvisosScreen(), context),
-        _buildAdminItem(
-            Icons.assessment, 'Gerar Relatório', const AvisosScreen(), context),
+            const VisualizarAvisosScreen(), context),
+        _buildAdminItem(Icons.build, 'Aprovar Manutenção',
+            const VisualizarAvisosScreen(), context),
+        _buildAdminItem(Icons.assessment, 'Gerar Relatório',
+            const VisualizarAvisosScreen(), context),
         _buildAdminItem(Icons.assignment, 'Criar Assembleia',
-            const AvisosScreen(), context),
+            const VisualizarAvisosScreen(), context),
         _buildAdminItem(Icons.mail, 'Adicionar Correspondência',
-            const AvisosScreen(), context),
-        _buildAdminItem(
-            Icons.block, 'Inativar Usuário', const AvisosScreen(), context),
+            const VisualizarAvisosScreen(), context),
+        _buildAdminItem(Icons.block, 'Inativar Usuário',
+            const VisualizarAvisosScreen(), context),
         _buildAdminItem(Icons.visibility, 'Visualizar Ocorrências',
-            const AvisosScreen(), context),
+            const VisualizarAvisosScreen(), context),
       ],
     );
   }

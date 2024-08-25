@@ -10,4 +10,25 @@ class AvisoProvider with ChangeNotifier {
     _avisos.add(aviso);
     notifyListeners();
   }
+
+  void removeAviso(Aviso aviso) {
+    _avisos.remove(aviso);
+    notifyListeners();
+  }
+
+  Aviso? getAvisoById(String id) {
+    try {
+      return _avisos.firstWhere((aviso) => aviso.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  void updateAviso(Aviso updatedAviso) {
+    final index = _avisos.indexWhere((aviso) => aviso.id == updatedAviso.id);
+    if (index != -1) {
+      _avisos[index] = updatedAviso;
+      notifyListeners();
+    }
+  }
 }

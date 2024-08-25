@@ -1,7 +1,7 @@
-import 'package:condoview/providers/aviso_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:condoview/models/aviso_model.dart';
+import 'package:condoview/providers/aviso_provider.dart';
+import 'package:provider/provider.dart';
 
 class AdicionarAvisoScreen extends StatefulWidget {
   const AdicionarAvisoScreen({super.key});
@@ -68,11 +68,13 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
 
   void _submit() {
     final aviso = Aviso(
+      id: DateTime.now().toString(),
       icon: _selectedIcon ?? Icons.info,
       title: _titleController.text,
       description: _descriptionController.text,
       time:
           'Enviado dia ${DateTime.now().toLocal().toString().split(' ')[0]} às ${DateTime.now().toLocal().toString().split(' ')[1].split('.')[0]}',
+      imageUrl: '', // Adicione o imageUrl se você tiver uma URL real.
     );
 
     Provider.of<AvisoProvider>(context, listen: false).addAviso(aviso);
@@ -82,6 +84,7 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
         content: Text('Aviso adicionado com sucesso!'),
       ),
     );
+
     Navigator.pop(context);
   }
 

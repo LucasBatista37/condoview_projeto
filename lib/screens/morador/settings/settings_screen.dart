@@ -1,4 +1,4 @@
-import 'package:condoview/screens/editarPerfil/editar_perfil_screen.dart';
+import 'package:condoview/screens/morador/editarPerfil/editar_perfil_screen.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {

@@ -1,13 +1,13 @@
-import 'package:condoview/screens/avisos/avisos_screen.dart';
+import 'package:condoview/screens/morador/avisos/avisos_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:condoview/screens/assembleias/assembleias_screen.dart';
-import 'package:condoview/screens/depesas/expenses_screen.dart';
-import 'package:condoview/screens/encomendas/encomendas_screen.dart';
-import 'package:condoview/screens/manutencao/manutencao_screen.dart';
-import 'package:condoview/screens/ocorrencia/ocorrencia_screen.dart';
-import 'package:condoview/screens/reservas/reservas_screen.dart';
-import 'package:condoview/screens/visitante/visitante_screen.dart';
-import 'package:condoview/screens/chat/chat_geral_screen.dart';
+import 'package:condoview/screens/morador/assembleias/assembleias_screen.dart';
+import 'package:condoview/screens/morador/depesas/expenses_screen.dart';
+import 'package:condoview/screens/morador/encomendas/encomendas_screen.dart';
+import 'package:condoview/screens/morador/manutencao/manutencao_screen.dart';
+import 'package:condoview/screens/morador/ocorrencia/ocorrencia_screen.dart';
+import 'package:condoview/screens/morador/reservas/reservas_screen.dart';
+import 'package:condoview/screens/morador/visitante/visitante_screen.dart';
+import 'package:condoview/screens/morador/chat/chat_geral_screen.dart';
 
 class MenuGrid extends StatelessWidget {
   const MenuGrid({super.key});

@@ -1,4 +1,4 @@
-import 'package:condoview/screens/avisos/avisos_detalhes_morador_screen.dart';
+import 'package:condoview/screens/morador/avisos/avisos_detalhes_morador_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/aviso_provider.dart';

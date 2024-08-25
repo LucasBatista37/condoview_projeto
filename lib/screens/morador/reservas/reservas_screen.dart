@@ -1,4 +1,4 @@
-import 'package:condoview/screens/reservas/solicitar_reserva.dart';
+import 'package:condoview/screens/morador/reservas/solicitar_reserva.dart';
 import 'package:flutter/material.dart';
 
 class ReservasScreen extends StatelessWidget {

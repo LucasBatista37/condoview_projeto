@@ -1,6 +1,6 @@
-import 'package:condoview/screens/editarPerfil/editar_perfil_screen.dart';
-import 'package:condoview/screens/login/login_screen.dart';
-import 'package:condoview/screens/settings/settings_screen.dart';
+import 'package:condoview/screens/morador/editarPerfil/editar_perfil_screen.dart';
+import 'package:condoview/screens/morador/login/login_screen.dart';
+import 'package:condoview/screens/morador/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 
 class CustomDrawer extends StatelessWidget {

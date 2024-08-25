@@ -1,5 +1,5 @@
-import 'package:condoview/screens/createCondo/create_condo_screen.dart';
-import 'package:condoview/screens/home/home_screen.dart';
+import 'package:condoview/screens/morador/createCondo/create_condo_screen.dart';
+import 'package:condoview/screens/morador/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import '../signup/signup_screen.dart';
 

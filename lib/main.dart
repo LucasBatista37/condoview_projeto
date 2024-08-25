@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/aviso_provider.dart';
 import 'package:condoview/screens/administrador/adicionar_avisos_screen.dart';
-import 'package:condoview/screens/home/home_screen.dart';
-import 'package:condoview/screens/conversas/chat_screen.dart';
-import 'package:condoview/screens/search/search_screen.dart';
+import 'package:condoview/screens/morador/home/home_screen.dart';
+import 'package:condoview/screens/morador/conversas/chat_screen.dart';
+import 'package:condoview/screens/morador/search/search_screen.dart';
 
 void main() {
   runApp(

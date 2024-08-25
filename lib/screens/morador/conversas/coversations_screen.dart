@@ -1,5 +1,5 @@
 // screens/conversations_screen.dart
-import 'package:condoview/screens/conversas/chat_screen.dart';
+import 'package:condoview/screens/morador/conversas/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:condoview/components/custom_bottom_navigation_bar.dart';
 

@@ -1,4 +1,4 @@
-import 'package:condoview/screens/assembleias/votar_screen.dart';
+import 'package:condoview/screens/morador/assembleias/votar_screen.dart';
 import 'package:flutter/material.dart';
 
 class AssembleiasScreen extends StatelessWidget {

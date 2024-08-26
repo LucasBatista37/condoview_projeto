@@ -1,20 +1,26 @@
+import 'package:condoview/screens/morador/signup/signup_screen.dart';
+import 'package:condoview/services/secure_storege_service.dart';
+import 'package:condoview/providers/aviso_provider.dart';
+import 'package:condoview/providers/reserva_provider.dart';
+import 'package:condoview/providers/usuario_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:condoview/providers/aviso_provider.dart';
-import 'package:condoview/providers/reserva_provider.dart'; // Exemplo adicional
 import 'package:condoview/screens/administrador/avisos/visualizar_avisos_screen.dart';
 import 'package:condoview/screens/administrador/avisos/adicionar_avisos_screen.dart';
 import 'package:condoview/screens/morador/home/home_screen.dart';
 import 'package:condoview/screens/morador/conversas/chat_screen.dart';
 import 'package:condoview/screens/morador/search/search_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => UsuarioProvider()),
         ChangeNotifierProvider(create: (context) => AvisoProvider()),
-        ChangeNotifierProvider(
-            create: (context) => ReservaProvider()), // Exemplo adicional
+        ChangeNotifierProvider(create: (context) => ReservaProvider()),
+        Provider(create: (context) => SecureStorageService()),
       ],
       child: const MyApp(),
     ),
@@ -26,18 +32,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CondoView',
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-      ),
-      initialRoute: '/home',
-      routes: {
-        '/home': (context) => const HomeScreen(),
-        '/chat': (context) => const ChatScreen(name: 'Nome'),
-        '/search': (context) => const SearchScreen(),
-        '/visualizarAvisos': (context) => const VisualizarAvisosScreen(),
-        '/adicionar': (context) => const AdicionarAvisoScreen(),
+    return Consumer<UsuarioProvider>(
+      builder: (context, usuarioProvider, child) {
+        // Verifica se o usuário está autenticado
+        final isAuthenticated = usuarioProvider.usuario != null;
+
+        return MaterialApp(
+          title: 'CondoView',
+          theme: ThemeData(
+            primarySwatch: Colors.deepPurple,
+          ),
+          initialRoute: isAuthenticated ? '/home' : '/signup',
+          routes: {
+            '/home': (context) => const HomeScreen(),
+            '/chat': (context) => const ChatScreen(name: 'Nome'),
+            '/search': (context) => const SearchScreen(),
+            '/visualizarAvisos': (context) => const VisualizarAvisosScreen(),
+            '/adicionar': (context) => const AdicionarAvisoScreen(),
+            '/signup': (context) =>
+                const SignupScreen(), // Adicione a tela de signup
+          },
+        );
       },
     );
   }

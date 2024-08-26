@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:condoview/components/custom_bottom_navigation_bar.dart';
 import 'package:condoview/components/custom_drawer.dart';
 import 'package:condoview/components/admin_grid.dart';
 import 'package:condoview/components/menu_grid.dart';
+import 'package:condoview/providers/usuario_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,32 +18,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
 
-  void _onTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-
-    switch (_currentIndex) {
-      case 0:
-        Navigator.pushNamed(context, '/home');
-        break;
-      case 1:
-        Navigator.pushNamed(context, '/search');
-        break;
-      case 2:
-        Navigator.pushNamed(context, '/condominio');
-        break;
-      case 3:
-        Navigator.pushNamed(context, '/vizinhança');
-        break;
-      case 4:
-        Navigator.pushNamed(context, '/conversas');
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final usuarioProvider = Provider.of<UsuarioProvider>(context);
+    final userName = usuarioProvider.userName;
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -59,18 +40,18 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Lucas',
-              style: TextStyle(
+              userName,
+              style: const TextStyle(
                 fontSize: 18,
-                color: Color.fromARGB(255, 255, 255, 255),
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
+            const Text(
               'Condomínio Fictício',
               style: TextStyle(
                 fontSize: 14,
@@ -83,9 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(width: 48),
         ],
       ),
-      drawer: const CustomDrawer(
-        userName: 'Lucas',
-        userEmail: 'Lucas@gmail.com',
+      drawer: CustomDrawer(
+        userName: userName,
+        userEmail: usuarioProvider.usuario?.email ?? 'Email não disponível',
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -149,5 +130,29 @@ class _HomeScreenState extends State<HomeScreen> {
         isThreeLine: true,
       ),
     );
+  }
+
+  void _onTap(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    switch (_currentIndex) {
+      case 0:
+        Navigator.pushNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushNamed(context, '/search');
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/condominio');
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/vizinhança');
+        break;
+      case 4:
+        Navigator.pushNamed(context, '/conversas');
+        break;
+    }
   }
 }

@@ -1,11 +1,15 @@
-import 'package:condoview/screens/morador/reservas/solicitar_reserva.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:condoview/providers/reserva_provider.dart';
+import 'package:condoview/screens/morador/reservas/solicitar_reserva.dart';
 
 class ReservasScreen extends StatelessWidget {
   const ReservasScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final reservaProvider = Provider.of<ReservaProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 78, 20, 166),
@@ -36,23 +40,19 @@ class ReservasScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView(
-                children: [
-                  _buildReservaCard(
+              child: ListView.builder(
+                itemCount: reservaProvider.reservas.length,
+                itemBuilder: (context, index) {
+                  final reserva = reservaProvider.reservas[index];
+                  return _buildReservaCard(
                     context,
-                    icon: Icons.group,
-                    title: 'Churrasqueira',
-                    date: '21/07/2024 das 07h00 às 12h00',
-                    reservedBy: 'Adriyan Alexander - A126',
-                  ),
-                  _buildReservaCard(
-                    context,
-                    icon: Icons.party_mode,
-                    title: 'Salão de Festas',
-                    date: '22/07/2024 das 17h00 às 22h00',
-                    reservedBy: 'Pedro Lopes - J27',
-                  ),
-                ],
+                    icon: Icons.event,
+                    title: reserva.area,
+                    date:
+                        '${reserva.data.day}/${reserva.data.month}/${reserva.data.year} das ${reserva.horarioInicio.format(context)} às ${reserva.horarioFim.format(context)}',
+                    reservedBy: 'Reservado por você',
+                  );
+                },
               ),
             ),
             const SizedBox(height: 16),
@@ -63,7 +63,7 @@ class ReservasScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ReservaScreen(),
+                      builder: (context) => const SolicitarReserva(),
                     ),
                   );
                 },

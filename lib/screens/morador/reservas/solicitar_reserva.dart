@@ -1,22 +1,30 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:condoview/providers/reserva_provider.dart';
+import 'package:condoview/models/reserva_model.dart';
 
-class ReservaScreen extends StatefulWidget {
-  const ReservaScreen({super.key});
+class SolicitarReserva extends StatefulWidget {
+  const SolicitarReserva({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _ReservaScreenState createState() => _ReservaScreenState();
+  _SolicitarReservaState createState() => _SolicitarReservaState();
 }
 
-class _ReservaScreenState extends State<ReservaScreen> {
-  final TextEditingController _motivoController = TextEditingController();
+class _SolicitarReservaState extends State<SolicitarReserva> {
   final TextEditingController _descricaoController = TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
-  XFile? _image;
+
+  final List<String> _areasFixas = [
+    'Salão de Festas',
+    'Churrasqueira',
+    'Quadra de Esportes',
+    'Piscina',
+  ];
+
+  String? _selectedArea;
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +58,15 @@ class _ReservaScreenState extends State<ReservaScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              _buildTextField(
-                  label: 'Motivo da Reserva', controller: _motivoController),
+              _buildDropdown(
+                  label: 'Escolher Área',
+                  value: _selectedArea,
+                  items: _areasFixas,
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedArea = newValue;
+                    });
+                  }),
               const SizedBox(height: 16),
               _buildTextField(
                   label: 'Descrição',
@@ -74,19 +89,27 @@ class _ReservaScreenState extends State<ReservaScreen> {
                 });
               }, selectedTime: _endTime),
               const SizedBox(height: 16),
-              _buildImagePicker(context),
-              const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Lógica para enviar a reserva
+                    final reserva = Reserva(
+                      area: _selectedArea ?? 'Não especificado',
+                      descricao: _descricaoController.text,
+                      data: _selectedDate ?? DateTime.now(),
+                      horarioInicio: _startTime ?? TimeOfDay.now(),
+                      horarioFim: _endTime ?? TimeOfDay.now(),
+                    );
+
+                    Provider.of<ReservaProvider>(context, listen: false)
+                        .adicionarReserva(reserva);
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Reserva enviada com sucesso!'),
                       ),
                     );
-                    Navigator.pop(context); // Fechar a tela de reservas
+                    Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -129,6 +152,28 @@ class _ReservaScreenState extends State<ReservaScreen> {
         labelText: label,
         border: const OutlineInputBorder(),
       ),
+    );
+  }
+
+  Widget _buildDropdown({
+    required String label,
+    required String? value,
+    required List<String> items,
+    required void Function(String?) onChanged,
+  }) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      items: items.map((String item) {
+        return DropdownMenuItem<String>(
+          value: item,
+          child: Text(item),
+        );
+      }).toList(),
+      onChanged: onChanged,
     );
   }
 
@@ -200,52 +245,6 @@ class _ReservaScreenState extends State<ReservaScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildImagePicker(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () async {
-            final ImagePicker picker = ImagePicker();
-            final XFile? pickedImage =
-                await picker.pickImage(source: ImageSource.gallery);
-
-            setState(() {
-              _image = pickedImage;
-            });
-          },
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(5.0),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(_image == null
-                    ? 'Selecionar Imagem'
-                    : 'Imagem Selecionada'),
-                const Icon(Icons.photo),
-              ],
-            ),
-          ),
-        ),
-        if (_image != null) ...[
-          const SizedBox(height: 16),
-          Center(
-            child: Image.file(
-              File(_image!.path),
-              height: 100,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ]
-      ],
     );
   }
 }

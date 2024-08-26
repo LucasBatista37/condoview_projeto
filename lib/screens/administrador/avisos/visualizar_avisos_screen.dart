@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/aviso_provider.dart';
-import 'package:condoview/screens/administrador/adicionar_avisos_screen.dart';
-import 'package:condoview/screens/administrador/avisos_detalhes_adm_screen.dart';
+import 'package:condoview/screens/administrador/avisos/adicionar_avisos_screen.dart';
+import 'package:condoview/screens/administrador/avisos/avisos_detalhes_adm_screen.dart';
 
 class VisualizarAvisosScreen extends StatelessWidget {
   const VisualizarAvisosScreen({super.key});

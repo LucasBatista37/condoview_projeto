@@ -2,6 +2,7 @@ import 'package:condoview/screens/administrador/adicionarMorador/adicionar_morad
 import 'package:condoview/screens/administrador/aprovarManutencao/visualizar_manutencao.dart';
 import 'package:condoview/screens/administrador/aprovarReserva/visualizar_reservas_screen.dart';
 import 'package:condoview/screens/administrador/avisos/visualizar_avisos_screen.dart';
+import 'package:condoview/screens/administrador/visualizarOcorrencia/lista_ocorrencias_screen.dart';
 import 'package:condoview/screens/morador/construcao/contrucao_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -41,7 +42,7 @@ class AdminGrid extends StatelessWidget {
         _buildAdminItem(Icons.block, 'Inativar Usuário',
             const EmConstrucaoScreen(), context),
         _buildAdminItem(Icons.visibility, 'Visualizar Ocorrências',
-            const EmConstrucaoScreen(), context),
+            const ListaOcorrenciasScreen(), context),
       ],
     );
   }

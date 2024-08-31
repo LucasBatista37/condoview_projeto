@@ -1,13 +1,13 @@
-import 'dart:io';
-
+import 'package:condoview/providers/ocorrencia_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'dart:io';
 
 class OcorrenciaScreen extends StatefulWidget {
   const OcorrenciaScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _OcorrenciaScreenState createState() => _OcorrenciaScreenState();
 }
 
@@ -63,13 +63,31 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Lógica para enviar a ocorrência
+                  if (_motivoController.text.isEmpty ||
+                      _descricaoController.text.isEmpty ||
+                      _selectedDate == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Por favor, preencha todos os campos.'),
+                      ),
+                    );
+                    return;
+                  }
+
+                  Provider.of<OcorrenciaProvider>(context, listen: false)
+                      .addOcorrencia(
+                    motivo: _motivoController.text,
+                    descricao: _descricaoController.text,
+                    data: _selectedDate!,
+                    imagem: _image != null ? File(_image!.path) : null,
+                  );
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Ocorrência enviada com sucesso!'),
                     ),
                   );
-                  Navigator.pop(context); // Fechar a tela de ocorrências
+                  Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -139,11 +157,13 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              _selectedDate == null
-                  ? 'Selecionar Data'
-                  : 'Data: ${_selectedDate!.month}/${_selectedDate!.day}/${_selectedDate!.year}',
+              _selectedDate != null
+                  ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
+                  : 'Selecionar Data',
+              style: const TextStyle(fontSize: 16),
             ),
-            const Icon(Icons.calendar_today),
+            const Icon(Icons.calendar_today,
+                color: Color.fromARGB(255, 0, 0, 0)),
           ],
         ),
       ),
@@ -151,48 +171,34 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
   }
 
   Widget _buildImagePicker(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () async {
-            final ImagePicker picker = ImagePicker();
-            final XFile? pickedImage =
-                await picker.pickImage(source: ImageSource.gallery);
-
-            setState(() {
-              _image = pickedImage;
-            });
-          },
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(5.0),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(_image == null
-                    ? 'Selecionar Imagem'
-                    : 'Imagem Selecionada'),
-                const Icon(Icons.photo),
-              ],
-            ),
-          ),
+    return GestureDetector(
+      onTap: () async {
+        final ImagePicker picker = ImagePicker();
+        final XFile? pickedFile =
+            await picker.pickImage(source: ImageSource.gallery);
+        if (pickedFile != null) {
+          setState(() {
+            _image = pickedFile;
+          });
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(5.0),
         ),
-        if (_image != null) ...[
-          const SizedBox(height: 16),
-          Center(
-            child: Image.file(
-              File(_image!.path),
-              height: 100,
-              fit: BoxFit.cover,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              _image != null ? 'Imagem Selecionada' : 'Selecionar Imagem',
+              style: const TextStyle(fontSize: 16),
             ),
-          ),
-        ]
-      ],
+            const Icon(Icons.image, color: Color.fromARGB(255, 0, 0, 0)),
+          ],
+        ),
+      ),
     );
   }
 }

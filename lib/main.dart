@@ -1,4 +1,5 @@
 import 'package:condoview/providers/manutencao_provider.dart';
+import 'package:condoview/providers/ocorrencia_provider.dart';
 import 'package:condoview/screens/morador/signup/signup_screen.dart';
 import 'package:condoview/services/secure_storege_service.dart';
 import 'package:condoview/providers/aviso_provider.dart';
@@ -22,6 +23,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => AvisoProvider()),
         ChangeNotifierProvider(create: (context) => ReservaProvider()),
         ChangeNotifierProvider(create: (_) => ManutencaoProvider()),
+        ChangeNotifierProvider(create: (_) => OcorrenciaProvider()),
         Provider(create: (context) => SecureStorageService()),
       ],
       child: const MyApp(),

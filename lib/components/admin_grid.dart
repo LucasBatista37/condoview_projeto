@@ -1,6 +1,8 @@
 import 'package:condoview/screens/administrador/adicionarMorador/adicionar_morador_screen.dart';
+import 'package:condoview/screens/administrador/aprovarManutencao/visualizar_manutencao.dart';
 import 'package:condoview/screens/administrador/aprovarReserva/visualizar_reservas_screen.dart';
 import 'package:condoview/screens/administrador/avisos/visualizar_avisos_screen.dart';
+import 'package:condoview/screens/morador/construcao/contrucao_screen.dart';
 import 'package:flutter/material.dart';
 
 class AdminGrid extends StatelessWidget {
@@ -29,17 +31,17 @@ class AdminGrid extends StatelessWidget {
             ),
             context),
         _buildAdminItem(Icons.build, 'Aprovar Manutenção',
-            const VisualizarAvisosScreen(), context),
+            const VisualizarManutencoesScreen(), context),
         _buildAdminItem(Icons.assessment, 'Gerar Relatório',
-            const VisualizarAvisosScreen(), context),
+            const EmConstrucaoScreen(), context),
         _buildAdminItem(Icons.assignment, 'Criar Assembleia',
-            const VisualizarAvisosScreen(), context),
+            const EmConstrucaoScreen(), context),
         _buildAdminItem(Icons.mail, 'Adicionar Correspondência',
-            const VisualizarAvisosScreen(), context),
+            const EmConstrucaoScreen(), context),
         _buildAdminItem(Icons.block, 'Inativar Usuário',
-            const VisualizarAvisosScreen(), context),
+            const EmConstrucaoScreen(), context),
         _buildAdminItem(Icons.visibility, 'Visualizar Ocorrências',
-            const VisualizarAvisosScreen(), context),
+            const EmConstrucaoScreen(), context),
       ],
     );
   }

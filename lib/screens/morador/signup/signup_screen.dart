@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:condoview/providers/usuario_provider.dart';
 import 'package:condoview/screens/morador/home/home_screen.dart';
 
@@ -8,11 +7,11 @@ class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SignupScreenState createState() => _SignupScreenState();
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
 
   String _nome = '';
@@ -125,23 +124,18 @@ class _SignupScreenState extends State<SignupScreen> {
                             context,
                             listen: false);
                         try {
-                          print('Tentando criar usuário...');
+                          // ignore: unused_local_variable
                           final userId = await usuarioProvider.createUser(
                               _nome, _email, _senha);
-                          print('Usuário criado com sucesso!');
-                          print('Usuário criado com os seguintes dados:');
-                          print('ID: $userId');
-                          print('Nome: $_nome');
-                          print('Email: $_email');
-                          print('Senha: $_senha');
 
                           Navigator.pushReplacement(
+                            // ignore: use_build_context_synchronously
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const HomeScreen()),
                           );
                         } catch (e) {
-                          print('Erro ao criar conta: $e');
+                          // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Erro ao criar conta: $e')),
                           );

@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:condoview/providers/manutencao_provider.dart';
+import 'package:condoview/models/manutencao_model.dart';
 
 class SolicitarManutencaoScreen extends StatefulWidget {
   const SolicitarManutencaoScreen({super.key});
@@ -56,6 +59,29 @@ class _SolicitarManutencaoScreenState extends State<SolicitarManutencaoScreen> {
   }
 
   void _submit() {
+    if (_selectedType == null ||
+        _selectedDate == null ||
+        _descriptionController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, preencha todos os campos!'),
+        ),
+      );
+      return;
+    }
+
+    final manutencaoProvider =
+        Provider.of<ManutencaoProvider>(context, listen: false);
+
+    final novaManutencao = Manutencao(
+      tipo: _selectedType!,
+      descricao: _descriptionController.text,
+      data: _selectedDate!,
+      imagemPath: _imageFile?.path,
+    );
+
+    manutencaoProvider.adicionarManutencao(novaManutencao);
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Manutenção enviada com sucesso!'),

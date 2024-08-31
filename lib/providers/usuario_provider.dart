@@ -12,7 +12,7 @@ class UsuarioProvider with ChangeNotifier {
   String get userName => _usuario?.nome ?? 'Usuário';
 
   Future<String> createUser(String nome, String email, String senha) async {
-    final uuid = Uuid();
+    const uuid = Uuid();
     final id = uuid.v4();
     final token = senha;
 

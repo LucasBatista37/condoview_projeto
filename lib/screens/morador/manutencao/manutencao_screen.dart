@@ -1,11 +1,15 @@
+import 'package:condoview/screens/morador/manutencao/solicitar_manutencao_screen.dart';
 import 'package:flutter/material.dart';
-import 'solicitar_manutencao_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:condoview/providers/manutencao_provider.dart';
 
 class ManutencaoScreen extends StatelessWidget {
   const ManutencaoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final manutencaoProvider = Provider.of<ManutencaoProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 78, 20, 166),
@@ -17,7 +21,7 @@ class ManutencaoScreen extends StatelessWidget {
           },
         ),
         title: const Text(
-          'Manutenção',
+          'Manutenções',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -31,29 +35,29 @@ class ManutencaoScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Manutenções Programadas',
+              'Minhas Manutenções',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView(
-                children: [
-                  _buildManutencaoCard(
-                    context,
-                    icon: Icons.work,
-                    title: 'Pintura no Prédio',
-                    date: '10/07/2024 até 20/07/2024',
-                    status: 'Em andamento',
-                  ),
-                  _buildManutencaoCard(
-                    context,
-                    icon: Icons.pool,
-                    title: 'Limpeza da Piscina',
-                    date: '15/07/2024',
-                    status: 'Agendada',
-                  ),
-                ],
-              ),
+              child: manutencaoProvider.manutencoes.isEmpty
+                  ? const Center(child: Text('Nenhuma manutenção registrada.'))
+                  : ListView.builder(
+                      itemCount: manutencaoProvider.manutencoes.length,
+                      itemBuilder: (context, index) {
+                        final manutencao =
+                            manutencaoProvider.manutencoes[index];
+                        return _buildManutencaoCard(
+                          context,
+                          icon: Icons.build,
+                          title: manutencao.tipo,
+                          date:
+                              '${manutencao.data.day}/${manutencao.data.month}/${manutencao.data.year}',
+                          description: manutencao.descricao,
+                          status: manutencao.status,
+                        );
+                      },
+                    ),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -82,7 +86,7 @@ class ManutencaoScreen extends StatelessWidget {
                     Icon(Icons.add, size: 24),
                     SizedBox(width: 8),
                     Text(
-                      'Solicitar Manutenção',
+                      'Solicitar manutenção',
                       style: TextStyle(fontSize: 16),
                     ),
                   ],
@@ -99,6 +103,7 @@ class ManutencaoScreen extends StatelessWidget {
       {required IconData icon,
       required String title,
       required String date,
+      required String description,
       required String status}) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -106,11 +111,11 @@ class ManutencaoScreen extends StatelessWidget {
       child: ListTile(
         leading: Icon(icon, color: const Color.fromARGB(255, 78, 20, 166)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(date),
+        subtitle: Text('$date\n$description'),
         trailing: Text(
           status,
           style: TextStyle(
-            color: status == 'Em andamento' ? Colors.green : Colors.orange,
+            color: status == 'Aprovada' ? Colors.green : Colors.red,
             fontWeight: FontWeight.bold,
           ),
         ),

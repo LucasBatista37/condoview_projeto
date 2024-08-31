@@ -1,3 +1,4 @@
+import 'package:condoview/providers/manutencao_provider.dart';
 import 'package:condoview/screens/morador/signup/signup_screen.dart';
 import 'package:condoview/services/secure_storege_service.dart';
 import 'package:condoview/providers/aviso_provider.dart';
@@ -20,6 +21,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => UsuarioProvider()),
         ChangeNotifierProvider(create: (context) => AvisoProvider()),
         ChangeNotifierProvider(create: (context) => ReservaProvider()),
+        ChangeNotifierProvider(create: (_) => ManutencaoProvider()),
         Provider(create: (context) => SecureStorageService()),
       ],
       child: const MyApp(),
@@ -34,7 +36,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UsuarioProvider>(
       builder: (context, usuarioProvider, child) {
-        // Verifica se o usuário está autenticado
         final isAuthenticated = usuarioProvider.usuario != null;
 
         return MaterialApp(
@@ -49,8 +50,7 @@ class MyApp extends StatelessWidget {
             '/search': (context) => const SearchScreen(),
             '/visualizarAvisos': (context) => const VisualizarAvisosScreen(),
             '/adicionar': (context) => const AdicionarAvisoScreen(),
-            '/signup': (context) =>
-                const SignupScreen(), // Adicione a tela de signup
+            '/signup': (context) => const SignupScreen(),
           },
         );
       },

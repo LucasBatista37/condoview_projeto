@@ -8,6 +8,7 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
 
@@ -111,19 +112,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     try {
                       final userId = await usuarioProvider.login(email, senha);
-                      print('Usuário autenticado com sucesso!');
-                      print('Usuário autenticado com os seguintes dados:');
-                      print('Email: $email');
-                      print('Senha: $senha');
 
                       Navigator.pushReplacement(
+                        // ignore: use_build_context_synchronously
                         context,
                         MaterialPageRoute(
                           builder: (context) => const HomeScreen(),
                         ),
                       );
                     } catch (e) {
-                      print('Erro ao autenticar usuário: $e');
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Erro ao autenticar: $e')),
                       );

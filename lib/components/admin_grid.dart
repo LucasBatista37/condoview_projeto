@@ -1,3 +1,4 @@
+import 'package:condoview/screens/administrador/adicionarEncomenda/adicionar_encomenda_screen.dart';
 import 'package:condoview/screens/administrador/adicionarMorador/adicionar_morador_screen.dart';
 import 'package:condoview/screens/administrador/aprovarManutencao/visualizar_manutencao.dart';
 import 'package:condoview/screens/administrador/aprovarReserva/visualizar_reservas_screen.dart';
@@ -38,7 +39,7 @@ class AdminGrid extends StatelessWidget {
         _buildAdminItem(Icons.assignment, 'Criar Assembleia',
             const EmConstrucaoScreen(), context),
         _buildAdminItem(Icons.mail, 'Adicionar Correspondência',
-            const EmConstrucaoScreen(), context),
+            AdicionarEncomendaScreen(), context),
         _buildAdminItem(Icons.block, 'Inativar Usuário',
             const EmConstrucaoScreen(), context),
         _buildAdminItem(Icons.visibility, 'Visualizar Ocorrências',

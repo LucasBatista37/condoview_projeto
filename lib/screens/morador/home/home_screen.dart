@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/components/custom_bottom_navigation_bar.dart';
@@ -22,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final usuarioProvider = Provider.of<UsuarioProvider>(context);
     final userName = usuarioProvider.userName;
+    final userProfileImage = usuarioProvider.userProfileImage;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -34,9 +37,11 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () {
               _scaffoldKey.currentState?.openDrawer();
             },
-            child: const CircleAvatar(
+            child: CircleAvatar(
               backgroundColor: Colors.transparent,
-              backgroundImage: AssetImage('assets/images/user.jpeg'),
+              backgroundImage: userProfileImage == null
+                  ? const AssetImage('assets/images/perfil.jpg')
+                  : FileImage(File(userProfileImage)) as ImageProvider,
             ),
           ),
         ),
@@ -64,10 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(width: 48),
         ],
       ),
-      drawer: CustomDrawer(
-        userName: userName,
-        userEmail: usuarioProvider.usuario?.email ?? 'Email não disponível',
-      ),
+      drawer: const CustomDrawer(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,44 +117,30 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: _onTap,
+        onTap: (int index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
       ),
     );
   }
 
-  Widget _buildNotificationCard(String title, String message, String from) {
+  Widget _buildNotificationCard(
+      String title, String description, String sender) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 8.0),
       elevation: 2,
       child: ListTile(
-        title: Text(title),
-        subtitle: Text('$message\n$from'),
-        isThreeLine: true,
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(description),
+        trailing: Text(
+          sender,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
     );
-  }
-
-  void _onTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-
-    switch (_currentIndex) {
-      case 0:
-        Navigator.pushNamed(context, '/home');
-        break;
-      case 1:
-        Navigator.pushNamed(context, '/search');
-        break;
-      case 2:
-        Navigator.pushNamed(context, '/condominio');
-        break;
-      case 3:
-        Navigator.pushNamed(context, '/vizinhança');
-        break;
-      case 4:
-        Navigator.pushNamed(context, '/conversas');
-        break;
-    }
   }
 }

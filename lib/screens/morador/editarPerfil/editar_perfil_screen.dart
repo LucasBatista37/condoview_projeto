@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'package:condoview/models/usuario_model.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:condoview/providers/usuario_provider.dart';
 
 class EditarPerfilScreen extends StatefulWidget {
   const EditarPerfilScreen({super.key});
@@ -15,6 +18,15 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
   XFile? _profileImage;
+
+  @override
+  void initState() {
+    super.initState();
+    final usuarioProvider =
+        Provider.of<UsuarioProvider>(context, listen: false);
+    _nomeController.text = usuarioProvider.userName;
+    _emailController.text = usuarioProvider.usuario?.email ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,13 +83,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
-                // Lógica para salvar as mudanças do perfil
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Perfil atualizado com sucesso!'),
-                  ),
-                );
-                Navigator.pop(context); // Fechar a tela de editar perfil
+                _updateUserProfile(context);
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
@@ -98,8 +104,10 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
     );
   }
 
-  Widget _buildTextField(
-      {required String label, required TextEditingController controller}) {
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+  }) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -119,5 +127,32 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         _profileImage = pickedImage;
       });
     }
+  }
+
+  void _updateUserProfile(BuildContext context) async {
+    final usuarioProvider =
+        Provider.of<UsuarioProvider>(context, listen: false);
+
+    if (_profileImage != null) {
+      await usuarioProvider.updateProfileImage(_profileImage!.path);
+    }
+
+    usuarioProvider.usuario = Usuario(
+      id: usuarioProvider.usuario!.id,
+      nome: _nomeController.text,
+      email: _emailController.text,
+      token: usuarioProvider.usuario!.token,
+      profileImageUrl: usuarioProvider.usuario!.profileImageUrl,
+    );
+
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Perfil atualizado com sucesso!'),
+      ),
+    );
+
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context);
   }
 }

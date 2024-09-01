@@ -9,9 +9,16 @@ class UsuarioProvider with ChangeNotifier {
 
   Usuario? get usuario => _usuario;
 
-  String get userName => _usuario?.nome ?? 'Usuário';
+  set usuario(Usuario? novoUsuario) {
+    _usuario = novoUsuario;
+    notifyListeners();
+  }
 
-  Future<String> createUser(String nome, String email, String senha) async {
+  String get userName => _usuario?.nome ?? 'Usuário';
+  String? get userProfileImage => _usuario?.profileImageUrl;
+
+  Future<String> createUser(String nome, String email, String senha,
+      {String? profileImageUrl}) async {
     const uuid = Uuid();
     final id = uuid.v4();
     final token = senha;
@@ -21,12 +28,16 @@ class UsuarioProvider with ChangeNotifier {
       nome: nome,
       email: email,
       token: token,
+      profileImageUrl: profileImageUrl,
     );
 
     await _storage.write(key: 'auth_token', value: token);
     await _storage.write(key: 'user_id', value: id);
     await _storage.write(key: 'user_name', value: nome);
     await _storage.write(key: 'user_email', value: email);
+    if (profileImageUrl != null) {
+      await _storage.write(key: 'user_profile_image', value: profileImageUrl);
+    }
 
     notifyListeners();
 
@@ -38,6 +49,7 @@ class UsuarioProvider with ChangeNotifier {
     final userId = await _storage.read(key: 'user_id');
     final userName = await _storage.read(key: 'user_name');
     final userEmail = await _storage.read(key: 'user_email');
+    final profileImageUrl = await _storage.read(key: 'user_profile_image');
 
     if (email == userEmail && senha == token) {
       _usuario = Usuario(
@@ -45,6 +57,7 @@ class UsuarioProvider with ChangeNotifier {
         nome: userName!,
         email: userEmail!,
         token: token!,
+        profileImageUrl: profileImageUrl,
       );
 
       notifyListeners();
@@ -60,6 +73,7 @@ class UsuarioProvider with ChangeNotifier {
     final userId = await _storage.read(key: 'user_id');
     final userName = await _storage.read(key: 'user_name');
     final userEmail = await _storage.read(key: 'user_email');
+    final profileImageUrl = await _storage.read(key: 'user_profile_image');
 
     if (token != null &&
         userId != null &&
@@ -70,6 +84,7 @@ class UsuarioProvider with ChangeNotifier {
         nome: userName,
         email: userEmail,
         token: token,
+        profileImageUrl: profileImageUrl,
       );
       notifyListeners();
     }
@@ -81,6 +96,21 @@ class UsuarioProvider with ChangeNotifier {
     await _storage.delete(key: 'user_id');
     await _storage.delete(key: 'user_name');
     await _storage.delete(key: 'user_email');
+    await _storage.delete(key: 'user_profile_image');
     notifyListeners();
+  }
+
+  Future<void> updateProfileImage(String imageUrl) async {
+    if (_usuario != null) {
+      _usuario = Usuario(
+        id: _usuario!.id,
+        nome: _usuario!.nome,
+        email: _usuario!.email,
+        token: _usuario!.token,
+        profileImageUrl: imageUrl,
+      );
+      await _storage.write(key: 'user_profile_image', value: imageUrl);
+      notifyListeners();
+    }
   }
 }

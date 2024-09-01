@@ -1,3 +1,4 @@
+import 'package:condoview/screens/morador/depesas/boleto_screen.dart';
 import 'package:flutter/material.dart';
 
 class DespesasScreen extends StatelessWidget {
@@ -30,27 +31,13 @@ class DespesasScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildDespesasCard(
+              context,
               Icons.home,
               'Condomínio',
               'R\$ 200,00',
               'Vencido',
               Colors.red,
-            ),
-            const SizedBox(height: 20),
-            _buildDespesasCard(
-              Icons.local_drink,
-              'Água',
-              'R\$ 300,00',
-              'A vencer',
-              Colors.orange,
-            ),
-            const SizedBox(height: 20),
-            _buildDespesasCard(
-              Icons.electric_car,
-              'Luz',
-              'R\$ 400,00',
-              'Vencido',
-              Colors.green,
+              'https://example.com/boleto.png',
             ),
           ],
         ),
@@ -59,11 +46,13 @@ class DespesasScreen extends StatelessWidget {
   }
 
   Widget _buildDespesasCard(
+    BuildContext context,
     IconData icon,
     String title,
     String amount,
     String status,
     Color statusColor,
+    String imageUrl,
   ) {
     return Card(
       elevation: 4,
@@ -81,7 +70,14 @@ class DespesasScreen extends StatelessWidget {
         ),
         trailing: ElevatedButton(
           onPressed: () {
-            // Ação ao clicar no botão
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BoletoImageScreen(
+                  imageUrl: imageUrl,
+                ),
+              ),
+            );
           },
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,

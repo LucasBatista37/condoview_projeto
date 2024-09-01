@@ -1,3 +1,4 @@
+import 'package:condoview/providers/assembleia_provider.dart';
 import 'package:condoview/providers/encomenda_provider.dart';
 import 'package:condoview/providers/manutencao_provider.dart';
 import 'package:condoview/providers/ocorrencia_provider.dart';
@@ -26,6 +27,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ManutencaoProvider()),
         ChangeNotifierProvider(create: (_) => OcorrenciaProvider()),
         ChangeNotifierProvider(create: (context) => EncomendasProvider()),
+        ChangeNotifierProvider(create: (_) => AssembleiaProvider()),
         Provider(create: (context) => SecureStorageService()),
       ],
       child: const MyApp(),

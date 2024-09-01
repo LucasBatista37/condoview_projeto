@@ -53,7 +53,7 @@ class ListaOcorrenciasScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    VisualizarOcorrenciaScreen(),
+                                    const VisualizarOcorrenciaScreen(),
                               ),
                             );
                           },
@@ -77,7 +77,7 @@ class ListaOcorrenciasScreen extends StatelessWidget {
       elevation: 2,
       child: ListTile(
         leading:
-            Icon(Icons.warning, color: const Color.fromARGB(255, 78, 20, 166)),
+            const Icon(Icons.warning, color: Color.fromARGB(255, 78, 20, 166)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(description),
         trailing: Text(

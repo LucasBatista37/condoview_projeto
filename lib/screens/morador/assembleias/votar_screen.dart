@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class VotacaoScreen extends StatefulWidget {
   final String pautaTitle;
+  final String pautaDescricao;
 
-  const VotacaoScreen({super.key, required this.pautaTitle});
+  const VotacaoScreen({
+    super.key,
+    required this.pautaTitle,
+    required this.pautaDescricao,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -38,9 +43,9 @@ class _VotacaoScreenState extends State<VotacaoScreen> {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Detalhes sobre a pauta',
-              style: TextStyle(fontSize: 16),
+            Text(
+              widget.pautaDescricao,
+              style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
             Column(

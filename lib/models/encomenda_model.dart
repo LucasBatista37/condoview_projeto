@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class Encomenda {
   final String id;
   final String title;

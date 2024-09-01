@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class EncomendaDetalhesScreen extends StatelessWidget {
   final Encomenda encomenda;
 
-  EncomendaDetalhesScreen({required this.encomenda});
+  const EncomendaDetalhesScreen({super.key, required this.encomenda});
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,8 @@
-import 'package:condoview/screens/morador/assembleias/votar_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../models/assembleia_model.dart';
+import '../../../providers/assembleia_provider.dart';
+import 'votar_screen.dart';
 
 class AssembleiasScreen extends StatelessWidget {
   const AssembleiasScreen({super.key});
@@ -17,7 +20,7 @@ class AssembleiasScreen extends StatelessWidget {
           },
         ),
         title: const Text(
-          'Assembleia',
+          'Assembleias',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -27,71 +30,147 @@ class AssembleiasScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Card(
-              color: Colors.green[100],
-              elevation: 2,
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Assembleia Extraordinária',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    SizedBox(height: 8),
-                    Text('Assunto: Instalação de câmeras de segurança'),
-                    SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'Em andamento',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
+        child: Consumer<AssembleiaProvider>(
+          builder: (context, assembleiaProvider, _) {
+            final assembleias = assembleiaProvider.assembleias;
+
+            if (assembleias.isEmpty) {
+              return const Center(
+                child: Text('Nenhuma assembleia disponível.'),
+              );
+            }
+
+            return ListView.builder(
+              itemCount: assembleias.length,
+              itemBuilder: (context, index) {
+                final assembleia = assembleias[index];
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                  color: assembleia.status == 'Em andamento'
+                      ? Colors.green[50]
+                      : Colors.grey[100],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          assembleia.titulo,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Assunto: ${assembleia.assunto}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Data: ${assembleia.data.day}/${assembleia.data.month}/${assembleia.data.year}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Horário: ${assembleia.horario.format(context)}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            assembleia.status,
+                            style: TextStyle(
+                              color: assembleia.status == 'Em andamento'
+                                  ? Colors.green
+                                  : Colors.orange,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const Divider(
+                          height: 20,
+                          thickness: 1,
+                        ),
+                        _buildPautasList(context, assembleia.pautas),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildPautaItem(context, 'Colocar câmeras de segurança'),
-                  _buildPautaItem(context, 'Segurança'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
+                  ),
+                );
+              },
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildPautaItem(BuildContext context, String title) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16.0),
-        title: Text(title),
-        trailing: const Icon(Icons.arrow_forward),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => VotacaoScreen(pautaTitle: title),
+  Widget _buildPautasList(BuildContext context, List<Pauta> pautas) {
+    if (pautas.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.0),
+        child: Text('Nenhuma pauta disponível.'),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: pautas.map((pauta) {
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 4.0),
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          elevation: 2,
+          child: ListTile(
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            title: Text(
+              pauta.titulo,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          );
-        },
-      ),
+            subtitle: Text(
+              pauta.descricao,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+            ),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Color.fromARGB(255, 78, 20, 166),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => VotacaoScreen(
+                    pautaTitle: pauta.titulo,
+                    pautaDescricao: pauta.descricao,
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      }).toList(),
     );
   }
 }

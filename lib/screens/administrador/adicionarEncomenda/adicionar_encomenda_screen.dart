@@ -5,7 +5,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class AdicionarEncomendaScreen extends StatefulWidget {
+  const AdicionarEncomendaScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _AdicionarEncomendaScreenState createState() =>
       _AdicionarEncomendaScreenState();
 }
@@ -59,6 +62,7 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
 
     if (picked != null) {
       final TimeOfDay? timePicked = await showTimePicker(
+        // ignore: use_build_context_synchronously
         context: context,
         initialTime: TimeOfDay.now(),
       );

@@ -8,6 +8,7 @@ class OcorrenciaScreen extends StatefulWidget {
   const OcorrenciaScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _OcorrenciaScreenState createState() => _OcorrenciaScreenState();
 }
 

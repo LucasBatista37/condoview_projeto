@@ -4,7 +4,7 @@ import 'package:condoview/models/ocorrencia_model.dart';
 import 'package:flutter/material.dart';
 
 class OcorrenciaProvider with ChangeNotifier {
-  List<Ocorrencia> _ocorrencias = [];
+  final List<Ocorrencia> _ocorrencias = [];
   Ocorrencia? _selectedOcorrencia;
 
   List<Ocorrencia> get ocorrencias => _ocorrencias;

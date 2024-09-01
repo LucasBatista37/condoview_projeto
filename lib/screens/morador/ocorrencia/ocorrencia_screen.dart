@@ -8,7 +8,6 @@ class OcorrenciaScreen extends StatefulWidget {
   const OcorrenciaScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _OcorrenciaScreenState createState() => _OcorrenciaScreenState();
 }
 
@@ -39,7 +38,7 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

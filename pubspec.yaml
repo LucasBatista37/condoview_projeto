@@ -33,6 +33,8 @@ dependencies:
   intl: ^0.18.0
   image_picker: ^1.1.2
   share_plus: ^10.0.2
+  flutter_image_compress: ^2.3.0
+  path_provider: ^2.1.4
   file_picker: ^8.1.2
   pdf: ^3.11.1
   flutter_downloader: ^1.11.8

@@ -80,11 +80,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Bem-vinda, Ana você tem três novas notificações!',
+                    'Bem-vindo, você tem três novas notificações!',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  _buildNotificationCard('Conversas', 'Oi Ana!', 'De: Mario'),
+                  _buildNotificationCard('Conversas', 'Oi!', 'De: Mario'),
                   _buildNotificationCard(
                       'Manutenção',
                       'Manutenção da piscina dia 25 de julho das 8h às 12h',

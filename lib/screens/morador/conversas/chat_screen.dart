@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:condoview/components/custom_bottom_navigation_bar.dart';
 
 class ChatScreen extends StatefulWidget {
   final String name;
@@ -15,35 +14,11 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  int _currentIndex = 4;
   final TextEditingController _messageController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   File? _image;
   String? _fileName;
   final List<ChatMessage> _messages = [];
-
-  void _onTap(int index) {
-    setState(() {
-      _currentIndex = index;
-      switch (_currentIndex) {
-        case 0:
-          Navigator.pushNamed(context, '/home');
-          break;
-        case 1:
-          Navigator.pushNamed(context, '/procurar');
-          break;
-        case 2:
-          Navigator.pushNamed(context, '/condominio');
-          break;
-        case 3:
-          Navigator.pushNamed(context, '/vizinhança');
-          break;
-        case 4:
-          Navigator.pushNamed(context, '/conversas');
-          break;
-      }
-    });
-  }
 
   Future<void> _pickImageFromCamera() async {
     final status = await Permission.camera.request();
@@ -155,8 +130,9 @@ class _ChatScreenState extends State<ChatScreen> {
                             Text(
                               message.text,
                               style: TextStyle(
-                                color:
-                                    message.isMe ? Colors.white : Colors.black,
+                                color: message.isMe
+                                    ? const Color.fromARGB(255, 0, 0, 0)
+                                    : Colors.black,
                               ),
                             ),
                           ],
@@ -243,10 +219,6 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
         ],
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTap,
       ),
     );
   }

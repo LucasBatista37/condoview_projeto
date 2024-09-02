@@ -192,10 +192,17 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
                     const SizedBox(height: 8),
                   ],
                   if (_fileName != null) ...[
-                    Text('Arquivo selecionado: $_fileName'),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.attach_file, size: 20),
+                        const SizedBox(width: 4),
+                        Text('$_fileName'),
+                      ],
+                    ),
                     const SizedBox(height: 8),
                   ],
-                  Text(message),
+                  if (message.isNotEmpty) Text(message),
                 ],
               ),
             ),

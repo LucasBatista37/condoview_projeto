@@ -62,7 +62,7 @@ class _AvisoDetalhesScreenState extends State<AvisoDetalhesScreen> {
       time: _dateController.text,
     );
     avisoProvider.updateAviso(updatedAviso);
-    _toggleEditing();
+    Navigator.pop(context);
   }
 
   void _updateDate() {

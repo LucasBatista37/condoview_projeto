@@ -112,11 +112,6 @@ class _ListaMoradoresScreenState extends State<ListaMoradoresScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-        child: const Icon(Icons.add),
-      ),
     );
   }
 

@@ -25,21 +25,21 @@ class MenuGrid extends StatelessWidget {
       children: [
         _buildMenuItem(
             Icons.person, 'Visitante', const VisitanteScreen(), context),
+        _buildMenuItem(Icons.warning, 'Avisos', const AvisosScreen(), context),
+        _buildMenuItem(Icons.local_shipping, 'Encomendas',
+            const EncomendasScreen(), context),
+        _buildMenuItem(Icons.meeting_room, 'Assembleias',
+            const AssembleiasScreen(), context),
         _buildMenuItem(
             Icons.calendar_today, 'Reservas', const ReservasScreen(), context),
         _buildMenuItem(
             Icons.build, 'Manutenção', const ManutencaoScreen(), context),
-        _buildMenuItem(
-            Icons.mail, 'Ocorrências', const OcorrenciaScreen(), context),
-        _buildMenuItem(Icons.local_shipping, 'Encomendas',
-            const EncomendasScreen(), context),
-        _buildMenuItem(Icons.warning, 'Avisos', const AvisosScreen(), context),
+        _buildMenuItem(Icons.create_rounded, 'Ocorrências',
+            const OcorrenciaScreen(), context),
         _buildMenuItem(
             Icons.chat, 'Conversas', const ChatGeralScreen(), context),
         _buildMenuItem(Icons.account_balance_wallet, 'Despesas',
             const DespesasScreen(), context),
-        _buildMenuItem(Icons.meeting_room, 'Assembleias',
-            const AssembleiasScreen(), context),
       ],
     );
   }

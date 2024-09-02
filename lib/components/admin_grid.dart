@@ -6,7 +6,6 @@ import 'package:condoview/screens/administrador/avisos/visualizar_avisos_screen.
 import 'package:condoview/screens/administrador/criarAssembleia/lista_assembleias_screen.dart';
 import 'package:condoview/screens/administrador/moradores/lista_moradores_screen.dart';
 import 'package:condoview/screens/administrador/visualizarOcorrencia/lista_ocorrencias_screen.dart';
-import 'package:condoview/screens/morador/construcao/contrucao_screen.dart';
 import 'package:flutter/material.dart';
 
 class AdminGrid extends StatelessWidget {
@@ -34,7 +33,7 @@ class AdminGrid extends StatelessWidget {
             ),
             _buildAdminItem(
               Icons.mail,
-              'Correspondência',
+              'Encomendas',
               const AdicionarEncomendaScreen(),
               context,
             ),
@@ -71,17 +70,18 @@ class AdminGrid extends StatelessWidget {
           'Visualizar',
           [
             _buildAdminItem(
+              Icons.visibility,
+              'Ocorrências',
+              const ListaOcorrenciasScreen(),
+              context,
+            ),
+            _buildAdminItem(
               Icons.groups,
               'Moradores',
               const ListaMoradoresScreen(),
               context,
             ),
-            _buildAdminItem(
-              Icons.visibility,
-              'Ocorrências',
-              const ListaOcorrenciasScreen(),
-              context,
-            ), /*
+            /*
             _buildAdminItem(
               Icons.assessment,
               'Relatório',

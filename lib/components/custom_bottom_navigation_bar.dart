@@ -1,4 +1,3 @@
-// custom_bottom_navigation_bar.dart
 import 'package:flutter/material.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
@@ -27,9 +26,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
             Navigator.pushNamed(context, '/condominio');
             break;
           case 3:
-            Navigator.pushNamed(context, '/vizinhança');
-            break;
-          case 4:
             Navigator.pushNamed(context, '/conversas');
             break;
         }
@@ -50,10 +46,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(Icons.business),
           label: 'Condomínio',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.location_city),
-          label: 'Vizinhança',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.message),

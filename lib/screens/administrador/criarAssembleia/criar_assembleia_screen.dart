@@ -7,7 +7,6 @@ class CriarAssembleiaScreen extends StatefulWidget {
   const CriarAssembleiaScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _CriarAssembleiaScreenState createState() => _CriarAssembleiaScreenState();
 }
 
@@ -42,9 +41,9 @@ class _CriarAssembleiaScreenState extends State<CriarAssembleiaScreen> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -238,57 +237,68 @@ class _CriarAssembleiaScreenState extends State<CriarAssembleiaScreen> {
   }
 
   void _showPautaDialog() {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
       builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Adicionar Pauta',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          title: const Text(
+            'Adicionar Pauta',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextField(
+                    controller: _pautaTituloController,
+                    decoration: const InputDecoration(
+                      labelText: 'Título da Pauta',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _pautaDescricaoController,
+                    decoration: const InputDecoration(
+                      labelText: 'Descrição da Pauta',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_pautaTituloController.text.isNotEmpty &&
+                          _pautaDescricaoController.text.isNotEmpty) {
+                        final pauta = Pauta(
+                          titulo: _pautaTituloController.text,
+                          descricao: _pautaDescricaoController.text,
+                        );
+                        Navigator.pop(context);
+                        setState(() {
+                          _pautas.add(pauta);
+                        });
+                        _pautaTituloController.clear();
+                        _pautaDescricaoController.clear();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Preencha todos os campos.'),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text('Adicionar Pauta'),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _pautaTituloController,
-                decoration: const InputDecoration(
-                  labelText: 'Título da Pauta',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _pautaDescricaoController,
-                decoration: const InputDecoration(
-                  labelText: 'Descrição da Pauta',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  if (_pautaTituloController.text.isNotEmpty &&
-                      _pautaDescricaoController.text.isNotEmpty) {
-                    final pauta = Pauta(
-                      titulo: _pautaTituloController.text,
-                      descricao: _pautaDescricaoController.text,
-                    );
-                    Navigator.pop(context);
-                    setState(() {
-                      _pautas.add(pauta);
-                    });
-                    _pautaTituloController.clear();
-                    _pautaDescricaoController.clear();
-                  }
-                },
-                child: const Text('Adicionar Pauta'),
-              ),
-            ],
+            ),
           ),
         );
       },

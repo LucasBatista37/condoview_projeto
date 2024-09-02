@@ -2,6 +2,7 @@ import 'package:condoview/providers/assembleia_provider.dart';
 import 'package:condoview/providers/encomenda_provider.dart';
 import 'package:condoview/providers/manutencao_provider.dart';
 import 'package:condoview/providers/ocorrencia_provider.dart';
+import 'package:condoview/screens/morador/condominio/condominio_screen.dart';
 import 'package:condoview/screens/morador/conversas/coversations_screen.dart';
 import 'package:condoview/screens/morador/signup/signup_screen.dart';
 import 'package:condoview/services/secure_storege_service.dart';
@@ -55,10 +56,10 @@ class MyApp extends StatelessWidget {
             '/home': (context) => const HomeScreen(),
             '/chat': (context) => const ChatScreen(name: 'Nome'),
             '/search': (context) => const SearchScreen(),
-            '/visualizarAvisos': (context) => const VisualizarAvisosScreen(),
             '/adicionar': (context) => const AdicionarAvisoScreen(),
             '/signup': (context) => const SignupScreen(),
-            '/conversas': (context) => const ConversationsScreen()
+            '/conversas': (context) => const ConversationsScreen(),
+            '/condominio': (context) => const CondominioScreen(),
           },
         );
       },

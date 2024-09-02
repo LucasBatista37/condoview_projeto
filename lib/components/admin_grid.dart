@@ -81,13 +81,13 @@ class AdminGrid extends StatelessWidget {
               'Ocorrências',
               const ListaOcorrenciasScreen(),
               context,
-            ),
+            ), /*
             _buildAdminItem(
               Icons.assessment,
               'Relatório',
               const EmConstrucaoScreen(),
               context,
-            ),
+            ),*/
           ],
         ),
       ],

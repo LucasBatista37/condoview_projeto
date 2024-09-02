@@ -11,7 +11,7 @@ class ConversationsScreen extends StatefulWidget {
 }
 
 class _ConversationsScreenState extends State<ConversationsScreen> {
-  int _currentIndex = 4;
+  int _currentIndex = 3;
 
   // Lista de nomes fictícios
   final List<String> _names = [
@@ -36,9 +36,6 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
           Navigator.pushNamed(context, '/condominio');
           break;
         case 3:
-          Navigator.pushNamed(context, '/vizinhança');
-          break;
-        case 4:
           Navigator.pushNamed(context, '/conversas');
           break;
       }

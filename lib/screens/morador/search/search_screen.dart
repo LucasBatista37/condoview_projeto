@@ -175,8 +175,6 @@ class _SearchScreenState extends State<SearchScreen> {
       case 2:
         return '/condominio';
       case 3:
-        return '/vizinhança';
-      case 4:
         return '/conversas';
       default:
         return '/home';

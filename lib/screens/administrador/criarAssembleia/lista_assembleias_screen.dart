@@ -24,81 +24,117 @@ class ListaAssembleiasScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: Consumer<AssembleiaProvider>(
-        builder: (context, assembleiaProvider, _) {
-          final assembleias = assembleiaProvider.assembleias;
-
-          if (assembleias.isEmpty) {
-            return const Center(
-              child: Text('Nenhuma assembleia criada.'),
-            );
-          }
-
-          return ListView.builder(
-            itemCount: assembleias.length,
-            itemBuilder: (context, index) {
-              final assembleia = assembleias[index];
-              return Card(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                elevation: 4,
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(16.0),
-                  title: Text(
-                    assembleia.titulo,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                  subtitle: Text(
-                    'Assunto: ${assembleia.assunto}\nStatus: ${assembleia.status}\nData: ${DateFormat('dd/MM/yyyy').format(assembleia.data)} ${assembleia.horario.format(context)}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  trailing: PopupMenuButton<String>(
-                    onSelected: (value) {
-                      if (value == 'edit') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditarAssembleiaScreen(
-                              assembleia: assembleia,
-                            ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Consumer<AssembleiaProvider>(
+                builder: (context, assembleiaProvider, child) {
+                  if (assembleiaProvider.assembleias.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'Nenhuma assembleia criada.',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    itemCount: assembleiaProvider.assembleias.length,
+                    itemBuilder: (context, index) {
+                      final assembleia = assembleiaProvider.assembleias[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        elevation: 4,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16.0),
+                          title: Text(
+                            assembleia.titulo,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
                           ),
-                        );
-                      } else if (value == 'delete') {
-                        _confirmarExclusao(context, assembleia);
-                      }
+                          subtitle: Text(
+                            'Assunto: ${assembleia.assunto}\nStatus: ${assembleia.status}\nData: ${DateFormat('dd/MM/yyyy').format(assembleia.data)} ${assembleia.horario.format(context)}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          trailing: PopupMenuButton<String>(
+                            onSelected: (value) {
+                              if (value == 'edit') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        EditarAssembleiaScreen(
+                                      assembleia: assembleia,
+                                    ),
+                                  ),
+                                );
+                              } else if (value == 'delete') {
+                                _confirmarExclusao(context, assembleia);
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: Text('Editar'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Text('Excluir'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
                     },
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: 'edit',
-                        child: Text('Editar'),
-                      ),
-                      const PopupMenuItem(
-                        value: 'delete',
-                        child: Text('Excluir'),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const CriarAssembleiaScreen(),
+                  );
+                },
+              ),
             ),
-          );
-        },
-        backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-        child: const Icon(Icons.add),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CriarAssembleiaScreen(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add, size: 24),
+                    SizedBox(width: 8),
+                    Text(
+                      'Adicionar Assembleia',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

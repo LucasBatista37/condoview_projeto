@@ -1,3 +1,7 @@
+import 'package:condoview/components/custom_date_time_picker.dart';
+import 'package:condoview/components/custom_drop_down.dart';
+import 'package:condoview/components/custom_image_picker.dart';
+import 'package:condoview/components/custom_text_field.dart';
 import 'package:condoview/models/encomenda_model.dart';
 import 'package:condoview/providers/encomenda_provider.dart';
 import 'package:flutter/material.dart';
@@ -17,16 +21,19 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
   final _titleController = TextEditingController();
   final _apartmentController = TextEditingController();
   DateTime? _selectedDateTime;
-  String? _imageUrl;
-  String _status = 'Pendente';
-
-  final ImagePicker _picker = ImagePicker();
+  XFile? _imageFile;
+  String? _selectedType;
+  final List<String> _types = [
+    'Pendente',
+    'Entregue',
+  ];
 
   void _submit() {
-    if (_titleController.text.isEmpty ||
+    if (_selectedType == null ||
+        _titleController.text.isEmpty ||
         _apartmentController.text.isEmpty ||
         _selectedDateTime == null ||
-        _imageUrl == null) {
+        _imageFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor, preencha todos os campos.')),
       );
@@ -38,8 +45,8 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
       title: _titleController.text,
       apartment: _apartmentController.text,
       time: _selectedDateTime!.toIso8601String(),
-      imageUrl: _imageUrl!,
-      status: _status,
+      imageFile: _imageFile!.path,
+      tipo: _selectedType!,
     );
 
     Provider.of<EncomendasProvider>(context, listen: false)
@@ -50,44 +57,6 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
     );
 
     Navigator.of(context).pop();
-  }
-
-  Future<void> _selectDateTime() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-
-    if (picked != null) {
-      final TimeOfDay? timePicked = await showTimePicker(
-        // ignore: use_build_context_synchronously
-        context: context,
-        initialTime: TimeOfDay.now(),
-      );
-
-      if (timePicked != null) {
-        setState(() {
-          _selectedDateTime = DateTime(
-            picked.year,
-            picked.month,
-            picked.day,
-            timePicked.hour,
-            timePicked.minute,
-          );
-        });
-      }
-    }
-  }
-
-  Future<void> _selectImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _imageUrl = image.path;
-      });
-    }
   }
 
   @override
@@ -109,82 +78,36 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildTextField(
-              label: 'Título',
-              controller: _titleController,
-              keyboardType: TextInputType.text,
-            ),
+            CustomTextField(controller: _titleController, label: "Título"),
             const SizedBox(height: 16),
-            _buildTextField(
-              label: 'Apartamento',
-              controller: _apartmentController,
-              keyboardType: TextInputType.text,
-            ),
+            CustomTextField(
+                controller: _apartmentController, label: "Apartamento"),
             const SizedBox(height: 16),
-            GestureDetector(
-              onTap: _selectDateTime,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 16.0, horizontal: 12.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _selectedDateTime == null
-                          ? 'Selecionar Data/Hora'
-                          : 'Data/Hora: ${_selectedDateTime!.toLocal().toString().substring(0, 16)}',
-                    ),
-                    const Icon(Icons.calendar_today),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            GestureDetector(
-              onTap: _selectImage,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 16.0, horizontal: 12.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _imageUrl == null
-                          ? 'Selecionar Imagem'
-                          : 'Imagem Selecionada',
-                    ),
-                    const Icon(Icons.image),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _status,
-              decoration: const InputDecoration(
-                labelText: 'Status',
-                border: OutlineInputBorder(),
-              ),
-              items: <String>['Pendente', 'Entregue'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
+            CustomDateTimePicker(
+              onDateTimeChanged: (dateTime) {
                 setState(() {
-                  _status = newValue!;
+                  _selectedDateTime = dateTime;
                 });
               },
             ),
+            const SizedBox(height: 16),
+            CustomImagePicker(
+              onImageSelected: (image) {
+                setState(() {
+                  _imageFile = image;
+                });
+              },
+              selectedImage: _imageFile,
+            ),
+            const SizedBox(height: 16),
+            CustomDropDown(
+                label: "Status",
+                items: _types,
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedType = newValue;
+                  });
+                }),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _submit,
@@ -210,23 +133,6 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
         ),
       ),
     );

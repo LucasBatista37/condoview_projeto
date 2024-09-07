@@ -42,18 +42,19 @@ class EncomendasScreen extends StatelessWidget {
       child: ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
-          child: encomenda.imageUrl.startsWith('http')
-              ? Image.network(
-                  encomenda.imageUrl,
+          // ignore: unnecessary_null_comparison
+          child: encomenda.imageFile != null
+              ? Image.file(
+                  File(encomenda.imageFile),
                   width: 50,
                   height: 50,
                   fit: BoxFit.cover,
                 )
-              : Image.file(
-                  File(encomenda.imageUrl),
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
+              : const Icon(
+                  Icons
+                      .image, // Ícone padrão para representar uma imagem ausente
+                  size: 50,
+                  color: Colors.grey,
                 ),
         ),
         title: Text(encomenda.title),
@@ -64,11 +65,10 @@ class EncomendasScreen extends StatelessWidget {
             const Icon(Icons.arrow_forward),
             const SizedBox(height: 4),
             Text(
-              encomenda.status,
+              encomenda.tipo,
               style: TextStyle(
-                color: encomenda.status == 'Entregue'
-                    ? Colors.green
-                    : Colors.orange,
+                color:
+                    encomenda.tipo == 'Entregue' ? Colors.green : Colors.orange,
                 fontWeight: FontWeight.bold,
               ),
             ),

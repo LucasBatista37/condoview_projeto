@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:condoview/models/aviso_model.dart';
 import 'package:condoview/providers/aviso_provider.dart';
@@ -74,7 +75,7 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
       description: _descriptionController.text,
       time:
           'Enviado dia ${DateTime.now().toLocal().toString().split(' ')[0]} às ${DateTime.now().toLocal().toString().split(' ')[1].split('.')[0]}',
-      imageUrl: '', // Adicione o imageUrl se você tiver uma URL real.
+      imageUrl: '',
     );
 
     Provider.of<AvisoProvider>(context, listen: false).addAviso(aviso);
@@ -123,20 +124,15 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              TextField(
+              CustomTextField(
                 controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Título do Aviso',
-                  border: OutlineInputBorder(),
-                ),
+                label: "Título do Aviso",
+                maxLines: 1,
               ),
               const SizedBox(height: 16),
-              TextField(
+              CustomTextField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descrição',
-                  border: OutlineInputBorder(),
-                ),
+                label: "Descrição",
                 maxLines: 5,
               ),
               const SizedBox(height: 16),

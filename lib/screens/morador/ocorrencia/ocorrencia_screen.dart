@@ -1,3 +1,6 @@
+import 'package:condoview/components/custom_data_picker.dart';
+import 'package:condoview/components/custom_image_picker.dart';
+import 'package:condoview/components/custom_text_field.dart';
 import 'package:condoview/providers/ocorrencia_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,6 +11,7 @@ class OcorrenciaScreen extends StatefulWidget {
   const OcorrenciaScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _OcorrenciaScreenState createState() => _OcorrenciaScreenState();
 }
 
@@ -48,16 +52,30 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildTextField(label: 'Motivo', controller: _motivoController),
+            CustomTextField(label: 'Motivo', controller: _motivoController),
             const SizedBox(height: 16),
-            _buildTextField(
+            CustomTextField(
                 label: 'Descrição',
                 controller: _descricaoController,
                 maxLines: 5),
             const SizedBox(height: 16),
-            _buildDatePicker(context),
+            CustomDataPicker(
+              onDateSelected: (date) {
+                setState(() {
+                  _selectedDate = date;
+                });
+              },
+              selectedDate: _selectedDate,
+            ),
             const SizedBox(height: 16),
-            _buildImagePicker(context),
+            CustomImagePicker(
+              onImageSelected: (image) {
+                setState(() {
+                  _image = image;
+                });
+              },
+              selectedImage: _image,
+            ),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
@@ -112,90 +130,6 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
                 ),
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(
-      {required String label,
-      required TextEditingController controller,
-      int maxLines = 1}) {
-    return TextField(
-      controller: controller,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
-    );
-  }
-
-  Widget _buildDatePicker(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        final DateTime? picked = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2100),
-        );
-        if (picked != null && picked != _selectedDate) {
-          setState(() {
-            _selectedDate = picked;
-          });
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _selectedDate != null
-                  ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
-                  : 'Selecionar Data',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const Icon(Icons.calendar_today,
-                color: Color.fromARGB(255, 0, 0, 0)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImagePicker(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        final ImagePicker picker = ImagePicker();
-        final XFile? pickedFile =
-            await picker.pickImage(source: ImageSource.gallery);
-        if (pickedFile != null) {
-          setState(() {
-            _image = pickedFile;
-          });
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _image != null ? 'Imagem Selecionada' : 'Selecionar Imagem',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const Icon(Icons.image, color: Color.fromARGB(255, 0, 0, 0)),
           ],
         ),
       ),

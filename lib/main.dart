@@ -11,7 +11,6 @@ import 'package:condoview/providers/reserva_provider.dart';
 import 'package:condoview/providers/usuario_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:condoview/screens/administrador/avisos/visualizar_avisos_screen.dart';
 import 'package:condoview/screens/administrador/avisos/adicionar_avisos_screen.dart';
 import 'package:condoview/screens/morador/home/home_screen.dart';
 import 'package:condoview/screens/morador/conversas/chat_screen.dart';

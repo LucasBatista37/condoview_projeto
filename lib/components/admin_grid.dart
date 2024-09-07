@@ -20,12 +20,6 @@ class AdminGrid extends StatelessWidget {
           'Adicionar',
           [
             _buildAdminItem(
-              Icons.person_add,
-              'Morador',
-              const AdicionarMoradorScreen(),
-              context,
-            ),
-            _buildAdminItem(
               Icons.add_alert,
               'Aviso',
               const VisualizarAvisosScreen(),
@@ -41,6 +35,12 @@ class AdminGrid extends StatelessWidget {
               Icons.assignment,
               'Assembleia',
               const ListaAssembleiasScreen(),
+              context,
+            ),
+            _buildAdminItem(
+              Icons.person_add,
+              'Morador',
+              const AdicionarMoradorScreen(),
               context,
             ),
           ],

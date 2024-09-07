@@ -10,6 +10,7 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.name});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ChatScreenState createState() => _ChatScreenState();
 }
 
@@ -33,6 +34,7 @@ class _ChatScreenState extends State<ChatScreen> {
         });
       }
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Permissão para acessar a câmera negada')),
       );
@@ -48,6 +50,7 @@ class _ChatScreenState extends State<ChatScreen> {
         _fileName = result.files.single.name;
       });
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Nenhum arquivo selecionado')),
       );

@@ -1,3 +1,6 @@
+import 'package:condoview/components/custom_data_picker.dart';
+import 'package:condoview/components/custom_text_field.dart';
+import 'package:condoview/components/custom_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/assembleia_provider.dart';
@@ -7,6 +10,7 @@ class CriarAssembleiaScreen extends StatefulWidget {
   const CriarAssembleiaScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CriarAssembleiaScreenState createState() => _CriarAssembleiaScreenState();
 }
 
@@ -52,20 +56,34 @@ class _CriarAssembleiaScreenState extends State<CriarAssembleiaScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              _buildTextField(
+              CustomTextField(
                 label: 'Título',
                 controller: _tituloController,
               ),
               const SizedBox(height: 16),
-              _buildTextField(
+              CustomTextField(
                 label: 'Assunto',
                 controller: _assuntoController,
-                maxLines: 3,
+                maxLines: 5,
               ),
               const SizedBox(height: 16),
-              _buildDatePicker(context),
+              CustomDataPicker(
+                onDateSelected: (date) {
+                  setState(() {
+                    _selectedDate = date;
+                  });
+                },
+                selectedDate: _selectedDate,
+              ),
               const SizedBox(height: 16),
-              _buildTimePicker(context),
+              CustomTimePicker(
+                  label: 'Horário de Início',
+                  onTimeSelected: (time) {
+                    setState(() {
+                      _selectedTime = time;
+                    });
+                  },
+                  selectedTime: _selectedTime),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => _showPautaDialog(),
@@ -129,91 +147,6 @@ class _CriarAssembleiaScreenState extends State<CriarAssembleiaScreen> {
     );
   }
 
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    int maxLines = 1,
-  }) {
-    return TextField(
-      controller: controller,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
-    );
-  }
-
-  Widget _buildDatePicker(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        final DateTime? picked = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2100),
-        );
-        if (picked != null && picked != _selectedDate) {
-          setState(() {
-            _selectedDate = picked;
-          });
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _selectedDate == null
-                  ? 'Selecionar Data'
-                  : 'Data: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-            ),
-            const Icon(Icons.calendar_today),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimePicker(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        final TimeOfDay? picked = await showTimePicker(
-          context: context,
-          initialTime: _selectedTime ?? TimeOfDay.now(),
-        );
-        if (picked != null && picked != _selectedTime) {
-          setState(() {
-            _selectedTime = picked;
-          });
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _selectedTime == null
-                  ? 'Selecionar Horário'
-                  : 'Horário: ${_selectedTime!.format(context)}',
-            ),
-            const Icon(Icons.access_time),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildPautasList() {
     return _pautas.isEmpty
         ? const Text('Nenhuma pauta adicionada.')
@@ -255,21 +188,15 @@ class _CriarAssembleiaScreenState extends State<CriarAssembleiaScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  TextField(
-                    controller: _pautaTituloController,
-                    decoration: const InputDecoration(
-                      labelText: 'Título da Pauta',
-                      border: OutlineInputBorder(),
-                    ),
+                  CustomTextField(
+                    controller: _tituloController,
+                    label: "Título",
                   ),
                   const SizedBox(height: 16),
-                  TextField(
+                  CustomTextField(
                     controller: _pautaDescricaoController,
-                    decoration: const InputDecoration(
-                      labelText: 'Descrição da Pauta',
-                      border: OutlineInputBorder(),
-                    ),
-                    maxLines: 3,
+                    label: "Assunto",
+                    maxLines: 5,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(

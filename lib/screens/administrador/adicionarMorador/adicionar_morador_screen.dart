@@ -1,16 +1,24 @@
+import 'package:condoview/components/custom_drop_down.dart';
+import 'package:condoview/components/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
 class AdicionarMoradorScreen extends StatefulWidget {
   const AdicionarMoradorScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AdicionarMoradorScreenState createState() => _AdicionarMoradorScreenState();
 }
 
 class _AdicionarMoradorScreenState extends State<AdicionarMoradorScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
-  String? _funcionalidadeSelecionada;
+  final List<String> _funcionalidadeAdicionada = [
+    'Morador',
+    'Síndico',
+  ];
+
+  String? _selectedFuncionalidade;
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +47,20 @@ class _AdicionarMoradorScreenState extends State<AdicionarMoradorScreen> {
           child: Column(
             children: [
               const SizedBox(height: 32),
-              _buildTextField(label: 'E-mail', controller: _emailController),
+              CustomTextField(label: 'E-mail', controller: _emailController),
               const SizedBox(height: 16),
-              _buildTextField(
+              CustomTextField(
                   label: 'Telefone', controller: _telefoneController),
               const SizedBox(height: 16),
-              _buildFuncionalidadeDropdown(),
+              CustomDropDown(
+                  label: 'Adicionar Funcionalidade',
+                  value: _selectedFuncionalidade,
+                  items: _funcionalidadeAdicionada,
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedFuncionalidade = newValue;
+                    });
+                  }),
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
@@ -84,41 +100,6 @@ class _AdicionarMoradorScreenState extends State<AdicionarMoradorScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField(
-      {required String label,
-      required TextEditingController controller,
-      int maxLines = 1}) {
-    return TextField(
-      controller: controller,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
-    );
-  }
-
-  Widget _buildFuncionalidadeDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _funcionalidadeSelecionada,
-      hint: const Text('Selecionar Funcionalidade'),
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(),
-      ),
-      items: ['Síndico', 'Morador'].map((funcionalidade) {
-        return DropdownMenuItem<String>(
-          value: funcionalidade,
-          child: Text(funcionalidade),
-        );
-      }).toList(),
-      onChanged: (value) {
-        setState(() {
-          _funcionalidadeSelecionada = value;
-        });
-      },
     );
   }
 }

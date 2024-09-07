@@ -18,8 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final usuarioProvider =
-        Provider.of<UsuarioProvider>(context, listen: false);
+    Provider.of<UsuarioProvider>(context, listen: false);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -111,8 +110,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
 
                     try {
-                      final userId = await usuarioProvider.login(email, senha);
-
                       Navigator.pushReplacement(
                         // ignore: use_build_context_synchronously
                         context,

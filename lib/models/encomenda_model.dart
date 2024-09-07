@@ -3,15 +3,15 @@ class Encomenda {
   final String title;
   final String apartment;
   final String time;
-  final String imageUrl;
-  final String status;
+  final String imageFile;
+  final String tipo;
 
   Encomenda({
     required this.id,
     required this.title,
     required this.apartment,
     required this.time,
-    required this.imageUrl,
-    required this.status,
+    required this.imageFile,
+    required this.tipo,
   });
 }

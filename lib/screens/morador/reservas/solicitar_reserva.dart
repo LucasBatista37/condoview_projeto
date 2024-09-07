@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/components/custom_data_picker.dart';
 import 'package:condoview/components/custom_drop_down.dart';
 import 'package:condoview/components/custom_text_field.dart';
@@ -29,6 +30,41 @@ class _SolicitarReservaState extends State<SolicitarReserva> {
   ];
 
   String? _selectedArea;
+
+  void _submit() {
+    if (_selectedArea == null ||
+        _selectedDate == null ||
+        _startTime == null ||
+        _endTime == null ||
+        _descricaoController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, preencha todos os campos!'),
+        ),
+      );
+      return;
+    }
+
+    final manutencaoProvider =
+        Provider.of<ReservaProvider>(context, listen: false);
+
+    final novaReserva = Reserva(
+      area: _selectedArea!,
+      descricao: _descricaoController.text,
+      data: _selectedDate!,
+      horarioInicio: _startTime!,
+      horarioFim: _endTime!,
+    );
+
+    manutencaoProvider.adicionarReserva(novaReserva);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Manutenção enviada com sucesso!'),
+      ),
+    );
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,51 +140,10 @@ class _SolicitarReservaState extends State<SolicitarReserva> {
                   },
                   selectedTime: _endTime),
               const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    final reserva = Reserva(
-                      area: _selectedArea ?? 'Não especificado',
-                      descricao: _descricaoController.text,
-                      data: _selectedDate ?? DateTime.now(),
-                      horarioInicio: _startTime ?? TimeOfDay.now(),
-                      horarioFim: _endTime ?? TimeOfDay.now(),
-                    );
-
-                    Provider.of<ReservaProvider>(context, listen: false)
-                        .adicionarReserva(reserva);
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Reserva enviada com sucesso!'),
-                      ),
-                    );
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add, size: 24),
-                      SizedBox(width: 8),
-                      Text(
-                        'Solicitar Reserva',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              CustomButton(
+                  label: 'Solicitar Reserva',
+                  icon: Icons.add,
+                  onPressed: _submit),
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/components/custom_data_picker.dart';
 import 'package:condoview/components/custom_text_field.dart';
 import 'package:condoview/components/custom_time_picker.dart';
@@ -23,6 +24,27 @@ class _CriarAssembleiaScreenState extends State<CriarAssembleiaScreen> {
   final List<Pauta> _pautas = [];
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+
+  void _submit() {
+    final assembleia = Assembleia(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      titulo: _tituloController.text,
+      assunto: _assuntoController.text,
+      data: _selectedDate ?? DateTime.now(),
+      horario: _selectedTime ?? TimeOfDay.now(),
+      pautas: _pautas,
+    );
+
+    Provider.of<AssembleiaProvider>(context, listen: false)
+        .adicionarAssembleia(assembleia);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Assembleia criada com sucesso!'),
+      ),
+    );
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,54 +114,10 @@ class _CriarAssembleiaScreenState extends State<CriarAssembleiaScreen> {
               const SizedBox(height: 16),
               _buildPautasList(),
               const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    final assembleia = Assembleia(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      titulo: _tituloController.text,
-                      assunto: _assuntoController.text,
-                      data: _selectedDate ?? DateTime.now(),
-                      horario: _selectedTime ?? TimeOfDay.now(),
-                      pautas: _pautas,
-                    );
-
-                    Provider.of<AssembleiaProvider>(context, listen: false)
-                        .adicionarAssembleia(assembleia);
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Assembleia criada com sucesso!'),
-                      ),
-                    );
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add, size: 24),
-                      SizedBox(width: 8),
-                      Text(
-                        'Criar Assembleia',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              CustomButton(
+                  label: "Criar Assembleia",
+                  icon: Icons.add,
+                  onPressed: _submit)
             ],
           ),
         ),

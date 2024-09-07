@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/screens/morador/manutencao/solicitar_manutencao_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -60,39 +61,18 @@ class ManutencaoScreen extends StatelessWidget {
                     ),
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SolicitarManutencaoScreen(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            CustomButton(
+              label: "Solicitar Manutenção",
+              icon: Icons.add,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SolicitarManutencaoScreen(),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add, size: 24),
-                    SizedBox(width: 8),
-                    Text(
-                      'Solicitar manutenção',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                );
+              },
+            )
           ],
         ),
       ),

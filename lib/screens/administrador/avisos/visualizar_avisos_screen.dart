@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/aviso_provider.dart';
@@ -54,9 +55,7 @@ class VisualizarAvisosScreen extends StatelessWidget {
                         aviso.title,
                         aviso.description,
                         aviso.time,
-                        () {
-                          // Handle edit action
-                        },
+                        () {},
                         () {
                           avisoProvider.removeAviso(aviso);
                         },
@@ -69,43 +68,19 @@ class VisualizarAvisosScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AdicionarAvisoScreen(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            child: CustomButton(
+              label: "Adicionar Aviso",
+              icon: Icons.add,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AdicionarAvisoScreen(),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add, size: 24),
-                    SizedBox(width: 8),
-                    Text(
-                      'Adicionar Aviso',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                );
+              },
             ),
-          ),
+          )
         ],
       ),
     );

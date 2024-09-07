@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/components/custom_drop_down.dart';
 import 'package:condoview/components/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,15 @@ class _AdicionarMoradorScreenState extends State<AdicionarMoradorScreen> {
   ];
 
   String? _selectedFuncionalidade;
+
+  void _submit() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Morador adicionado com sucesso!'),
+      ),
+    );
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,40 +72,10 @@ class _AdicionarMoradorScreenState extends State<AdicionarMoradorScreen> {
                     });
                   }),
               const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Morador adicionado com sucesso!'),
-                      ),
-                    );
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.person_add, size: 24),
-                      SizedBox(width: 8),
-                      Text(
-                        'Adicionar Morador',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              CustomButton(
+                  label: "Adicionar Morador",
+                  icon: Icons.person_add,
+                  onPressed: _submit)
             ],
           ),
         ),

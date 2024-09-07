@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/components/custom_data_picker.dart';
 import 'package:condoview/components/custom_drop_down.dart';
 import 'package:condoview/components/custom_image_picker.dart';
@@ -132,33 +133,10 @@ class _SolicitarManutencaoScreenState extends State<SolicitarManutencaoScreen> {
                 selectedImage: _imageFile,
               ),
               const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _submit,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.check, size: 24),
-                      SizedBox(width: 8),
-                      Text(
-                        'Solicitar Manutenção',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              CustomButton(
+                  label: "Solicitar Manutenção",
+                  icon: Icons.check,
+                  onPressed: _submit)
             ],
           ),
         ),

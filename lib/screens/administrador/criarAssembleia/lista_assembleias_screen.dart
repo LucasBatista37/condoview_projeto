@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/models/assembleia_model.dart';
 import 'package:condoview/providers/assembleia_provider.dart';
 import 'package:condoview/screens/administrador/criarAssembleia/criar_assembleia_screen.dart';
@@ -98,41 +99,19 @@ class ListaAssembleiasScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CriarAssembleiaScreen(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add, size: 24),
-                    SizedBox(width: 8),
-                    Text(
-                      'Adicionar Assembleia',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                width: double.infinity,
+                child: CustomButton(
+                  label: "Adicionar Assembleia",
+                  icon: Icons.add,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CriarAssembleiaScreen(),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                    );
+                  },
+                )),
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/components/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:condoview/models/aviso_model.dart';
@@ -152,7 +153,7 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
                             ? 'Selecionar Ícone'
                             : 'Ícone Selecionado',
                       ),
-                      Icon(_selectedIcon ?? Icons.star, size: 24),
+                      Icon(_selectedIcon ?? Icons.info, size: 24),
                     ],
                   ),
                 ),
@@ -176,33 +177,10 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _submit,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.check, size: 24),
-                      SizedBox(width: 8),
-                      Text(
-                        'Adicionar Aviso',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              CustomButton(
+                  label: "Adicionar Aviso",
+                  icon: Icons.check,
+                  onPressed: _submit)
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/components/custom_date_time_picker.dart';
 import 'package:condoview/components/custom_drop_down.dart';
 import 'package:condoview/components/custom_image_picker.dart';
@@ -109,29 +110,10 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
                   });
                 }),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _submit,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add, size: 24),
-                  SizedBox(width: 8),
-                  Text(
-                    'Adicionar Encomenda',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
+            CustomButton(
+                label: "Adicionar Encomenda",
+                icon: Icons.add,
+                onPressed: _submit)
           ],
         ),
       ),

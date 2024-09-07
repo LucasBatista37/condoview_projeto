@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'lista_moradores_screen.dart';
 
@@ -24,6 +25,16 @@ class _EditarMoradorScreenState extends State<EditarMoradorScreen> {
     _apartamentoController.text = widget.morador.apartamento;
     _emailController.text = widget.morador.email;
     _telefoneController.text = widget.morador.telefone;
+  }
+
+  void _submit() {
+    final updatedMorador = Morador(
+      nome: _nomeController.text,
+      apartamento: _apartamentoController.text,
+      email: _emailController.text,
+      telefone: _telefoneController.text,
+    );
+    Navigator.pop(context, updatedMorador);
   }
 
   @override
@@ -59,26 +70,10 @@ class _EditarMoradorScreenState extends State<EditarMoradorScreen> {
               labelText: 'Telefone',
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                final updatedMorador = Morador(
-                  nome: _nomeController.text,
-                  apartamento: _apartamentoController.text,
-                  email: _emailController.text,
-                  telefone: _telefoneController.text,
-                );
-                Navigator.pop(context, updatedMorador);
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-              ),
-              child: const Text('Salvar Alterações'),
-            ),
+            CustomButton(
+                label: "Salvar Alterações",
+                icon: Icons.save,
+                onPressed: _submit)
           ],
         ),
       ),

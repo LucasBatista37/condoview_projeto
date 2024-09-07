@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/reserva_provider.dart';
@@ -56,39 +57,18 @@ class ReservasScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SolicitarReserva(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            CustomButton(
+              label: "Solicitar Reserva",
+              icon: Icons.add,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SolicitarReserva(),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add, size: 24),
-                    SizedBox(width: 8),
-                    Text(
-                      'Solicitar reserva',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                );
+              },
+            )
           ],
         ),
       ),

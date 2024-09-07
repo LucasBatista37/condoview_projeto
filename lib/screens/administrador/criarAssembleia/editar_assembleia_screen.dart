@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../models/assembleia_model.dart';
@@ -57,6 +58,21 @@ class _EditarAssembleiaScreenState extends State<EditarAssembleiaScreen> {
     }
   }
 
+  void _submit() {
+    final updatedAssembleia = Assembleia(
+      id: widget.assembleia.id,
+      titulo: _tituloController.text,
+      assunto: _assuntoController.text,
+      status: _status,
+      data: _data,
+      horario: _horario,
+      pautas: widget.assembleia.pautas,
+    );
+    Provider.of<AssembleiaProvider>(context, listen: false)
+        .updateAssembleia(updatedAssembleia);
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,31 +108,10 @@ class _EditarAssembleiaScreenState extends State<EditarAssembleiaScreen> {
             const SizedBox(height: 16),
             _buildTimeSelector(),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                final updatedAssembleia = Assembleia(
-                  id: widget.assembleia.id,
-                  titulo: _tituloController.text,
-                  assunto: _assuntoController.text,
-                  status: _status,
-                  data: _data,
-                  horario: _horario,
-                  pautas: widget.assembleia.pautas,
-                );
-                Provider.of<AssembleiaProvider>(context, listen: false)
-                    .updateAssembleia(updatedAssembleia);
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-              ),
-              child: const Text('Salvar Alterações'),
-            ),
+            CustomButton(
+                label: "Salvar Alterações",
+                icon: Icons.save,
+                onPressed: _submit)
           ],
         ),
       ),

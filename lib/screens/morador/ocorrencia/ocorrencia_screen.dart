@@ -1,3 +1,4 @@
+import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/components/custom_data_picker.dart';
 import 'package:condoview/components/custom_image_picker.dart';
 import 'package:condoview/components/custom_text_field.dart';
@@ -20,6 +21,33 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
   final TextEditingController _descricaoController = TextEditingController();
   DateTime? _selectedDate;
   XFile? _image;
+
+  void _submit() {
+    if (_motivoController.text.isEmpty ||
+        _descricaoController.text.isEmpty ||
+        _selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, preencha todos os campos.'),
+        ),
+      );
+      return;
+    }
+
+    Provider.of<OcorrenciaProvider>(context, listen: false).addOcorrencia(
+      motivo: _motivoController.text,
+      descricao: _descricaoController.text,
+      data: _selectedDate!,
+      imagem: _image != null ? File(_image!.path) : null,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Ocorrência enviada com sucesso!'),
+      ),
+    );
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,59 +105,10 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
               selectedImage: _image,
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (_motivoController.text.isEmpty ||
-                      _descricaoController.text.isEmpty ||
-                      _selectedDate == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Por favor, preencha todos os campos.'),
-                      ),
-                    );
-                    return;
-                  }
-
-                  Provider.of<OcorrenciaProvider>(context, listen: false)
-                      .addOcorrencia(
-                    motivo: _motivoController.text,
-                    descricao: _descricaoController.text,
-                    data: _selectedDate!,
-                    imagem: _image != null ? File(_image!.path) : null,
-                  );
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Ocorrência enviada com sucesso!'),
-                    ),
-                  );
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.send, size: 24),
-                    SizedBox(width: 8),
-                    Text(
-                      'Enviar Ocorrência',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            CustomButton(
+                label: "Enviar Ocorrência",
+                icon: Icons.send,
+                onPressed: _submit)
           ],
         ),
       ),

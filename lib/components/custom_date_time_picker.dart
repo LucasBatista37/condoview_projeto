@@ -60,8 +60,9 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
           children: [
             Text(
               _selectedDateTime == null
-                  ? 'Selecionar Data/Hora'
-                  : 'Data/Hora: ${_selectedDateTime!.toLocal().toString().substring(0, 16)}',
+                  ? 'Selecionar Data e Hora'
+                  : 'Data e Hora: ${_selectedDateTime!.toLocal().toString().substring(0, 16)}',
+              style: const TextStyle(fontSize: 16),
             ),
             const Icon(Icons.calendar_today),
           ],

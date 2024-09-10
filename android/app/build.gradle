@@ -1,0 +1,58 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // O Plugin do Flutter Gradle deve ser aplicado após os plugins do Android e Kotlin.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    namespace = "com.example.condoview"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        // Application ID único para seu aplicativo.
+        applicationId = "com.example.condoview"
+        // Configurações mínimas, alvo e versão do SDK definidas pelo Flutter.
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    buildTypes {
+    release {
+        // Assinatura com a chave de debug para permitir o comando `flutter run --release`.
+        signingConfig = signingConfigs.debug
+        // Ative a redução de código:
+        minifyEnabled true
+        shrinkResources true
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+    }
+
+
+    // Define a pasta de compilação.
+    buildDir = "${rootProject.buildDir}/${project.name}"
+}
+
+flutter {
+    source = "../.."
+}
+
+dependencies {
+    // Dependências padrão do Android e Kotlin.
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // Outras dependências do projeto, se houver.
+}
+
+// Remover a tarefa `clean` duplicada

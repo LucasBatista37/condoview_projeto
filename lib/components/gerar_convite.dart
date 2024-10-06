@@ -7,13 +7,13 @@ import 'package:share_plus/share_plus.dart';
 import 'package:qr_flutter/qr_flutter.dart'; // QR Code package
 
 class GerarConvite extends StatefulWidget {
-  final String data; // Data do evento
-  final String hora; // Hora do evento
-  final String nome; // Nome do visitante
-  final String unidade; // Unidade do visitante
-  final String condominio; // Nome do condomínio
-  final String endereco; // Endereço do condomínio
-  final String anfitriao; // Nome do anfitrião
+  final String data;
+  final String hora;
+  final String nome;
+  final String unidade;
+  final String condominio;
+  final String endereco;
+  final String anfitriao;
 
   const GerarConvite({
     super.key,
@@ -53,7 +53,6 @@ class _GerarConviteState extends State<GerarConvite> {
         shadows: [Shadow(offset: Offset(1, 1), color: Colors.black26)],
       );
 
-      // Adicionando informações do convite à imagem (exclua se não precisar)
       final nameTextPainter = TextPainter(
         text: TextSpan(text: '${widget.nome}', style: textStyle),
         textDirection: TextDirection.ltr,
@@ -103,15 +102,12 @@ class _GerarConviteState extends State<GerarConvite> {
       hostTextPainter.layout();
       hostTextPainter.paint(canvas, const Offset(200, 385));
 
-      // Gerando o QR Code
-      final qrCodeData =
-          '${widget.data},${widget.hora},${widget.nome},${widget.unidade},${widget.condominio},${widget.endereco},${widget.anfitriao}';
       final qrValidationResult = QrValidator.validate(
-        data: qrCodeData,
+        data:
+            'Data: ${widget.data}, Hora: ${widget.hora}, Nome: ${widget.nome}, Unidade: ${widget.unidade}, Condomínio: ${widget.condominio}, Endereço: ${widget.endereco}, Anfitrião: ${widget.anfitriao}',
         version: QrVersions.auto,
         errorCorrectionLevel: QrErrorCorrectLevel.L,
       );
-
       if (qrValidationResult.status == QrValidationStatus.valid) {
         final qrCode = qrValidationResult.qrCode!;
         final qrPainter = QrPainter.withQr(
@@ -144,43 +140,12 @@ class _GerarConviteState extends State<GerarConvite> {
     }
   }
 
-  bool isConviteValido() {
-    DateTime agora = DateTime.now();
-    DateTime dataConvite = DateTime.parse('${widget.data} ${widget.hora}');
-    Duration diferenca = agora.difference(dataConvite);
-
-    // Retorna true se o convite for válido (menos de 24 horas)
-    return diferenca.inHours < 24;
-  }
-
-  // Função para compartilhar a imagem
   void _shareInvitation() async {
     try {
       final imagePath = await _generateInvitationImage();
       await Share.shareXFiles(
         [XFile(imagePath)],
         text: 'Aqui está o seu convite de visitante.',
-      );
-
-      // Após compartilhar, verificamos a validade e mostramos a imagem correspondente
-      bool valido = isConviteValido();
-      String resultadoImage = valido
-          ? 'assets/images/valid.png' // Imagem para convite válido
-          : 'assets/images/invalid.png'; // Imagem para convite inválido
-
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: Image.asset(resultadoImage),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Fechar'),
-              ),
-            ],
-          );
-        },
       );
     } catch (e) {
       print('Error sharing the invitation: $e');

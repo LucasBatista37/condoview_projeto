@@ -48,13 +48,24 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
             Center(
               child: Stack(
                 children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: _profileImage != null
-                        ? FileImage(File(_profileImage!.path))
-                        : const AssetImage('assets/profile_placeholder.png')
-                            as ImageProvider,
-                  ),
+                  _profileImage == null
+                      ? CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.grey.shade300,
+                          child: Text(
+                            _nomeController.text.isNotEmpty
+                                ? _nomeController.text[0].toUpperCase()
+                                : '',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
+                          ),
+                        )
+                      : CircleAvatar(
+                          radius: 50,
+                          backgroundImage: FileImage(File(_profileImage!.path)),
+                        ),
                   Positioned(
                     bottom: 0,
                     right: 0,

@@ -1,15 +1,19 @@
 import 'dart:io';
-
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:qr_flutter/qr_flutter.dart'; // QR Code package
 
 class GerarConvite extends StatefulWidget {
-  final String data;
-  final String hora;
-  final String nome;
-  final String unidade;
+  final String data; // Data do evento
+  final String hora; // Hora do evento
+  final String nome; // Nome do visitante
+  final String unidade; // Unidade do visitante
+  final String condominio; // Nome do condomínio
+  final String endereco; // Endereço do condomínio
+  final String anfitriao; // Nome do anfitrião
 
   const GerarConvite({
     super.key,
@@ -17,6 +21,9 @@ class GerarConvite extends StatefulWidget {
     required this.hora,
     required this.nome,
     required this.unidade,
+    required this.condominio,
+    required this.endereco,
+    required this.anfitriao,
   });
 
   @override
@@ -24,168 +31,166 @@ class GerarConvite extends StatefulWidget {
 }
 
 class _GerarConviteState extends State<GerarConvite> {
-  final TextEditingController _dataController = TextEditingController();
-
-  final TextEditingController _horaController = TextEditingController();
-
-  final TextEditingController _nomeController = TextEditingController();
-
-  final TextEditingController _unidadeController = TextEditingController();
-
-  @override
-  void dispose() {
-    _dataController.dispose();
-    _horaController.dispose();
-    _nomeController.dispose();
-    _unidadeController.dispose();
-    super.dispose();
-  }
-
   Future<String> _generateInvitationImage() async {
-    final recorder = ui.PictureRecorder();
-    final canvas = Canvas(
-      recorder,
-      Rect.fromPoints(const Offset(0, 0), const Offset(500, 250)),
-    );
+    try {
+      print('Loading image card_template.png');
 
-    final paintBackground = Paint()
-      ..shader = ui.Gradient.linear(
-        const Offset(0, 0),
-        const Offset(500, 250),
-        [
-          const ui.Color.fromARGB(255, 89, 41, 177),
-          const ui.Color.fromARGB(255, 89, 41, 177),
-        ],
-      )
-      ..style = PaintingStyle.fill;
-    canvas.drawRect(const Rect.fromLTWH(0, 0, 500, 250), paintBackground);
+      final ByteData imageData =
+          await rootBundle.load('assets/images/card_template.png');
+      final Uint8List bytes = imageData.buffer.asUint8List();
 
-    final titlePainter = TextPainter(
-      text: const TextSpan(
-        text: 'CONVITE DE VISITANTE',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 26,
-          fontWeight: FontWeight.bold,
-          shadows: [Shadow(offset: Offset(2, 2), color: Colors.black38)],
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    titlePainter.layout(maxWidth: 450);
-    titlePainter.paint(canvas, const Offset(25, 30));
+      print('Image loaded successfully');
 
-    const iconSize = 20.0;
-    const textStyle = TextStyle(
-      color: Colors.white,
-      fontSize: 16,
-      shadows: [Shadow(offset: Offset(1, 1), color: Colors.black26)],
-    );
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder, const Rect.fromLTWH(0, 0, 1004, 591));
 
-    final dateIconPainter = TextPainter(
-      text: const TextSpan(
-        text: '📅 ',
-        style: TextStyle(fontSize: iconSize),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    dateIconPainter.layout();
-    dateIconPainter.paint(canvas, const Offset(30, 100));
+      final ui.Image image = await decodeImageFromList(bytes);
+      canvas.drawImage(image, Offset.zero, Paint());
 
-    final dateTextPainter = TextPainter(
-      text: TextSpan(
-        text: 'Data: ${widget.data}',
-        style: textStyle,
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    dateTextPainter.layout();
-    dateTextPainter.paint(canvas, const Offset(55, 100));
+      const textStyle = TextStyle(
+        color: Colors.black,
+        fontSize: 18,
+        shadows: [Shadow(offset: Offset(1, 1), color: Colors.black26)],
+      );
 
-    final timeIconPainter = TextPainter(
-      text: const TextSpan(
-        text: '⏰ ',
-        style: TextStyle(fontSize: iconSize),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    timeIconPainter.layout();
-    timeIconPainter.paint(canvas, const Offset(30, 130));
+      // Adicionando informações do convite à imagem (exclua se não precisar)
+      final nameTextPainter = TextPainter(
+        text: TextSpan(text: '${widget.nome}', style: textStyle),
+        textDirection: TextDirection.ltr,
+      );
+      nameTextPainter.layout();
+      nameTextPainter.paint(canvas, const Offset(125, 113));
 
-    final timeTextPainter = TextPainter(
-      text: TextSpan(
-        text: 'Hora: ${widget.hora}',
-        style: textStyle,
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    timeTextPainter.layout();
-    timeTextPainter.paint(canvas, const Offset(55, 130));
+      final unitTextPainter = TextPainter(
+        text: TextSpan(text: '${widget.unidade}', style: textStyle),
+        textDirection: TextDirection.ltr,
+      );
+      unitTextPainter.layout();
+      unitTextPainter.paint(canvas, const Offset(201, 324));
 
-    final nameIconPainter = TextPainter(
-      text: const TextSpan(
-        text: '👤 ',
-        style: TextStyle(fontSize: iconSize),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    nameIconPainter.layout();
-    nameIconPainter.paint(canvas, const Offset(30, 160));
+      final dateTextPainter = TextPainter(
+        text: TextSpan(text: '${widget.data}', style: textStyle),
+        textDirection: TextDirection.ltr,
+      );
+      dateTextPainter.layout();
+      dateTextPainter.paint(canvas, const Offset(164, 515));
 
-    final nameTextPainter = TextPainter(
-      text: TextSpan(
-        text: 'Nome: ${widget.nome}',
-        style: textStyle,
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    nameTextPainter.layout();
-    nameTextPainter.paint(canvas, const Offset(55, 160));
+      final timeTextPainter = TextPainter(
+        text: TextSpan(text: '${widget.hora}', style: textStyle),
+        textDirection: TextDirection.ltr,
+      );
+      timeTextPainter.layout();
+      timeTextPainter.paint(canvas, const Offset(166, 454));
 
-    final unitIconPainter = TextPainter(
-      text: const TextSpan(
-        text: '🏠 ',
-        style: TextStyle(fontSize: iconSize),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    unitIconPainter.layout();
-    unitIconPainter.paint(canvas, const Offset(30, 190));
+      final condoTextPainter = TextPainter(
+        text: TextSpan(text: '${widget.condominio}', style: textStyle),
+        textDirection: TextDirection.ltr,
+      );
+      condoTextPainter.layout();
+      condoTextPainter.paint(canvas, const Offset(239, 195));
 
-    final unitTextPainter = TextPainter(
-      text: TextSpan(
-        text: 'Unidade: ${widget.unidade}',
-        style: textStyle,
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    unitTextPainter.layout();
-    unitTextPainter.paint(canvas, const Offset(55, 190));
+      final addressTextPainter = TextPainter(
+        text: TextSpan(text: '${widget.endereco}', style: textStyle),
+        textDirection: TextDirection.ltr,
+      );
+      addressTextPainter.layout();
+      addressTextPainter.paint(canvas, const Offset(211, 260));
 
-    final picture = recorder.endRecording();
-    final img = await picture.toImage(500, 250);
-    final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-    final buffer = byteData!.buffer.asUint8List();
+      final hostTextPainter = TextPainter(
+        text: TextSpan(text: '${widget.anfitriao}', style: textStyle),
+        textDirection: TextDirection.ltr,
+      );
+      hostTextPainter.layout();
+      hostTextPainter.paint(canvas, const Offset(200, 385));
 
-    final tempDir = await getTemporaryDirectory();
-    final file = File('${tempDir.path}/invitation_image.png');
-    await file.writeAsBytes(buffer);
+      // Gerando o QR Code
+      final qrCodeData =
+          '${widget.data},${widget.hora},${widget.nome},${widget.unidade},${widget.condominio},${widget.endereco},${widget.anfitriao}';
+      final qrValidationResult = QrValidator.validate(
+        data: qrCodeData,
+        version: QrVersions.auto,
+        errorCorrectionLevel: QrErrorCorrectLevel.L,
+      );
 
-    return file.path;
+      if (qrValidationResult.status == QrValidationStatus.valid) {
+        final qrCode = qrValidationResult.qrCode!;
+        final qrPainter = QrPainter.withQr(
+          qr: qrCode,
+          color: const Color(0xFF000000),
+          emptyColor: const Color(0xFFFFFFFF),
+        );
+
+        final uiImage = await qrPainter.toImage(290);
+        canvas.drawImage(uiImage, const Offset(667, 145), Paint());
+      }
+
+      final picture = recorder.endRecording();
+      final img = await picture.toImage(1004, 591);
+      final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+      final buffer = byteData!.buffer.asUint8List();
+
+      print('Image generated successfully');
+
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/invitation_image.png');
+      await file.writeAsBytes(buffer);
+
+      print('Image saved at path: ${file.path}');
+
+      return file.path;
+    } catch (e) {
+      print('Error generating the image: $e');
+      rethrow;
+    }
   }
 
-  void _compartilharConvite() async {
-    final imagePath = await _generateInvitationImage();
-    await Share.shareXFiles(
-      [XFile(imagePath)],
-      text: 'Aqui está o convite para o visitante',
-    );
+  bool isConviteValido() {
+    DateTime agora = DateTime.now();
+    DateTime dataConvite = DateTime.parse('${widget.data} ${widget.hora}');
+    Duration diferenca = agora.difference(dataConvite);
+
+    // Retorna true se o convite for válido (menos de 24 horas)
+    return diferenca.inHours < 24;
+  }
+
+  // Função para compartilhar a imagem
+  void _shareInvitation() async {
+    try {
+      final imagePath = await _generateInvitationImage();
+      await Share.shareXFiles(
+        [XFile(imagePath)],
+        text: 'Aqui está o seu convite de visitante.',
+      );
+
+      // Após compartilhar, verificamos a validade e mostramos a imagem correspondente
+      bool valido = isConviteValido();
+      String resultadoImage = valido
+          ? 'assets/images/valid.png' // Imagem para convite válido
+          : 'assets/images/invalid.png'; // Imagem para convite inválido
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Image.asset(resultadoImage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Fechar'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      print('Error sharing the invitation: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: _compartilharConvite,
+      onPressed: _shareInvitation,
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
         backgroundColor: const Color.fromARGB(255, 78, 20, 166),

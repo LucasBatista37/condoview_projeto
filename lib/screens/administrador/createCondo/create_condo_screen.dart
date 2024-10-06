@@ -1,4 +1,4 @@
-import 'package:condoview/screens/morador/createCondo/create_admin_screen.dart';
+import 'package:condoview/screens/administrador/createCondo/create_admin_screen.dart';
 import 'package:flutter/material.dart';
 
 class CreateCondoScreen extends StatelessWidget {

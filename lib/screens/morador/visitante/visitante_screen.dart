@@ -14,7 +14,9 @@ class _VisitanteScreenState extends State<VisitanteScreen> {
   final TextEditingController _horaController = TextEditingController();
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _unidadeController = TextEditingController();
-
+  final String condominioFicticio = "Condomínio Atlas";
+  final String enderecoFicticio = "Rua da Praia, 123 - Centro";
+  final String anfitriaoFicticio = "João Pedro";
   @override
   void dispose() {
     _dataController.dispose();
@@ -145,7 +147,10 @@ class _VisitanteScreenState extends State<VisitanteScreen> {
                 hora: _horaController.text,
                 nome: _nomeController.text,
                 unidade: _unidadeController.text,
-              ),
+                condominio: condominioFicticio,
+                endereco: enderecoFicticio,
+                anfitriao: anfitriaoFicticio,
+              )
             ],
           ),
         ),

@@ -14,9 +14,20 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  final TextEditingController _senhaController = TextEditingController();
+  final TextEditingController _senhaConfirmacaoController =
+      TextEditingController();
+
   String _nome = '';
   String _email = '';
-  String _senha = '';
+
+  @override
+  void dispose() {
+    // Libera os controladores de memória quando o widget for destruído
+    _senhaController.dispose();
+    _senhaConfirmacaoController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +102,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    controller: _senhaController,
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: 'Senha',
@@ -106,10 +118,37 @@ class _SignupScreenState extends State<SignupScreen> {
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
-                    onSaved: (value) => _senha = value?.trim() ?? '',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Digite uma senha';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _senhaConfirmacaoController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: 'Confirmar senha',
+                      hintText: 'Confirme sua senha',
+                      labelStyle: const TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 78, 20, 166),
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Confirme sua senha';
+                      }
+                      if (value != _senhaController.text) {
+                        return 'As senhas não coincidem';
                       }
                       return null;
                     },
@@ -121,21 +160,20 @@ class _SignupScreenState extends State<SignupScreen> {
                         _formKey.currentState?.save();
 
                         final usuarioProvider = Provider.of<UsuarioProvider>(
-                            context,
-                            listen: false);
+                          context,
+                          listen: false,
+                        );
                         try {
-                          // ignore: unused_local_variable
                           final userId = await usuarioProvider.createUser(
-                              _nome, _email, _senha);
+                              _nome, _email, _senhaController.text);
 
                           Navigator.pushReplacement(
-                            // ignore: use_build_context_synchronously
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const HomeScreen()),
+                              builder: (context) => const HomeScreen(),
+                            ),
                           );
                         } catch (e) {
-                          // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Erro ao criar conta: $e')),
                           );

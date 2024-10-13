@@ -34,19 +34,35 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
       return;
     }
 
-    Provider.of<OcorrenciaProvider>(context, listen: false).addOcorrencia(
+    print('Dados a serem enviados:');
+    print('Motivo: ${_motivoController.text}');
+    print('Descrição: ${_descricaoController.text}');
+    print('Data: ${_selectedDate}');
+    print(
+        'Imagem: ${_image != null ? _image!.path : 'Nenhuma imagem selecionada'}');
+
+    Provider.of<OcorrenciaProvider>(context, listen: false)
+        .addOcorrencia(
       motivo: _motivoController.text,
       descricao: _descricaoController.text,
       data: _selectedDate!,
       imagem: _image != null ? File(_image!.path) : null,
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Ocorrência enviada com sucesso!'),
-      ),
-    );
-    Navigator.pop(context);
+    )
+        .then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Ocorrência enviada com sucesso!'),
+        ),
+      );
+      Navigator.pop(context);
+    }).catchError((error) {
+      print('Erro no catch: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao enviar a ocorrência.'),
+        ),
+      );
+    });
   }
 
   @override

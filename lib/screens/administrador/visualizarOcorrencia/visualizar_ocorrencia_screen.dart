@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:condoview/providers/ocorrencia_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -48,7 +46,8 @@ class VisualizarOcorrenciaScreen extends StatelessWidget {
               value:
                   '${ocorrencia.data.day}/${ocorrencia.data.month}/${ocorrencia.data.year}',
             ),
-            if (ocorrencia.imagemPath != null) ...[
+            if (ocorrencia.imagemPath != null &&
+                ocorrencia.imagemPath!.isNotEmpty) ...[
               const SizedBox(height: 16),
               const Text(
                 'Imagem Anexada:',
@@ -59,10 +58,17 @@ class VisualizarOcorrenciaScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Image.file(
-                File(ocorrencia.imagemPath!),
+              Image.network(
+                'http://10.0.1.9:5000/api/users/admin/ocorrencias/' +
+                    ocorrencia.imagemPath!.replaceAll(r'\', '/'),
                 height: 200,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Text(
+                    'Erro ao carregar a imagem',
+                    style: TextStyle(color: Colors.red),
+                  );
+                },
               ),
             ],
           ],

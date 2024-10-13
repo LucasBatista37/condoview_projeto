@@ -25,18 +25,20 @@ class _ListaOcorrenciasScreenState extends State<ListaOcorrenciasScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 78, 20, 166),
+        foregroundColor: Colors.white,
         title: const Text('Ocorrências'),
         centerTitle: true,
       ),
       body: ocorrenciaProvider.isLoading
-          ? const Center(child: CircularProgressIndicator()) 
+          ? const Center(child: CircularProgressIndicator())
           : ocorrenciaProvider.ocorrencias.isEmpty
               ? const CustomEmpty(text: 'Nenhuma ocorrência pendente.')
               : _buildOcorrenciaList(context, ocorrenciaProvider),
     );
   }
 
-  Widget _buildOcorrenciaList(BuildContext context, OcorrenciaProvider ocorrenciaProvider) {
+  Widget _buildOcorrenciaList(
+      BuildContext context, OcorrenciaProvider ocorrenciaProvider) {
     return ListView.builder(
       itemCount: ocorrenciaProvider.ocorrencias.length,
       itemBuilder: (context, index) {
@@ -44,7 +46,8 @@ class _ListaOcorrenciasScreenState extends State<ListaOcorrenciasScreen> {
         return _buildOcorrenciaCard(
           context,
           title: ocorrencia.motivo,
-          date: '${ocorrencia.data.day}/${ocorrencia.data.month}/${ocorrencia.data.year}',
+          date:
+              '${ocorrencia.data.day}/${ocorrencia.data.month}/${ocorrencia.data.year}',
           description: ocorrencia.descricao,
           onTap: () {
             ocorrenciaProvider.selectOcorrencia(ocorrencia);
@@ -72,7 +75,8 @@ class _ListaOcorrenciasScreenState extends State<ListaOcorrenciasScreen> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
-        leading: const Icon(Icons.warning, color: Color.fromARGB(255, 78, 20, 166)),
+        leading:
+            const Icon(Icons.warning, color: Color.fromARGB(255, 78, 20, 166)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(description),
         trailing: Text(

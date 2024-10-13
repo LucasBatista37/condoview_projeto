@@ -58,18 +58,25 @@ class VisualizarOcorrenciaScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Image.network(
-                'http://10.0.1.9:5000/api/users/admin/ocorrencias/' +
-                    ocorrencia.imagemPath!.replaceAll(r'\', '/'),
-                height: 200,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Text(
-                    'Erro ao carregar a imagem',
-                    style: TextStyle(color: Colors.red),
-                  );
-                },
-              ),
+              Builder(builder: (context) {
+                final imageUrl = 'http://10.0.1.9:5000/' +
+                    ocorrencia.imagemPath!.replaceAll(r'\', '/');
+                debugPrint('Caminho da imagem: $imageUrl');
+
+                return Image.network(
+                  imageUrl,
+                  height: 200,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    // Log do erro
+                    debugPrint('Erro ao carregar a imagem: $error');
+                    return const Text(
+                      'Erro ao carregar a imagem',
+                      style: TextStyle(color: Colors.red),
+                    );
+                  },
+                );
+              }),
             ],
           ],
         ),

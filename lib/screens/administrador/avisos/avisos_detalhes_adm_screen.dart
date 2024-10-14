@@ -61,17 +61,17 @@ class _AvisoDetalhesScreenState extends State<AvisoDetalhesScreen> {
       icon: _selectedIcon ?? _aviso.icon,
       time: _dateController.text,
     );
-    avisoProvider.updateAviso(updatedAviso);
-    Navigator.pop(context);
-  }
 
-  void _updateDate() {
-    setState(() {
-      _dateController.text = DateTime.now().toLocal().toString().split(' ')[0];
+    avisoProvider.updateAviso(updatedAviso).then((_) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Aviso atualizado com sucesso!')),
+      );
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao atualizar aviso: $error')),
+      );
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Aviso atualizado com sucesso!')),
-    );
   }
 
   void _showConfirmationDialog() {
@@ -92,7 +92,6 @@ class _AvisoDetalhesScreenState extends State<AvisoDetalhesScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                _updateDate();
                 _saveChanges();
               },
               child: const Text('Confirmar'),

@@ -1,13 +1,26 @@
 import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/components/custom_empty.dart';
+import 'package:condoview/models/aviso_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/aviso_provider.dart';
 import 'package:condoview/screens/administrador/avisos/adicionar_avisos_screen.dart';
 import 'package:condoview/screens/administrador/avisos/avisos_detalhes_adm_screen.dart';
 
-class VisualizarAvisosScreen extends StatelessWidget {
+class VisualizarAvisosScreen extends StatefulWidget {
   const VisualizarAvisosScreen({super.key});
+
+  @override
+  _VisualizarAvisosScreenState createState() => _VisualizarAvisosScreenState();
+}
+
+class _VisualizarAvisosScreenState extends State<VisualizarAvisosScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
+    avisoProvider.fetchAvisos();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,18 +57,7 @@ class VisualizarAvisosScreen extends StatelessWidget {
                     itemCount: avisoProvider.avisos.length,
                     itemBuilder: (context, index) {
                       final aviso = avisoProvider.avisos[index];
-                      return _buildAvisoItem(
-                        context,
-                        aviso.id,
-                        aviso.icon,
-                        aviso.title,
-                        aviso.description,
-                        aviso.time,
-                        () {},
-                        () {
-                          avisoProvider.removeAviso(aviso);
-                        },
-                      );
+                      return _buildAvisoItem(context, aviso);
                     },
                   );
                 },
@@ -82,30 +84,23 @@ class VisualizarAvisosScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAvisoItem(
-    BuildContext context,
-    String id,
-    IconData icon,
-    String title,
-    String description,
-    String time,
-    VoidCallback onEdit,
-    VoidCallback onDelete,
-  ) {
+  Widget _buildAvisoItem(BuildContext context, Aviso aviso) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       elevation: 2,
       child: ListTile(
         contentPadding: const EdgeInsets.all(16.0),
-        leading: Icon(icon, color: const Color.fromARGB(255, 78, 20, 166)),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        leading:
+            Icon(aviso.icon, color: const Color.fromARGB(255, 78, 20, 166)),
+        title: Text(aviso.title,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(description),
+            Text(aviso.description),
             const SizedBox(height: 4),
             Text(
-              time,
+              aviso.time,
               style: const TextStyle(color: Colors.grey),
             ),
           ],
@@ -114,7 +109,7 @@ class VisualizarAvisosScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AvisoDetalhesScreen(id: id),
+              builder: (context) => AvisoDetalhesScreen(id: aviso.id),
             ),
           );
         },

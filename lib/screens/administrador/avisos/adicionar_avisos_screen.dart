@@ -68,7 +68,7 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
     }
   }
 
-  void _submit() {
+  void _submit() async {
     final aviso = Aviso(
       id: DateTime.now().toString(),
       icon: _selectedIcon ?? Icons.info,
@@ -76,18 +76,24 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
       description: _descriptionController.text,
       time:
           'Enviado dia ${DateTime.now().toLocal().toString().split(' ')[0]} às ${DateTime.now().toLocal().toString().split(' ')[1].split('.')[0]}',
-      imageUrl: '',
+      imageUrl: '', 
     );
 
-    Provider.of<AvisoProvider>(context, listen: false).addAviso(aviso);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Aviso adicionado com sucesso!'),
-      ),
-    );
-
-    Navigator.pop(context);
+    try {
+      await Provider.of<AvisoProvider>(context, listen: false).addAviso(aviso);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Aviso adicionado com sucesso!'),
+        ),
+      );
+      Navigator.pop(context);
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Falha ao adicionar aviso: $error'),
+        ),
+      );
+    }
   }
 
   @override

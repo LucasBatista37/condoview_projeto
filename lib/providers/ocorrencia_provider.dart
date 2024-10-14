@@ -1,21 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:condoview/models/ocorrencia_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-class Ocorrencia {
-  final String motivo;
-  final String descricao;
-  final DateTime data;
-  final String? imagemPath;
-
-  Ocorrencia({
-    required this.motivo,
-    required this.descricao,
-    required this.data,
-    this.imagemPath,
-  });
-}
 
 class OcorrenciaProvider with ChangeNotifier {
   List<Ocorrencia> _ocorrencias = [];
@@ -85,7 +72,7 @@ class OcorrenciaProvider with ChangeNotifier {
             motivo: item['motivo'],
             descricao: item['descricao'],
             data: DateTime.parse(item['data']),
-            imagemPath: item['imagemPath'],
+            image: item['imagemPath'],
           );
         }).toList();
 

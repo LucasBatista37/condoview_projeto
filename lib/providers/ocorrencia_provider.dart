@@ -72,7 +72,7 @@ class OcorrenciaProvider with ChangeNotifier {
             motivo: item['motivo'],
             descricao: item['descricao'],
             data: DateTime.parse(item['data']),
-            image: item['imagemPath'],
+            image: item['imagemPath'] != null ? File(item['imagemPath']) : null,
           );
         }).toList();
 

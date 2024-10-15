@@ -48,9 +48,9 @@ class EncomendasScreen extends StatelessWidget {
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           // ignore: unnecessary_null_comparison
-          child: encomenda.imageFile != null
+          child: encomenda.imagePath != null
               ? Image.file(
-                  File(encomenda.imageFile),
+                  File(encomenda.imagePath),
                   width: 50,
                   height: 50,
                   fit: BoxFit.cover,
@@ -69,10 +69,10 @@ class EncomendasScreen extends StatelessWidget {
             const Icon(Icons.arrow_forward),
             const SizedBox(height: 4),
             Text(
-              encomenda.tipo,
+              encomenda.status,
               style: TextStyle(
                 color:
-                    encomenda.tipo == 'Entregue' ? Colors.green : Colors.orange,
+                    encomenda.status == 'Entregue' ? Colors.green : Colors.orange,
                 fontWeight: FontWeight.bold,
               ),
             ),

@@ -42,12 +42,11 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
     }
 
     final newEncomenda = Encomenda(
-      id: DateTime.now().toString(),
       title: _titleController.text,
       apartment: _apartmentController.text,
       time: _selectedDateTime!.toIso8601String(),
-      imageFile: _imageFile!.path,
-      tipo: _selectedType!,
+      imagePath: _imageFile!.path,
+      status: _selectedType!,
     );
 
     Provider.of<EncomendasProvider>(context, listen: false)

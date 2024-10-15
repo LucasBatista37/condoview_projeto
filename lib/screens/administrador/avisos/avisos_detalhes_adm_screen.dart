@@ -40,7 +40,7 @@ class _AvisoDetalhesScreenState extends State<AvisoDetalhesScreen> {
 
   void _loadAviso() {
     final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
-    _aviso = avisoProvider.getAvisoById(widget.id)!;
+    _aviso = avisoProvider.getAvisoById(widget.id);
     _titleController.text = _aviso.title;
     _descriptionController.text = _aviso.description;
     _dateController.text = _aviso.time;

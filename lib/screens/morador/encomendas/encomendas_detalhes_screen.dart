@@ -24,7 +24,7 @@ class EncomendaDetalhesScreen extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
               child: Image.file(
-                File(encomenda.imageFile),
+                File(encomenda.imagePath),
                 height: 200,
                 fit: BoxFit.cover,
               ),
@@ -49,11 +49,11 @@ class EncomendaDetalhesScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Status: ${encomenda.tipo}',
+              'Status: ${encomenda.status}',
               style: TextStyle(
                 fontSize: 18,
                 color:
-                    encomenda.tipo == 'Entregue' ? Colors.green : Colors.orange,
+                    encomenda.status == 'Entregue' ? Colors.green : Colors.orange,
               ),
             ),
           ],

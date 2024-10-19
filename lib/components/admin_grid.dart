@@ -1,5 +1,4 @@
 import 'package:condoview/screens/administrador/adicionarEncomenda/adicionar_encomenda_screen.dart';
-import 'package:condoview/screens/administrador/adicionarMorador/adicionar_morador_screen.dart';
 import 'package:condoview/screens/administrador/aprovarManutencao/visualizar_manutencao.dart';
 import 'package:condoview/screens/administrador/aprovarReserva/visualizar_reservas_screen.dart';
 import 'package:condoview/screens/administrador/avisos/visualizar_avisos_screen.dart';
@@ -35,12 +34,6 @@ class AdminGrid extends StatelessWidget {
               Icons.assignment,
               'Assembleia',
               const ListaAssembleiasScreen(),
-              context,
-            ),
-            _buildAdminItem(
-              Icons.person_add,
-              'Morador',
-              const AdicionarMoradorScreen(),
               context,
             ),
           ],
@@ -81,13 +74,6 @@ class AdminGrid extends StatelessWidget {
               const ListaMoradoresScreen(),
               context,
             ),
-            /*
-            _buildAdminItem(
-              Icons.assessment,
-              'Relatório',
-              const EmConstrucaoScreen(),
-              context,
-            ),*/
           ],
         ),
       ],

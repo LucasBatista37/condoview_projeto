@@ -2,15 +2,15 @@ class Encomenda {
   final String title;
   final String apartment;
   final String time;
-  final String imagePath;
   final String status;
+  final String imagePath;
 
   Encomenda({
     required this.title,
     required this.apartment,
     required this.time,
-    required this.imagePath,
     required this.status,
+    required this.imagePath,
   });
 
   factory Encomenda.fromJson(Map<String, dynamic> json) {
@@ -18,18 +18,8 @@ class Encomenda {
       title: json['title'],
       apartment: json['apartment'],
       time: json['time'],
-      imagePath: json['imagePath'],
-      status: json['type'],
+      status: json['status'],
+      imagePath: json['imagePath'] ?? '',
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'title': title,
-      'apartment': apartment,
-      'time': time,
-      'imagePath': imagePath,
-      'type': status,
-    };
   }
 }

@@ -1,5 +1,8 @@
+import 'package:condoview/screens/administrador/adicionarMorador/adicionar_morador_screen.dart';
 import 'package:flutter/material.dart';
 import 'editar_morador_screen.dart';
+
+import 'package:condoview/components/custom_button.dart';
 
 class Morador {
   final String nome;
@@ -19,7 +22,6 @@ class ListaMoradoresScreen extends StatefulWidget {
   const ListaMoradoresScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ListaMoradoresScreenState createState() => _ListaMoradoresScreenState();
 }
 
@@ -60,57 +62,77 @@ class _ListaMoradoresScreenState extends State<ListaMoradoresScreen> {
         ),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: moradores.length,
-        itemBuilder: (context, index) {
-          final morador = moradores[index];
-
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: moradores.length,
+              itemBuilder: (context, index) {
+                final morador = moradores[index];
+                return Card(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  elevation: 4,
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(16.0),
+                    leading: CircleAvatar(
+                      backgroundColor: const Color.fromARGB(255, 78, 20, 166),
+                      child: Text(
+                        morador.nome[0],
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    title: Text(
+                      morador.nome,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                    subtitle: Text(
+                      'Apartamento: ${morador.apartamento}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'edit') {
+                          _editMorador(context, morador, index);
+                        } else if (value == 'delete') {
+                          _confirmarExclusao(context, morador, index);
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'edit',
+                          child: Text('Editar'),
+                        ),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Text('Excluir'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
-            elevation: 4,
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(16.0),
-              leading: CircleAvatar(
-                backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                child: Text(
-                  morador.nome[0],
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
-              title: Text(
-                morador.nome,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              subtitle: Text(
-                'Apartamento: ${morador.apartamento}',
-                style: const TextStyle(fontSize: 16),
-              ),
-              trailing: PopupMenuButton<String>(
-                onSelected: (value) {
-                  if (value == 'edit') {
-                    _editMorador(context, morador, index);
-                  } else if (value == 'delete') {
-                    _confirmarExclusao(context, morador, index);
-                  }
+          ),
+          Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CustomButton(
+                label: "Adicionar morador",
+                icon: Icons.add,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AdicionarMoradorScreen(),
+                    ),
+                  );
                 },
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 'edit',
-                    child: Text('Editar'),
-                  ),
-                  const PopupMenuItem(
-                    value: 'delete',
-                    child: Text('Excluir'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+              )),
+        ],
       ),
     );
   }

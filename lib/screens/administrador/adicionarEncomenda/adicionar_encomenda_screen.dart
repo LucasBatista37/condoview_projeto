@@ -41,7 +41,7 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
       return;
     }
 
-    final newEncomenda = Encomenda(
+    final encomenda = Encomenda(
       title: _titleController.text,
       apartment: _apartmentController.text,
       time: _selectedDateTime!.toIso8601String(),
@@ -50,7 +50,7 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
     );
 
     Provider.of<EncomendasProvider>(context, listen: false)
-        .addEncomenda(newEncomenda);
+        .addEncomenda(encomenda);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Encomenda adicionada com sucesso!')),

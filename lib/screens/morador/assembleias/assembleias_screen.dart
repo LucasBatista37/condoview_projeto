@@ -33,7 +33,7 @@ class AssembleiasScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Consumer<AssembleiaProvider>(
           builder: (context, assembleiaProvider, _) {
-            final assembleias = assembleiaProvider.assembleias;
+            final assembleias = assembleiaProvider.assembleia;
 
             if (assembleias.isEmpty) {
               return const CustomEmpty(

@@ -25,25 +25,70 @@ class _CriarAssembleiaScreenState extends State<CriarAssembleiaScreen> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
-  void _submit() {
+  void _submit() async {
+    if (_tituloController.text.isEmpty ||
+        _assuntoController.text.isEmpty ||
+        _selectedDate == null ||
+        _selectedTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha todos os campos obrigatórios!'),
+        ),
+      );
+      return;
+    }
+
+    String formatTimeOfDay(TimeOfDay time) {
+      final now = DateTime.now();
+      final dateTime =
+          DateTime(now.year, now.month, now.day, time.hour, time.minute);
+      return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    }
+
+    String determinarStatus(DateTime data, TimeOfDay horario) {
+      DateTime agora = DateTime.now();
+      DateTime dataHoraAssembleia = DateTime(
+          data.year, data.month, data.day, horario.hour, horario.minute);
+
+      if (dataHoraAssembleia.isAfter(agora)) {
+        return 'pendente'; // A assembleia está no futuro
+      } else if (dataHoraAssembleia.isBefore(agora)) {
+        return 'encerrada'; // A assembleia está no passado
+      } else {
+        return 'em andamento'; // A assembleia está acontecendo agora
+      }
+    }
+
+// Criação da instância de Assembleia
     final assembleia = Assembleia(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       titulo: _tituloController.text,
       assunto: _assuntoController.text,
-      data: _selectedDate ?? DateTime.now(),
-      horario: _selectedTime ?? TimeOfDay.now(),
+      data:
+          _selectedDate!, // Certifique-se de que _selectedDate é um DateTime válido
+      horario: _selectedTime!, // Passar o objeto TimeOfDay diretamente
+      status: determinarStatus(
+          _selectedDate!, _selectedTime!), // Adiciona o status aqui
       pautas: _pautas,
     );
 
-    Provider.of<AssembleiaProvider>(context, listen: false)
-        .adicionarAssembleia(assembleia);
+    try {
+      await Provider.of<AssembleiaProvider>(context, listen: false)
+          .adicionarAssembleia(assembleia);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Assembleia criada com sucesso!'),
-      ),
-    );
-    Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Assembleia criada com sucesso!'),
+        ),
+      );
+      Navigator.pop(context);
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao criar a assembleia.'),
+        ),
+      );
+    }
   }
 
   @override

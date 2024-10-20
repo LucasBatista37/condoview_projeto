@@ -68,7 +68,6 @@ class VisualizarOcorrenciaScreen extends StatelessWidget {
                   height: 200,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    // Log do erro
                     debugPrint('Erro ao carregar a imagem: $error');
                     return const Text(
                       'Erro ao carregar a imagem',

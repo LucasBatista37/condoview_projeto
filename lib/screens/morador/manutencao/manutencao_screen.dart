@@ -5,8 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/manutencao_provider.dart';
 
-class ManutencaoScreen extends StatelessWidget {
+class ManutencaoScreen extends StatefulWidget {
   const ManutencaoScreen({super.key});
+
+  @override
+  _ManutencaoScreenState createState() => _ManutencaoScreenState();
+}
+
+class _ManutencaoScreenState extends State<ManutencaoScreen> {
+  late Future<void> _fetchManutencoesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final manutencaoProvider =
+        Provider.of<ManutencaoProvider>(context, listen: false);
+    _fetchManutencoesFuture = manutencaoProvider.fetchManutencoes();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,53 +46,65 @@ class ManutencaoScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Manutenções aprovadas',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: manutencaoProvider.manutencoes.isEmpty
-                  ? const CustomEmpty(
-                      text: "Nenhuma manutenção registrada.",
-                    )
-                  : ListView.builder(
-                      itemCount: manutencaoProvider.manutencoes.length,
-                      itemBuilder: (context, index) {
-                        final manutencao =
-                            manutencaoProvider.manutencoes[index];
-                        return _buildManutencaoCard(
-                          context,
-                          icon: Icons.build,
-                          title: manutencao.tipo,
-                          date:
-                              '${manutencao.data.day}/${manutencao.data.month}/${manutencao.data.year}',
-                          description: manutencao.descricao,
-                          status: manutencao.status,
-                        );
-                      },
-                    ),
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
-              label: "Solicitar Manutenção",
-              icon: Icons.add,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SolicitarManutencaoScreen(),
+      body: FutureBuilder(
+        future: _fetchManutencoesFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Erro ao carregar manutenções'));
+          } else {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Manutenções aprovadas',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                );
-              },
-            )
-          ],
-        ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: manutencaoProvider.manutencoes.isEmpty
+                        ? const CustomEmpty(
+                            text: "Nenhuma manutenção registrada.",
+                          )
+                        : ListView.builder(
+                            itemCount: manutencaoProvider.manutencoes.length,
+                            itemBuilder: (context, index) {
+                              final manutencao =
+                                  manutencaoProvider.manutencoes[index];
+                              return _buildManutencaoCard(
+                                context,
+                                icon: Icons.build,
+                                title: manutencao.tipo,
+                                date:
+                                    '${manutencao.data.day}/${manutencao.data.month}/${manutencao.data.year}',
+                                description: manutencao.descricao,
+                                status: manutencao.status,
+                              );
+                            },
+                          ),
+                  ),
+                  const SizedBox(height: 16),
+                  CustomButton(
+                    label: "Solicitar Manutenção",
+                    icon: Icons.add,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const SolicitarManutencaoScreen(),
+                        ),
+                      );
+                    },
+                  )
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }
@@ -88,6 +115,26 @@ class ManutencaoScreen extends StatelessWidget {
       required String date,
       required String description,
       required String status}) {
+    status = status.trim();
+
+    print('Status: $status');
+
+    Color statusColor;
+    switch (status) {
+      case 'aprovado':
+        statusColor = Colors.green;
+        break;
+      case 'rejeitado':
+        statusColor = Colors.red;
+        break;
+      case 'pendente':
+        statusColor = Colors.orange;
+        break;
+      default:
+        statusColor = Colors.grey;
+        break;
+    }
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       elevation: 2,
@@ -98,7 +145,7 @@ class ManutencaoScreen extends StatelessWidget {
         trailing: Text(
           status,
           style: TextStyle(
-            color: status == 'Aprovada' ? Colors.green : Colors.red,
+            color: statusColor,
             fontWeight: FontWeight.bold,
           ),
         ),

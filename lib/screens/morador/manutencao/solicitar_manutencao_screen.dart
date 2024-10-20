@@ -13,7 +13,6 @@ class SolicitarManutencaoScreen extends StatefulWidget {
   const SolicitarManutencaoScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _SolicitarManutencaoScreenState createState() =>
       _SolicitarManutencaoScreenState();
 }
@@ -34,6 +33,12 @@ class _SolicitarManutencaoScreenState extends State<SolicitarManutencaoScreen> {
   ];
 
   void _submit() {
+    // Log para verificar os dados antes de enviar
+    debugPrint('Tipo selecionado: $_selectedType');
+    debugPrint('Data selecionada: $_selectedDate');
+    debugPrint('Descrição: ${_descriptionController.text}');
+    debugPrint('Caminho da imagem: ${_imageFile?.path}');
+
     if (_selectedType == null ||
         _selectedDate == null ||
         _descriptionController.text.isEmpty) {
@@ -54,6 +59,9 @@ class _SolicitarManutencaoScreenState extends State<SolicitarManutencaoScreen> {
       data: _selectedDate!,
       imagemPath: _imageFile?.path,
     );
+
+    // Log para verificar o objeto de manutenção criado
+    debugPrint('Nova manutenção: ${novaManutencao.toString()}');
 
     manutencaoProvider.adicionarManutencao(novaManutencao);
 

@@ -4,8 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/manutencao_provider.dart';
 
-class VisualizarManutencoesScreen extends StatelessWidget {
+class VisualizarManutencoesScreen extends StatefulWidget {
   const VisualizarManutencoesScreen({super.key});
+
+  @override
+  _VisualizarManutencoesScreenState createState() =>
+      _VisualizarManutencoesScreenState();
+}
+
+class _VisualizarManutencoesScreenState
+    extends State<VisualizarManutencoesScreen> {
+  late Future<void> _fetchManutencoesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final manutencaoProvider =
+        Provider.of<ManutencaoProvider>(context, listen: false);
+    _fetchManutencoesFuture = manutencaoProvider.fetchManutencoes();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,46 +41,63 @@ class VisualizarManutencoesScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Manutenções Pendentes',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: manutencaoProvider.manutencoes.isEmpty
-                  ? const CustomEmpty(text: "Nenhuma manutenção pendente.")
-                  : ListView.builder(
-                      itemCount: manutencaoProvider.manutencoes.length,
-                      itemBuilder: (context, index) {
-                        final manutencao =
-                            manutencaoProvider.manutencoes[index];
-                        return _buildManutencaoCard(context,
-                            icon: Icons.build,
-                            title: manutencao.tipo,
-                            date:
-                                '${manutencao.data.day}/${manutencao.data.month}/${manutencao.data.year}',
-                            description: manutencao.descricao,
-                            status: manutencao.status, onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AprovarManutencaoScreen(
-                                manutencao: manutencao,
-                                manutencaoIndex: index,
-                              ),
-                            ),
-                          );
-                        });
-                      },
-                    ),
-            ),
-          ],
-        ),
+      body: FutureBuilder<void>(
+        future: _fetchManutencoesFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+                child: Text('Erro ao carregar manutenções: ${snapshot.error}'));
+          } else {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Manutenções Pendentes',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: manutencaoProvider.manutencoes.isEmpty
+                        ? const CustomEmpty(
+                            text: "Nenhuma manutenção pendente.")
+                        : ListView.builder(
+                            itemCount: manutencaoProvider.manutencoes.length,
+                            itemBuilder: (context, index) {
+                              final manutencao =
+                                  manutencaoProvider.manutencoes[index];
+                              return _buildManutencaoCard(
+                                context,
+                                icon: Icons.build,
+                                title: manutencao.tipo,
+                                date:
+                                    '${manutencao.data.day}/${manutencao.data.month}/${manutencao.data.year}',
+                                description: manutencao.descricao,
+                                status: manutencao.status,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AprovarManutencaoScreen(
+                                        manutencao: manutencao,
+                                        manutencaoIndex: index,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }
@@ -75,6 +109,21 @@ class VisualizarManutencoesScreen extends StatelessWidget {
       required String description,
       required String status,
       required VoidCallback onTap}) {
+    Color statusColor;
+
+    switch (status) {
+      case 'aprovado':
+        statusColor = Colors.green;
+        break;
+      case 'rejeitado':
+        statusColor = Colors.red;
+        break;
+      case 'pendente':
+      default:
+        statusColor = Colors.orange; 
+        break;
+    }
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       elevation: 2,
@@ -85,7 +134,7 @@ class VisualizarManutencoesScreen extends StatelessWidget {
         trailing: Text(
           status,
           style: TextStyle(
-            color: status == 'Aprovada' ? Colors.green : Colors.red,
+            color: statusColor,
             fontWeight: FontWeight.bold,
           ),
         ),

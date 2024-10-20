@@ -82,11 +82,11 @@ class AssembleiaProvider with ChangeNotifier {
         final List<dynamic> data = json.decode(response.body);
 
         data.forEach((item) {
-          print('Item recebido: $item'); 
+          print('Item recebido: $item');
         });
 
         List<Assembleia> fetchedAssembleias = data.map((item) {
-          return Assembleia.fromJson(item); 
+          return Assembleia.fromJson(item);
         }).toList();
 
         _assembleias = fetchedAssembleias;
@@ -104,7 +104,11 @@ class AssembleiaProvider with ChangeNotifier {
     try {
       final response = await http.put(
         Uri.parse('$_baseUrl/api/users/admin/assemblies/${assembleia.id}'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGM2YTIwOGRlOTY2ODg0ZTQ5NDE2ZiIsImlhdCI6MTcyODg2Njg0OCwiZXhwIjoxNzI5NDcxNjQ4fQ.Y4Mf7L6LJsSE7zAtzN3iFnvTZtm_Fg0NdYsh5EZOGtE',
+        },
         body: json.encode(assembleia.toJson()),
       );
 

@@ -9,10 +9,12 @@ class UsuarioProvider with ChangeNotifier {
   String _userName = '';
   String _userProfileImage = '';
   Usuario? _usuario;
+  String? _token; // Variável para armazenar o token
 
   String get userName => _userName;
   String get userProfileImage => _userProfileImage;
   Usuario? get usuario => _usuario;
+  String? get token => _token; // Getter para o token
 
   Future<String> createUser(String nome, String email, String senha) async {
     final url = Uri.parse('$_baseUrl/api/users/register');
@@ -36,7 +38,15 @@ class UsuarioProvider with ChangeNotifier {
           _userName = nome;
           _usuario = Usuario.fromJson(data);
           notifyListeners();
-          return data['_id']; 
+
+          if (data['token'] != null) {
+            _token = data['token']; // Armazenando o token
+            print('Token recebido: $_token');
+            return _token!;
+          } else {
+            throw Exception(
+                'Token não encontrado na resposta: ${response.body}');
+          }
         } else {
           throw Exception(
               'ID do usuário não encontrado na resposta: ${response.body}');
@@ -73,11 +83,11 @@ class UsuarioProvider with ChangeNotifier {
         final data = jsonDecode(response.body);
         print('Dados do usuário recebidos: $data');
         _usuario = Usuario.fromJson(data);
+        _token = data['token']; // Armazenando o token
         notifyListeners();
 
         if (_usuario != null) {
-          print(
-              'Usuário autenticado com sucesso: ${_usuario!.id}');
+          print('Usuário autenticado com sucesso: ${_usuario!.id}');
         } else {
           print('Usuário não autenticado.');
         }
@@ -110,7 +120,7 @@ class UsuarioProvider with ChangeNotifier {
 
     final response = await http.put(
       url,
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $_token'}, // Adicionando o token na atualização
       body: jsonEncode(requestBody),
     );
 

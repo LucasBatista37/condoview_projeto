@@ -59,9 +59,6 @@ class _AdicionarMoradorScreenState extends State<AdicionarMoradorScreen> {
               const SizedBox(height: 32),
               CustomTextField(label: 'E-mail', controller: _emailController),
               const SizedBox(height: 16),
-              CustomTextField(
-                  label: 'Telefone', controller: _telefoneController),
-              const SizedBox(height: 16),
               CustomDropDown(
                   label: 'Adicionar Funcionalidade',
                   value: _selectedFuncionalidade,

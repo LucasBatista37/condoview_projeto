@@ -47,7 +47,7 @@ class AprovarManutencaoScreen extends StatelessWidget {
           children: [
             _buildDetailContainer(
               label: 'ID da Manutenção',
-              value: manutencao.id ?? 'N/A',
+              value: manutencao.id ?? 'N/A', 
             ),
             const SizedBox(height: 16),
             _buildDetailContainer(

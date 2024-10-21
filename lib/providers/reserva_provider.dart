@@ -57,19 +57,15 @@ class ReservaProvider with ChangeNotifier {
         final data = json.decode(response.body) as List;
         _reservas = data.map((item) {
           return Reserva(
-            id: item['id'] ?? '', 
-            area: item['area'] ?? '', 
-            descricao: item['description'] ??
-                'Descrição não disponível', 
+            id: item['id'] ?? '',
+            area: item['area'] ?? '',
+            descricao: item['description'] ?? 'Descrição não disponível',
             data: item['data'] != null
                 ? DateTime.parse(item['data'])
                 : DateTime.now(),
-            horarioInicio: _parseTime(item['hourStart'] ??
-                '00:00'), 
-            horarioFim: _parseTime(item['hourEnd'] ??
-                '00:00'),
-            status: item['status'] ??
-                'Desconhecido', 
+            horarioInicio: _parseTime(item['hourStart'] ?? '00:00'),
+            horarioFim: _parseTime(item['hourEnd'] ?? '00:00'),
+            status: item['status'] ?? 'Desconhecido',
           );
         }).toList();
         notifyListeners();
@@ -78,7 +74,7 @@ class ReservaProvider with ChangeNotifier {
       }
     } catch (error) {
       print('Erro ao buscar reservas: $error');
-      throw error; 
+      throw error;
     }
   }
 
@@ -91,7 +87,7 @@ class ReservaProvider with ChangeNotifier {
         headers: {
           'Content-Type': 'application/json',
           'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MTVhNTJlMmQ5MGZjZDA5NDg4YmQ4YyIsImlhdCI6MTcyOTQ3MTc5MCwiZXhwIjoxNzMwMDc2NTkwfQ.Oar2nGYSQijDSi8BBLQsItKBoqPaoRZmhMTMsJEamvo', // Adicione o token de autenticação
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MTVhNTJlMmQ5MGZjZDA5NDg4YmQ4YyIsImlhdCI6MTcyOTQ3MTc5MCwiZXhwIjoxNzMwMDc2NTkwfQ.Oar2nGYSQijDSi8BBLQsItKBoqPaoRZmhMTMsJEamvo',
         },
       );
 

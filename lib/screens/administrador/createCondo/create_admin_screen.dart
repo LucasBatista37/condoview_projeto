@@ -1,10 +1,21 @@
+import 'package:condoview/screens/morador/home/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:condoview/providers/usuario_provider.dart';
 
 class CreateAdminScreen extends StatelessWidget {
   const CreateAdminScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final usuarioProvider = Provider.of<UsuarioProvider>(context);
+
+    final TextEditingController nomeController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController senhaController = TextEditingController();
+    final TextEditingController confirmarSenhaController =
+        TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 78, 20, 166),
@@ -42,6 +53,7 @@ class CreateAdminScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
+                  controller: nomeController,
                   decoration: InputDecoration(
                     labelText: 'Nome Completo',
                     hintText: 'Insira o nome completo do administrador',
@@ -59,6 +71,7 @@ class CreateAdminScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     hintText: 'Insira o email do administrador',
@@ -76,6 +89,7 @@ class CreateAdminScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
+                  controller: senhaController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Senha',
@@ -94,6 +108,7 @@ class CreateAdminScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
+                  controller: confirmarSenhaController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Confirmar Senha',
@@ -110,28 +125,40 @@ class CreateAdminScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Telefone',
-                    hintText: 'Insira o telefone do administrador',
-                    labelStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Color.fromARGB(255, 78, 20, 166),
-                      ),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                ),
                 const SizedBox(height: 32),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Funcionalidade para criar o administrador
+                    onPressed: () async {
+                      if (senhaController.text ==
+                          confirmarSenhaController.text) {
+                        try {
+                          await usuarioProvider.createUser(
+                            nomeController.text,
+                            emailController.text,
+                            senhaController.text,
+                          );
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('Administrador criado com sucesso!'),
+                            ),
+                          );
+                        } catch (error) {
+                          // Tratar erro
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Erro: $error')),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('As senhas não coincidem')),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 78, 20, 166),

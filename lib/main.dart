@@ -3,6 +3,7 @@ import 'package:condoview/providers/chat_provider.dart';
 import 'package:condoview/providers/encomenda_provider.dart';
 import 'package:condoview/providers/manutencao_provider.dart';
 import 'package:condoview/providers/ocorrencia_provider.dart';
+import 'package:condoview/screens/administrador/createCondo/create_condo_screen.dart';
 import 'package:condoview/screens/morador/chat/chat_geral_screen.dart';
 import 'package:condoview/screens/morador/condominio/condominio_screen.dart';
 import 'package:condoview/screens/morador/conversas/coversations_screen.dart';
@@ -11,6 +12,7 @@ import 'package:condoview/services/secure_storege_service.dart';
 import 'package:condoview/providers/aviso_provider.dart';
 import 'package:condoview/providers/reserva_provider.dart';
 import 'package:condoview/providers/usuario_provider.dart';
+import 'package:condoview/providers/condominium_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/screens/administrador/avisos/adicionar_avisos_screen.dart';
@@ -32,6 +34,9 @@ void main() async {
         ChangeNotifierProvider(create: (context) => EncomendasProvider()),
         ChangeNotifierProvider(create: (context) => AssembleiaProvider()),
         ChangeNotifierProvider(create: (context) => ChatProvider()),
+        ChangeNotifierProvider(
+            create: (context) =>
+                CondoProvider()), // Adicionando o provider de condomínio
         Provider(create: (context) => SecureStorageService()),
       ],
       child: const MyApp(),
@@ -62,7 +67,9 @@ class MyApp extends StatelessWidget {
             '/signup': (context) => const SignupScreen(),
             '/conversas': (context) => const ConversationsScreen(),
             '/condominio': (context) => const CondominioScreen(),
-            '/chat_geral': (context) => const ChatGeralScreen(), // Nova rota para ChatGeral
+            '/create_condo': (context) =>
+                const CreateCondoScreen(), // Adicionando a rota para a tela de criação de condomínio
+            '/chat_geral': (context) => const ChatGeralScreen(),
           },
         );
       },

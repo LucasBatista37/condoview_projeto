@@ -1,4 +1,4 @@
-import 'package:condoview/screens/administrador/adicionarMorador/adicionar_morador_screen.dart';
+import 'package:condoview/screens/administrador/moradores/adicionar_morador_screen.dart';
 import 'package:flutter/material.dart';
 import 'editar_morador_screen.dart';
 

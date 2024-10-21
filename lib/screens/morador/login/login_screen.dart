@@ -8,7 +8,6 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
 
@@ -87,40 +86,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Digite uma senha';
-                    }
-                    return null;
-                  },
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () async {
-                    final email = _emailController.text.trim();
-                    final senha = _senhaController.text.trim();
-
-                    if (email.isEmpty || senha.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Por favor, preencha todos os campos'),
-                        ),
-                      );
-                      return;
-                    }
-
+                    final usuarioProvider =
+                        Provider.of<UsuarioProvider>(context, listen: false);
                     try {
+                      await usuarioProvider.login(
+                          _emailController.text, _senhaController.text);
                       Navigator.pushReplacement(
-                        // ignore: use_build_context_synchronously
                         context,
                         MaterialPageRoute(
                           builder: (context) => const HomeScreen(),
                         ),
                       );
                     } catch (e) {
-                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Erro ao autenticar: $e')),
+                        SnackBar(content: Text('Erro ao fazer login: $e')),
                       );
                     }
                   },
@@ -137,28 +120,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-                const SizedBox(height: 32),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Não tem uma conta? '),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignupScreen(),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Criar conta',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 78, 20, 166),
-                        ),
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignupScreen()),
+                    );
+                  },
+                  child: const Text(
+                    'Criar conta',
+                    style: TextStyle(color: Color.fromARGB(255, 78, 20, 166)),
+                  ),
                 ),
               ],
             ),

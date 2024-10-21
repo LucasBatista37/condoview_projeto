@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:condoview/models/usuario_model.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -22,8 +21,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
   @override
   void initState() {
     super.initState();
-    final usuarioProvider =
-        Provider.of<UsuarioProvider>(context, listen: false);
+    final usuarioProvider = Provider.of<UsuarioProvider>(context, listen: false);
     _nomeController.text = usuarioProvider.userName;
     _emailController.text = usuarioProvider.usuario?.email ?? '';
   }
@@ -144,26 +142,30 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
     final usuarioProvider =
         Provider.of<UsuarioProvider>(context, listen: false);
 
-    if (_profileImage != null) {
-      await usuarioProvider.updateProfileImage(_profileImage!.path);
+    String? profileImagePath = _profileImage?.path;
+    
+    try {
+      await usuarioProvider.update(
+        nome: _nomeController.text,
+        senha: usuarioProvider.usuario?.senha, 
+        profileImage: profileImagePath,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Perfil atualizado com sucesso!'),
+        ),
+      );
+
+      // Pop the screen to go back to the previous screen
+      Navigator.pop(context);
+    } catch (error) {
+      // Handle the error here (exibir mensagem de erro)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao atualizar perfil: $error'),
+        ),
+      );
     }
-
-    usuarioProvider.usuario = Usuario(
-      id: usuarioProvider.usuario!.id,
-      nome: _nomeController.text,
-      email: _emailController.text,
-      token: usuarioProvider.usuario!.token,
-      profileImageUrl: usuarioProvider.usuario!.profileImageUrl,
-    );
-
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Perfil atualizado com sucesso!'),
-      ),
-    );
-
-    // ignore: use_build_context_synchronously
-    Navigator.pop(context);
   }
 }

@@ -1,116 +1,127 @@
 import 'package:condoview/models/usuario_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class UsuarioProvider with ChangeNotifier {
-  Usuario? _usuario;
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final String _baseUrl = 'http://10.0.1.9:5000';
 
+  String _userName = '';
+  String _userProfileImage = '';
+  Usuario? _usuario;
+
+  String get userName => _userName;
+  String get userProfileImage => _userProfileImage;
   Usuario? get usuario => _usuario;
 
-  set usuario(Usuario? novoUsuario) {
-    _usuario = novoUsuario;
-    notifyListeners();
+  Future<String> createUser(String nome, String email, String senha) async {
+    final url = Uri.parse('$_baseUrl/api/users/register');
+
+    print('Tentando criar usuário: nome=$nome, email=$email');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'nome': nome,
+          'email': email,
+          'senha': senha,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        if (data['_id'] != null) {
+          _userName = nome;
+          _usuario = Usuario.fromJson(data);
+          notifyListeners();
+          return data['_id']; 
+        } else {
+          throw Exception(
+              'ID do usuário não encontrado na resposta: ${response.body}');
+        }
+      } else {
+        print('Resposta do servidor: ${response.body}');
+        throw Exception('Erro ao criar conta: ${response.body}');
+      }
+    } catch (e) {
+      print('Erro na requisição: $e');
+      throw Exception('Erro ao criar conta: $e');
+    }
   }
 
-  String get userName => _usuario?.nome ?? 'Usuário';
-  String? get userProfileImage => _usuario?.profileImageUrl;
+  Future<void> login(String email, String senha) async {
+    final url = Uri.parse('$_baseUrl/api/users/login');
 
-  Future<String> createUser(String nome, String email, String senha,
-      {String? profileImageUrl}) async {
-    const uuid = Uuid();
-    final id = uuid.v4();
-    final token = senha;
+    print('Tentando autenticar usuário: email=$email, senha=$senha');
 
-    _usuario = Usuario(
-      id: id,
-      nome: nome,
-      email: email,
-      token: token,
-      profileImageUrl: profileImageUrl,
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'senha': senha,
+        }),
+      );
+
+      print('Status da resposta: ${response.statusCode}');
+      print('Corpo da resposta: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        print('Dados do usuário recebidos: $data');
+        _usuario = Usuario.fromJson(data);
+        notifyListeners();
+
+        if (_usuario != null) {
+          print(
+              'Usuário autenticado com sucesso: ${_usuario!.id}');
+        } else {
+          print('Usuário não autenticado.');
+        }
+      } else {
+        print('Erro ao autenticar: ${response.statusCode}');
+        throw Exception('Erro ao autenticar: ${response.body}');
+      }
+    } catch (e) {
+      print('Erro na requisição de login: $e');
+      throw Exception('Erro ao autenticar: $e');
+    }
+  }
+
+  Future<void> update(
+      {String? nome, String? senha, String? profileImage}) async {
+    final url = Uri.parse('$_baseUrl/api/users/${_usuario?.id}');
+    final requestBody = <String, dynamic>{};
+
+    if (nome != null) {
+      requestBody['nome'] = nome;
+    }
+
+    if (senha != null) {
+      requestBody['senha'] = senha;
+    }
+
+    if (profileImage != null) {
+      requestBody['profileImage'] = profileImage;
+    }
+
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
     );
 
-    await _storage.write(key: 'auth_token', value: token);
-    await _storage.write(key: 'user_id', value: id);
-    await _storage.write(key: 'user_name', value: nome);
-    await _storage.write(key: 'user_email', value: email);
-    if (profileImageUrl != null) {
-      await _storage.write(key: 'user_profile_image', value: profileImageUrl);
-    }
-
-    notifyListeners();
-
-    return id;
-  }
-
-  Future<Usuario?> login(String email, String senha) async {
-    final token = await _storage.read(key: 'auth_token');
-    final userId = await _storage.read(key: 'user_id');
-    final userName = await _storage.read(key: 'user_name');
-    final userEmail = await _storage.read(key: 'user_email');
-    final profileImageUrl = await _storage.read(key: 'user_profile_image');
-
-    if (email == userEmail && senha == token) {
-      _usuario = Usuario(
-        id: userId!,
-        nome: userName!,
-        email: userEmail!,
-        token: token!,
-        profileImageUrl: profileImageUrl,
-      );
-
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      _usuario = Usuario.fromJson(data);
+      _userName = data['nome'] ?? _userName;
+      _userProfileImage = data['profileImage'] ?? _userProfileImage;
       notifyListeners();
-
-      return _usuario;
     } else {
-      throw Exception('Credenciais inválidas');
-    }
-  }
-
-  Future<void> loadUserFromStorage() async {
-    final token = await _storage.read(key: 'auth_token');
-    final userId = await _storage.read(key: 'user_id');
-    final userName = await _storage.read(key: 'user_name');
-    final userEmail = await _storage.read(key: 'user_email');
-    final profileImageUrl = await _storage.read(key: 'user_profile_image');
-
-    if (token != null &&
-        userId != null &&
-        userName != null &&
-        userEmail != null) {
-      _usuario = Usuario(
-        id: userId,
-        nome: userName,
-        email: userEmail,
-        token: token,
-        profileImageUrl: profileImageUrl,
-      );
-      notifyListeners();
-    }
-  }
-
-  Future<void> logout() async {
-    _usuario = null;
-    await _storage.delete(key: 'auth_token');
-    await _storage.delete(key: 'user_id');
-    await _storage.delete(key: 'user_name');
-    await _storage.delete(key: 'user_email');
-    await _storage.delete(key: 'user_profile_image');
-    notifyListeners();
-  }
-
-  Future<void> updateProfileImage(String imageUrl) async {
-    if (_usuario != null) {
-      _usuario = Usuario(
-        id: _usuario!.id,
-        nome: _usuario!.nome,
-        email: _usuario!.email,
-        token: _usuario!.token,
-        profileImageUrl: imageUrl,
-      );
-      await _storage.write(key: 'user_profile_image', value: imageUrl);
-      notifyListeners();
+      throw Exception('Erro ao atualizar usuário: ${response.body}');
     }
   }
 }

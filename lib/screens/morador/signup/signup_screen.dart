@@ -13,17 +13,14 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _senhaConfirmacaoController =
-      TextEditingController();
+  final TextEditingController _senhaConfirmacaoController = TextEditingController();
 
   String _nome = '';
   String _email = '';
 
   @override
   void dispose() {
-    // Libera os controladores de memória quando o widget for destruído
     _senhaController.dispose();
     _senhaConfirmacaoController.dispose();
     super.dispose();
@@ -74,6 +71,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                     onSaved: (value) => _nome = value?.trim() ?? '',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Digite seu nome';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -159,13 +162,9 @@ class _SignupScreenState extends State<SignupScreen> {
                       if (_formKey.currentState?.validate() ?? false) {
                         _formKey.currentState?.save();
 
-                        final usuarioProvider = Provider.of<UsuarioProvider>(
-                          context,
-                          listen: false,
-                        );
+                        final usuarioProvider = Provider.of<UsuarioProvider>(context, listen: false);
                         try {
-                          final userId = await usuarioProvider.createUser(
-                              _nome, _email, _senhaController.text);
+                          await usuarioProvider.createUser(_nome, _email, _senhaController.text);
 
                           Navigator.pushReplacement(
                             context,
@@ -182,8 +181,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 100, vertical: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -200,16 +198,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       children: [
                         TextSpan(
                           text: 'Termos de uso',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 78, 20, 166),
-                          ),
+                          style: TextStyle(color: Color.fromARGB(255, 78, 20, 166)),
                         ),
                         TextSpan(text: ' e '),
                         TextSpan(
                           text: 'Política de privacidade',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 78, 20, 166),
-                          ),
+                          style: TextStyle(color: Color.fromARGB(255, 78, 20, 166)),
                         ),
                       ],
                     ),

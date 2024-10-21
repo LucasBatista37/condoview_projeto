@@ -10,7 +10,8 @@ class ReservasScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final reservaProvider = Provider.of<ReservaProvider>(context);
+    final reservaProvider =
+        Provider.of<ReservaProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -31,51 +32,67 @@ class ReservasScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Áreas Disponíveis para Reserva',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: reservaProvider.reservas.isEmpty
-                  ? const CustomEmpty(
-                      text: "Nenhuma reserva registrada.",
-                    )
-                  : ListView.builder(
-                      itemCount: reservaProvider.reservas.length,
-                      itemBuilder: (context, index) {
-                        final reserva = reservaProvider.reservas[index];
-                        return _buildReservaCard(
-                          context,
-                          icon: Icons.event,
-                          title: reserva.area,
-                          date:
-                              '${reserva.data.day}/${reserva.data.month}/${reserva.data.year} das ${reserva.horarioInicio.format(context)} às ${reserva.horarioFim.format(context)}',
-                          status: reserva.status,
+      body: FutureBuilder(
+        future: reservaProvider.fetchReservas(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Erro ao carregar reservas.'));
+          } else {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Áreas Disponíveis para Reserva',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: Consumer<ReservaProvider>(
+                      builder: (context, reservaProvider, _) {
+                        if (reservaProvider.reservas.isEmpty) {
+                          return const CustomEmpty(
+                            text: "Nenhuma reserva registrada.",
+                          );
+                        }
+                        return ListView.builder(
+                          itemCount: reservaProvider.reservas.length,
+                          itemBuilder: (context, index) {
+                            final reserva = reservaProvider.reservas[index];
+                            return _buildReservaCard(
+                              context,
+                              icon: Icons.event,
+                              title: reserva.area,
+                              date:
+                                  '${reserva.data.day}/${reserva.data.month}/${reserva.data.year} das ${reserva.horarioInicio.format(context)} às ${reserva.horarioFim.format(context)}',
+                              status: reserva.status,
+                            );
+                          },
                         );
                       },
                     ),
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
-              label: "Solicitar Reserva",
-              icon: Icons.add,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SolicitarReserva(),
                   ),
-                );
-              },
-            )
-          ],
-        ),
+                  const SizedBox(height: 16),
+                  CustomButton(
+                    label: "Solicitar Reserva",
+                    icon: Icons.add,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SolicitarReserva(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }

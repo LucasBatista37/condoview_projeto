@@ -31,7 +31,7 @@ class _SolicitarReservaState extends State<SolicitarReserva> {
 
   String? _selectedArea;
 
-  void _submit() {
+  void _submit() async {
     if (_selectedArea == null ||
         _selectedDate == null ||
         _startTime == null ||
@@ -40,6 +40,15 @@ class _SolicitarReservaState extends State<SolicitarReserva> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor, preencha todos os campos!'),
+        ),
+      );
+      return;
+    }
+
+    if (_descricaoController.text.length < 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('A descrição deve ter pelo menos 5 caracteres.'),
         ),
       );
       return;
@@ -56,14 +65,24 @@ class _SolicitarReservaState extends State<SolicitarReserva> {
       horarioFim: _endTime!,
     );
 
-    manutencaoProvider.adicionarReserva(novaReserva);
+    print('Tentando adicionar reserva: ${novaReserva.toJson()}');
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Manutenção enviada com sucesso!'),
-      ),
-    );
-    Navigator.pop(context);
+    try {
+      await manutencaoProvider.adicionarReserva(novaReserva);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Reserva enviada com sucesso!'),
+        ),
+      );
+
+      Navigator.pop(context);
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao enviar reserva: $error'),
+        ),
+      );
+    }
   }
 
   @override

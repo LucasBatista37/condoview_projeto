@@ -6,8 +6,8 @@ class Manutencao {
   final String descricao;
   final DateTime data;
   final String? imagemPath;
-  String status; // Agora é String
-  Color statusColor; // Nova propriedade para a cor do status
+  String status; 
+  Color statusColor; 
 
   Manutencao({
     this.id,
@@ -17,9 +17,8 @@ class Manutencao {
     this.imagemPath,
     this.status = "pendente",
   }) : statusColor =
-            _getStatusColor(status); // Inicializa a cor com base no status
+            _getStatusColor(status); 
 
-  // Método para determinar a cor com base no status
   static Color _getStatusColor(String status) {
     switch (status) {
       case 'aprovado':

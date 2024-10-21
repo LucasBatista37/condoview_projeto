@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:condoview/providers/manutencao_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:condoview/models/manutencao_model.dart';
@@ -48,7 +47,7 @@ class AprovarManutencaoScreen extends StatelessWidget {
           children: [
             _buildDetailContainer(
               label: 'ID da Manutenção',
-              value: manutencao.id ?? 'N/A', // Exibir 'N/A' se id for nulo
+              value: manutencao.id ?? 'N/A',
             ),
             const SizedBox(height: 16),
             _buildDetailContainer(

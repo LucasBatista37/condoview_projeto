@@ -36,8 +36,7 @@ class MenuGrid extends StatelessWidget {
             Icons.build, 'Manutenção', const ManutencaoScreen(), context),
         _buildMenuItem(Icons.create_rounded, 'Ocorrências',
             const OcorrenciaScreen(), context),
-        _buildMenuItem(
-            Icons.chat, 'Chat Geral', const ChatGeralScreen(), context),
+        _buildMenuItem(Icons.chat, 'Chat Geral', const ChatGeralScreen(), context),
         _buildMenuItem(Icons.account_balance_wallet, 'Despesas',
             const DespesasScreen(), context),
       ],

@@ -67,8 +67,6 @@ class AssembleiaProvider with ChangeNotifier {
   }
 
   Future<void> fetchAssembleias() async {
-    final url = Uri.parse('$_baseUrl/api/users/admin/assemblies');
-
     try {
       final response = await http.get(
         Uri.parse('$_baseUrl/api/users/admin/assemblies'),

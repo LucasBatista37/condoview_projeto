@@ -4,8 +4,24 @@ import 'package:provider/provider.dart';
 import 'package:condoview/providers/reserva_provider.dart';
 import 'package:condoview/screens/administrador/aprovarReserva/aprovar_reserva_screen.dart';
 
-class VisualizarReservasScreen extends StatelessWidget {
-  const VisualizarReservasScreen({super.key, required List reservas});
+class VisualizarReservasScreen extends StatefulWidget {
+  const VisualizarReservasScreen({super.key});
+
+  @override
+  _VisualizarReservasScreenState createState() =>
+      _VisualizarReservasScreenState();
+}
+
+class _VisualizarReservasScreenState extends State<VisualizarReservasScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final reservaProvider =
+          Provider.of<ReservaProvider>(context, listen: false);
+      reservaProvider.fetchReservas();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +69,8 @@ class VisualizarReservasScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AprovarReservaScreen(
-                                  reserva: reserva,
+                                  reserva:
+                                      reserva, 
                                   reservaIndex: index,
                                 ),
                               ),

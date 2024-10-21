@@ -26,8 +26,6 @@ class EncomendasProvider with ChangeNotifier {
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGRjODAzNDM1ODJkNzQ0MzJmMTlmMCIsImlhdCI6MTcyOTAxMDYxNiwiZXhwIjoxNzI5NjE1NDE2fQ.i6IJtSrWDL4w5x2Bpl2iAu2YScYFuNuxiXoG_Z4OFaw', // Insira seu token aqui
         },
         body: json.encode(requestBody),
       );
@@ -46,14 +44,13 @@ class EncomendasProvider with ChangeNotifier {
   }
 
   Future<void> fetchEncomendas() async {
-    final url = Uri.parse('$_baseUrl/api/encomendas');
+    final url = Uri.parse('$_baseUrl/api/users/admin/package');
 
     try {
       final response = await http.get(
         url,
         headers: {
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGRjODAzNDM1ODJkNzQ0MzJmMTlmMCIsImlhdCI6MTcyOTAxMDYxNiwiZXhwIjoxNzI5NjE1NDE2fQ.i6IJtSrWDL4w5x2Bpl2iAu2YScYFuNuxiXoG_Z4OFaw', // Insira seu token aqui
+          // Removendo o token
         },
       );
 

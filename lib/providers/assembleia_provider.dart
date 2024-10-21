@@ -46,8 +46,6 @@ class AssembleiaProvider with ChangeNotifier {
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGM2YTIwOGRlOTY2ODg0ZTQ5NDE2ZiIsImlhdCI6MTcyODg2Njg0OCwiZXhwIjoxNzI5NDcxNjQ4fQ.Y4Mf7L6LJsSE7zAtzN3iFnvTZtm_Fg0NdYsh5EZOGtE'
         },
         body: requestBody,
       );
@@ -70,10 +68,6 @@ class AssembleiaProvider with ChangeNotifier {
     try {
       final response = await http.get(
         Uri.parse('$_baseUrl/api/users/admin/assemblies'),
-        headers: {
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGM2YTIwOGRlOTY2ODg0ZTQ5NDE2ZiIsImlhdCI6MTcyODg2Njg0OCwiZXhwIjoxNzI5NDcxNjQ4fQ.Y4Mf7L6LJsSE7zAtzN3iFnvTZtm_Fg0NdYsh5EZOGtE',
-        },
       );
 
       if (response.statusCode == 200) {
@@ -104,8 +98,6 @@ class AssembleiaProvider with ChangeNotifier {
         Uri.parse('$_baseUrl/api/users/admin/assemblies/${assembleia.id}'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGM2YTIwOGRlOTY2ODg0ZTQ5NDE2ZiIsImlhdCI6MTcyODg2Njg0OCwiZXhwIjoxNzI5NDcxNjQ4fQ.Y4Mf7L6LJsSE7zAtzN3iFnvTZtm_Fg0NdYsh5EZOGtE',
         },
         body: json.encode(assembleia.toJson()),
       );
@@ -128,10 +120,7 @@ class AssembleiaProvider with ChangeNotifier {
     final url = '$_baseUrl/api/users/admin/assemblies/${assembleia.id}';
 
     try {
-      final response = await http.delete(Uri.parse(url), headers: {
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGM2YTIwOGRlOTY2ODg0ZTQ5NDE2ZiIsImlhdCI6MTcyODg2Njg0OCwiZXhwIjoxNzI5NDcxNjQ4fQ.Y4Mf7L6LJsSE7zAtzN3iFnvTZtm_Fg0NdYsh5EZOGtE',
-      });
+      final response = await http.delete(Uri.parse(url));
 
       if (response.statusCode == 200) {
         _assembleias.removeWhere((a) => a.id == assembleia.id);

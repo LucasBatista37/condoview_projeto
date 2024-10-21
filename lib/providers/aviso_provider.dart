@@ -24,8 +24,7 @@ class AvisoProvider with ChangeNotifier {
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGM2YTIwOGRlOTY2ODg0ZTQ5NDE2ZiIsImlhdCI6MTcyODg2Njg0OCwiZXhwIjoxNzI5NDcxNjQ4fQ.Y4Mf7L6LJsSE7zAtzN3iFnvTZtm_Fg0NdYsh5EZOGtE',
+          // Removido o cabeçalho de autorização
         },
         body: json.encode(requestBody),
       );
@@ -47,10 +46,6 @@ class AvisoProvider with ChangeNotifier {
     try {
       final response = await http.get(
         url,
-        headers: {
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGM2YTIwOGRlOTY2ODg0ZTQ5NDE2ZiIsImlhdCI6MTcyODg2Njg0OCwiZXhwIjoxNzI5NDcxNjQ4fQ.Y4Mf7L6LJsSE7zAtzN3iFnvTZtm_Fg0NdYsh5EZOGtE',
-        },
       );
 
       if (response.statusCode == 200) {
@@ -81,7 +76,7 @@ class AvisoProvider with ChangeNotifier {
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer <SEU_TOKEN_AQUI>',
+          // Removido o cabeçalho de autorização
         },
         body: json.encode(requestBody),
       );
@@ -108,9 +103,7 @@ class AvisoProvider with ChangeNotifier {
     try {
       final response = await http.delete(
         url,
-        headers: {
-          'Authorization': 'Bearer <SEU_TOKEN_AQUI>',
-        },
+        // Removido o cabeçalho de autorização
       );
 
       if (response.statusCode == 200) {

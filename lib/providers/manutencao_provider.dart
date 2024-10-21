@@ -5,8 +5,6 @@ import 'package:condoview/models/manutencao_model.dart';
 
 class ManutencaoProvider with ChangeNotifier {
   final String _baseUrl = 'http://10.0.1.9:5000';
-  final String _token =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MGM2YTIwOGRlOTY2ODg0ZTQ5NDE2ZiIsImlhdCI6MTcyODg2Njg0OCwiZXhwIjoxNzI5NDcxNjQ4fQ.Y4Mf7L6LJsSE7zAtzN3iFnvTZtm_Fg0NdYsh5EZOGtE';
   List<Manutencao> _manutencoes = [];
 
   List<Manutencao> get manutencoes => _manutencoes;
@@ -15,8 +13,7 @@ class ManutencaoProvider with ChangeNotifier {
     final url = Uri.parse('$_baseUrl/api/users/maintenance');
 
     try {
-      var request = http.MultipartRequest('POST', url)
-        ..headers['Authorization'] = _token;
+      var request = http.MultipartRequest('POST', url);
 
       request.fields['type'] = manutencao.tipo;
       request.fields['descriptionMaintenance'] = manutencao.descricao;
@@ -46,9 +43,7 @@ class ManutencaoProvider with ChangeNotifier {
   Future<void> fetchManutencoes() async {
     final url = Uri.parse('$_baseUrl/api/users/admin/maintenance');
     try {
-      final response = await http.get(url, headers: {
-        'Authorization': _token,
-      });
+      final response = await http.get(url);
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         _manutencoes = data.map((item) => Manutencao.fromJson(item)).toList();
@@ -67,8 +62,7 @@ class ManutencaoProvider with ChangeNotifier {
     final url = Uri.parse('$_baseUrl/admin/maintenance/$manutencaoId');
 
     try {
-      var request = http.MultipartRequest('PUT', url)
-        ..headers['Authorization'] = _token;
+      var request = http.MultipartRequest('PUT', url);
 
       request.fields['type'] = manutencao.tipo;
       request.fields['descriptionMaintenance'] = manutencao.descricao;
@@ -100,9 +94,7 @@ class ManutencaoProvider with ChangeNotifier {
     final url = Uri.parse('$_baseUrl/admin/maintenance/$manutencaoId');
 
     try {
-      final response = await http.delete(url, headers: {
-        'Authorization': _token,
-      });
+      final response = await http.delete(url);
       if (response.statusCode == 200) {
         notifyListeners();
       } else {
@@ -122,7 +114,6 @@ class ManutencaoProvider with ChangeNotifier {
       final response = await http.post(
         url,
         headers: {
-          'Authorization': _token,
           'Content-Type': 'application/json',
         },
       );
@@ -149,7 +140,6 @@ class ManutencaoProvider with ChangeNotifier {
       final response = await http.post(
         url,
         headers: {
-          'Authorization': _token,
           'Content-Type': 'application/json',
         },
       );

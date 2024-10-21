@@ -20,14 +20,17 @@ class Aviso {
   factory Aviso.fromJson(Map<String, dynamic> json) {
     return Aviso(
       id: json['_id'],
-      icon: Icons.info, 
+      icon: Icons.info,
       title: json['title'],
       description: json['message'],
-      time: json['date'], 
+      time: json['date'],
       imageUrl: json['imagePath'] ?? '',
     );
   }
 
-  copyWith({required String title, required String description, required IconData icon, required String time}) {}
+  copyWith(
+      {required String title,
+      required String description,
+      required IconData icon,
+      required String time}) {}
 }
-

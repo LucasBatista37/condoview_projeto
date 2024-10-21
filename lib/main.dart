@@ -36,7 +36,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => ChatProvider()),
         ChangeNotifierProvider(
             create: (context) =>
-                CondoProvider()), // Adicionando o provider de condomínio
+                CondoProvider()),
         Provider(create: (context) => SecureStorageService()),
       ],
       child: const MyApp(),
@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
             '/conversas': (context) => const ConversationsScreen(),
             '/condominio': (context) => const CondominioScreen(),
             '/create_condo': (context) =>
-                const CreateCondoScreen(), // Adicionando a rota para a tela de criação de condomínio
+                const CreateCondoScreen(), 
             '/chat_geral': (context) => const ChatGeralScreen(),
           },
         );

@@ -44,7 +44,7 @@ class CondominioScreen extends StatelessWidget {
                 children: [
                   Center(
                     child: Text(
-                      'Condomínio Fictício',
+                      'Condomínio Atlas',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -75,7 +75,7 @@ class CondominioScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'O Condomínio Fictício é um residencial moderno com infraestrutura completa, incluindo piscina, academia e área de lazer. Oferece segurança 24 horas e um ambiente tranquilo para seus moradores.',
+                    'O Condomínio Atlas é um residencial moderno com infraestrutura completa, incluindo piscina, academia e área de lazer. Oferece segurança 24 horas e um ambiente tranquilo para seus moradores.',
                     style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 16),
@@ -88,7 +88,7 @@ class CondominioScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Telefone: (13) 1234-5678\nE-mail: ficticio@gmail.com',
+                    'Telefone: (13) 1234-5678\nE-mail: atlas@gmail.com',
                     style: TextStyle(fontSize: 16),
                   ),
                 ],

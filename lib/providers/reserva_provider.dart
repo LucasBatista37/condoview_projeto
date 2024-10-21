@@ -12,20 +12,15 @@ class ReservaProvider with ChangeNotifier {
 
   Future<void> adicionarReserva(Reserva reserva) async {
     final url = '$_baseUrl/api/users/reserve';
-
     print('Dados a serem enviados: ${reserva.toJson()}');
-
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MTVhNTJlMmQ5MGZjZDA5NDg4YmQ4YyIsImlhdCI6MTcyOTQ3MTc5MCwiZXhwIjoxNzMwMDc2NTkwfQ.Oar2nGYSQijDSi8BBLQsItKBoqPaoRZmhMTMsJEamvo', // Adicione o token de autenticação
         },
         body: json.encode(reserva.toJson()),
       );
-
       if (response.statusCode == 201) {
         notifyListeners();
       } else {
@@ -38,15 +33,13 @@ class ReservaProvider with ChangeNotifier {
   }
 
   Future<void> fetchReservas() async {
-    final url = '$_baseUrl/api/users/admin/reserve';
-
+    final url =
+        '$_baseUrl/api/users/reserve'; // Seu endpoint para buscar reservas
     try {
       final response = await http.get(
         Uri.parse(url),
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MTVhNTJlMmQ5MGZjZDA5NDg4YmQ4YyIsImlhdCI6MTcyOTQ3MTc5MCwiZXhwIjoxNzMwMDc2NTkwfQ.Oar2nGYSQijDSi8BBLQsItKBoqPaoRZmhMTMsJEamvo', // Adicione o token de autenticação
+          'Content-Type': 'application/json', // Sem o token de autenticação
         },
       );
 
@@ -80,17 +73,13 @@ class ReservaProvider with ChangeNotifier {
 
   Future<void> aprovarReserva(String id) async {
     final url = '$_baseUrl/api/users/admin/reserve/approve/$id';
-
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MTVhNTJlMmQ5MGZjZDA5NDg4YmQ4YyIsImlhdCI6MTcyOTQ3MTc5MCwiZXhwIjoxNzMwMDc2NTkwfQ.Oar2nGYSQijDSi8BBLQsItKBoqPaoRZmhMTMsJEamvo',
         },
       );
-
       if (response.statusCode == 200) {
         _reservas.firstWhere((reserva) => reserva.id == id).status = "aprovado";
         notifyListeners();
@@ -104,17 +93,13 @@ class ReservaProvider with ChangeNotifier {
 
   Future<void> rejeitarReserva(String id) async {
     final url = '$_baseUrl/api/users/admin/reserve/reject/$id';
-
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MTVhNTJlMmQ5MGZjZDA5NDg4YmQ4YyIsImlhdCI6MTcyOTQ3MTc5MCwiZXhwIjoxNzMwMDc2NTkwfQ.Oar2nGYSQijDSi8BBLQsItKBoqPaoRZmhMTMsJEamvo', // Adicione o token de autenticação
         },
       );
-
       if (response.statusCode == 200) {
         _reservas.firstWhere((reserva) => reserva.id == id).status =
             "rejeitado";

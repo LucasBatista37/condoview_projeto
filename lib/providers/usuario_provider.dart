@@ -9,12 +9,12 @@ class UsuarioProvider with ChangeNotifier {
   String _userName = '';
   String _userProfileImage = '';
   Usuario? _usuario;
-  String? _token; // Variável para armazenar o token
+  String? _token;
 
   String get userName => _userName;
   String get userProfileImage => _userProfileImage;
   Usuario? get usuario => _usuario;
-  String? get token => _token; // Getter para o token
+  String? get token => _token;
 
   Future<String> createUser(String nome, String email, String senha) async {
     final url = Uri.parse('$_baseUrl/api/users/register');
@@ -40,7 +40,7 @@ class UsuarioProvider with ChangeNotifier {
           notifyListeners();
 
           if (data['token'] != null) {
-            _token = data['token']; // Armazenando o token
+            _token = data['token'];
             print('Token recebido: $_token');
             return _token!;
           } else {
@@ -120,7 +120,10 @@ class UsuarioProvider with ChangeNotifier {
 
     final response = await http.put(
       url,
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $_token'}, // Adicionando o token na atualização
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $_token'
+      }, // Adicionando o token na atualização
       body: jsonEncode(requestBody),
     );
 

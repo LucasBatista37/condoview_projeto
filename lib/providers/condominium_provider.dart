@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class CondoProvider with ChangeNotifier {
-  final String baseUrl = 'http://10.0.1.9:5000';
+  final String baseUrl = 'https://backend-condoview.onrender.com';
 
   Future<void> createCondo(Condominium condo) async {
     final url = Uri.parse(

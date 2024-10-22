@@ -13,7 +13,7 @@ class OcorrenciaProvider with ChangeNotifier {
   Ocorrencia? get selectedOcorrencia => _selectedOcorrencia;
   bool get isLoading => _isLoading;
 
-  final String _baseUrl = 'http://10.0.1.9:5000';
+  final String _baseUrl = 'https://backend-condoview.onrender.com';
 
   Future<void> addOcorrencia({
     required String motivo,

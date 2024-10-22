@@ -8,7 +8,7 @@ class ReservaProvider with ChangeNotifier {
 
   List<Reserva> get reservas => _reservas;
 
-  final String _baseUrl = 'http://10.0.1.9:5000';
+  final String _baseUrl = 'https://backend-condoview.onrender.com';
 
   Future<void> adicionarReserva(Reserva reserva) async {
     final url = '$_baseUrl/api/users/reserve';
@@ -22,9 +22,22 @@ class ReservaProvider with ChangeNotifier {
         body: json.encode(reserva.toJson()),
       );
       if (response.statusCode == 201) {
+        final data = json.decode(response.body);
+
+        final novaReserva = Reserva(
+          id: data['_id'],
+          area: reserva.area,
+          descricao: reserva.descricao,
+          data: reserva.data,
+          horarioInicio: reserva.horarioInicio,
+          horarioFim: reserva.horarioFim,
+          status: reserva.status,
+        );
+        _reservas.add(novaReserva);
         notifyListeners();
       } else {
-        throw Exception('Erro ao criar reserva: ${response.body}');
+        throw Exception(
+            'Erro ao criar reserva: ${response.statusCode} - ${response.body}');
       }
     } catch (error) {
       print('Erro ao adicionar reserva: $error');
@@ -33,13 +46,12 @@ class ReservaProvider with ChangeNotifier {
   }
 
   Future<void> fetchReservas() async {
-    final url =
-        '$_baseUrl/api/users/reserve'; // Seu endpoint para buscar reservas
+    final url = '$_baseUrl/api/users/admin/reserve';
     try {
       final response = await http.get(
         Uri.parse(url),
         headers: {
-          'Content-Type': 'application/json', // Sem o token de autenticação
+          'Content-Type': 'application/json',
         },
       );
 
@@ -50,9 +62,9 @@ class ReservaProvider with ChangeNotifier {
         final data = json.decode(response.body) as List;
         _reservas = data.map((item) {
           return Reserva(
-            id: item['id'] ?? '',
+            id: item['_id'] ?? '',
             area: item['area'] ?? '',
-            descricao: item['description'] ?? 'Descrição não disponível',
+            descricao: item['descricao'] ?? 'Descrição não disponível',
             data: item['data'] != null
                 ? DateTime.parse(item['data'])
                 : DateTime.now(),
@@ -63,7 +75,8 @@ class ReservaProvider with ChangeNotifier {
         }).toList();
         notifyListeners();
       } else {
-        throw Exception('Erro ao buscar reservas: ${response.body}');
+        throw Exception(
+            'Erro ao buscar reservas: ${response.statusCode} - ${response.body}');
       }
     } catch (error) {
       print('Erro ao buscar reservas: $error');
@@ -74,20 +87,33 @@ class ReservaProvider with ChangeNotifier {
   Future<void> aprovarReserva(String id) async {
     final url = '$_baseUrl/api/users/admin/reserve/approve/$id';
     try {
+      debugPrint('Enviando solicitação para aprovar a reserva com ID: $id');
+
       final response = await http.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
         },
       );
+
+      debugPrint('Resposta da API: ${response.statusCode}');
+      debugPrint('Corpo da resposta: ${response.body}');
+
       if (response.statusCode == 200) {
-        _reservas.firstWhere((reserva) => reserva.id == id).status = "aprovado";
+        final reserva = _reservas.firstWhere((reserva) => reserva.id == id);
+        reserva.status =
+            "aprovado"; // Ou outro valor que você use para "aprovado"
         notifyListeners();
       } else {
-        throw Exception('Erro ao aprovar reserva: ${response.body}');
+        // Adicionando mais detalhes ao erro
+        final errorMessage =
+            response.body; // Supondo que a mensagem de erro esteja aqui
+        throw Exception(
+            'Erro ao aprovar reserva: ${response.statusCode} - $errorMessage');
       }
     } catch (error) {
-      throw error;
+      debugPrint('Erro ao aprovar reserva: $error');
+      throw error; // Rethrow para que a tela possa tratar o erro
     }
   }
 
@@ -100,21 +126,30 @@ class ReservaProvider with ChangeNotifier {
           'Content-Type': 'application/json',
         },
       );
+
+      debugPrint('Resposta da API: ${response.statusCode}');
+      debugPrint('Corpo da resposta: ${response.body}');
+
       if (response.statusCode == 200) {
-        _reservas.firstWhere((reserva) => reserva.id == id).status =
-            "rejeitado";
+        final reserva = _reservas.firstWhere((reserva) => reserva.id == id);
+        reserva.status = "rejeitado";
         notifyListeners();
       } else {
-        throw Exception('Erro ao rejeitar reserva: ${response.body}');
+        throw Exception(
+            'Erro ao rejeitar reserva: ${response.statusCode} - ${response.body}');
       }
     } catch (error) {
+      debugPrint('Erro ao rejeitar reserva: $error');
       throw error;
     }
   }
 
   Future<String?> recuperarId(int index) async {
-    final reserva = _reservas[index];
-    return reserva.id;
+    if (index >= 0 && index < _reservas.length) {
+      final reserva = _reservas[index];
+      return reserva.id;
+    }
+    return null;
   }
 
   TimeOfDay _parseTime(String timeString) {

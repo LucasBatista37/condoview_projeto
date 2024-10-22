@@ -3,18 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:condoview/models/reserva_model.dart';
 import 'package:provider/provider.dart';
 
-class AprovarReservaScreen extends StatelessWidget {
-  final Reserva reserva; 
-  final int reservaIndex; 
+class AprovarReservaScreen extends StatefulWidget {
+  final Reserva reserva;
+  final int reservaIndex;
 
   const AprovarReservaScreen({
-    super.key,
+    Key? key,
     required this.reserva,
     required this.reservaIndex,
-  });
+  }) : super(key: key);
+
+  @override
+  _AprovarReservaScreenState createState() => _AprovarReservaScreenState();
+}
+
+class _AprovarReservaScreenState extends State<AprovarReservaScreen> {
+  bool _isLoading = false; // Estado de carregamento
 
   @override
   Widget build(BuildContext context) {
+    final reserva = widget.reserva;
+
     debugPrint('ID da reserva: ${reserva.id}');
     debugPrint('Área solicitada: ${reserva.area}');
     debugPrint('Descrição: ${reserva.descricao}');
@@ -75,6 +84,8 @@ class AprovarReservaScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _buildActionButtons(context),
+            if (_isLoading)
+              const Center(child: CircularProgressIndicator()), // Carregador
           ],
         ),
       ),
@@ -87,7 +98,7 @@ class AprovarReservaScreen extends StatelessWidget {
       children: [
         Expanded(
           child: ElevatedButton(
-            onPressed: () => _handleAprovarReserva(context),
+            onPressed: _isLoading ? null : () => _handleAprovarReserva(context),
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
               backgroundColor: Colors.green,
@@ -105,7 +116,8 @@ class AprovarReservaScreen extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: ElevatedButton(
-            onPressed: () => _handleRejeitarReserva(context),
+            onPressed:
+                _isLoading ? null : () => _handleRejeitarReserva(context),
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
               backgroundColor: Colors.red,
@@ -124,44 +136,62 @@ class AprovarReservaScreen extends StatelessWidget {
     );
   }
 
-  void _handleAprovarReserva(BuildContext context) {
+  Future<void> _handleAprovarReserva(BuildContext context) async {
     final provider = Provider.of<ReservaProvider>(context, listen: false);
+    final reserva = widget.reserva;
+
     if (reserva.id != null) {
-      debugPrint('Aprovando reserva com ID: ${reserva.id}');
-      provider.aprovarReserva(reserva.id!);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Reserva aprovada com sucesso!'),
-        ),
-      );
-      Navigator.pop(context);
+      setState(() => _isLoading = true); // Ativa o carregador
+
+      try {
+        debugPrint('Aprovando reserva com ID: ${reserva.id}');
+        await provider.aprovarReserva(reserva.id!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Reserva aprovada com sucesso!')),
+        );
+        Navigator.pop(context);
+      } catch (error) {
+        debugPrint('Erro ao aprovar reserva: $error');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao aprovar reserva.')),
+        );
+      } finally {
+        setState(() => _isLoading = false); // Desativa o carregador
+      }
     } else {
       debugPrint('Erro: ID da reserva é nulo.');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erro: ID da reserva é nulo.'),
-        ),
+        const SnackBar(content: Text('Erro: ID da reserva é nulo.')),
       );
     }
   }
 
-  void _handleRejeitarReserva(BuildContext context) {
+  Future<void> _handleRejeitarReserva(BuildContext context) async {
     final provider = Provider.of<ReservaProvider>(context, listen: false);
+    final reserva = widget.reserva;
+
     if (reserva.id != null) {
-      debugPrint('Rejeitando reserva com ID: ${reserva.id}');
-      provider.rejeitarReserva(reserva.id!);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Reserva rejeitada.'),
-        ),
-      );
-      Navigator.pop(context);
+      setState(() => _isLoading = true); // Ativa o carregador
+
+      try {
+        debugPrint('Rejeitando reserva com ID: ${reserva.id}');
+        await provider.rejeitarReserva(reserva.id!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Reserva rejeitada.')),
+        );
+        Navigator.pop(context);
+      } catch (error) {
+        debugPrint('Erro ao rejeitar reserva: $error');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao rejeitar reserva.')),
+        );
+      } finally {
+        setState(() => _isLoading = false); // Desativa o carregador
+      }
     } else {
       debugPrint('Erro: ID da reserva é nulo.');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erro: ID da reserva é nulo.'),
-        ),
+        const SnackBar(content: Text('Erro: ID da reserva é nulo.')),
       );
     }
   }

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class MoradorProvider with ChangeNotifier {
-  final String _baseUrl = 'http://10.0.1.9:5000';
+  final String _baseUrl = 'https://backend-condoview.onrender.com';
 
   Future<void> adicionarMorador(
       String email, String telefone, String funcionalidade) async {

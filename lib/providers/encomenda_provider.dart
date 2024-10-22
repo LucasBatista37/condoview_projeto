@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:condoview/models/encomenda_model.dart';
 
 class EncomendasProvider with ChangeNotifier {
-  final String _baseUrl = 'http://10.0.1.9:5000';
+  final String _baseUrl = 'https://backend-condoview.onrender.com';
   List<Encomenda> _encomendas = [];
 
   List<Encomenda> get encomendas => _encomendas;
@@ -50,7 +50,6 @@ class EncomendasProvider with ChangeNotifier {
       final response = await http.get(
         url,
         headers: {
-          // Removendo o token
         },
       );
 

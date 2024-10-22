@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:condoview/models/assembleia_model.dart';
 
 class AssembleiaProvider with ChangeNotifier {
-  final String _baseUrl = 'http://10.0.1.9:5000';
+  final String _baseUrl = 'https://backend-condoview.onrender.com';
 
   List<Assembleia> _assembleias = [];
 

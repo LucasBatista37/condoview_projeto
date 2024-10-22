@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:condoview/models/aviso_model.dart';
 
 class AvisoProvider with ChangeNotifier {
-  final String baseUrl = 'http://10.0.1.9:5000';
+  final String baseUrl = 'https://backend-condoview.onrender.com';
   List<Aviso> _avisos = [];
 
   List<Aviso> get avisos => _avisos;
@@ -24,7 +24,6 @@ class AvisoProvider with ChangeNotifier {
         url,
         headers: {
           'Content-Type': 'application/json',
-          // Removido o cabeçalho de autorização
         },
         body: json.encode(requestBody),
       );
@@ -76,7 +75,6 @@ class AvisoProvider with ChangeNotifier {
         url,
         headers: {
           'Content-Type': 'application/json',
-          // Removido o cabeçalho de autorização
         },
         body: json.encode(requestBody),
       );
@@ -103,7 +101,6 @@ class AvisoProvider with ChangeNotifier {
     try {
       final response = await http.delete(
         url,
-        // Removido o cabeçalho de autorização
       );
 
       if (response.statusCode == 200) {

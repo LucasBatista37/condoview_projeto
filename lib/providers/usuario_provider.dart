@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class UsuarioProvider with ChangeNotifier {
-  final String _baseUrl = 'http://10.0.1.9:5000';
+  final String _baseUrl = 'https://backend-condoview.onrender.com';
 
   String _userName = '';
   String _userProfileImage = '';
@@ -83,7 +83,7 @@ class UsuarioProvider with ChangeNotifier {
         final data = jsonDecode(response.body);
         print('Dados do usuário recebidos: $data');
         _usuario = Usuario.fromJson(data);
-        _token = data['token']; // Armazenando o token
+        _token = data['token']; 
         notifyListeners();
 
         if (_usuario != null) {
@@ -123,7 +123,7 @@ class UsuarioProvider with ChangeNotifier {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_token'
-      }, // Adicionando o token na atualização
+      }, 
       body: jsonEncode(requestBody),
     );
 

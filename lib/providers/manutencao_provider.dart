@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:condoview/models/manutencao_model.dart';
 
 class ManutencaoProvider with ChangeNotifier {
-  final String _baseUrl = 'http://10.0.1.9:5000';
+  final String _baseUrl = 'https://backend-condoview.onrender.com';
   List<Manutencao> _manutencoes = [];
 
   List<Manutencao> get manutencoes => _manutencoes;

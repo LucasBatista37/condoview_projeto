@@ -75,8 +75,7 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
       title: _titleController.text,
       description: _descriptionController.text,
       time:
-          'Enviado dia ${DateTime.now().toLocal().toString().split(' ')[0]} às ${DateTime.now().toLocal().toString().split(' ')[1].split('.')[0]}',
-      imageUrl: '', 
+          'Enviado dia ${DateTime.now().toLocal().toString().split(' ')[0]} às ${DateTime.now().toLocal().toString().split(' ')[1].split('.')[0]}', 
     );
 
     try {

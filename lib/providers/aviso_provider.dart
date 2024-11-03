@@ -16,7 +16,6 @@ class AvisoProvider with ChangeNotifier {
       'title': aviso.title,
       'message': aviso.description,
       'date': DateTime.now().toIso8601String(),
-      'imagePath': aviso.imageUrl
     };
 
     try {
@@ -61,13 +60,12 @@ class AvisoProvider with ChangeNotifier {
   }
 
   Future<void> updateAviso(Aviso aviso) async {
-    final url = Uri.parse('$baseUrl/admin/notices/${aviso.id}');
+    final url = Uri.parse('$baseUrl/api/users/admin/notices/${aviso.id}');
 
     final requestBody = {
       'title': aviso.title,
       'message': aviso.description,
       'date': aviso.time,
-      'imagePath': aviso.imageUrl,
     };
 
     try {
@@ -81,9 +79,10 @@ class AvisoProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         print('Aviso atualizado com sucesso: ${response.body}');
+        final updatedAviso = Aviso.fromJson(json.decode(response.body));
         int index = _avisos.indexWhere((a) => a.id == aviso.id);
         if (index != -1) {
-          _avisos[index] = aviso;
+          _avisos[index] = updatedAviso;
           notifyListeners();
         }
       } else {
@@ -96,7 +95,7 @@ class AvisoProvider with ChangeNotifier {
   }
 
   Future<void> removeAviso(Aviso aviso) async {
-    final url = Uri.parse('$baseUrl/admin/notices/${aviso.id}');
+    final url = Uri.parse('$baseUrl/api/users/admin/notices/${aviso.id}');
 
     try {
       final response = await http.delete(

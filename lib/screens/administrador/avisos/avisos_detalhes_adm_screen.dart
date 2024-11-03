@@ -9,7 +9,6 @@ class AvisoDetalhesScreen extends StatefulWidget {
   const AvisoDetalhesScreen({super.key, required this.id});
 
   @override
-  // ignore: library_private_types_in_public_api
   _AvisoDetalhesScreenState createState() => _AvisoDetalhesScreenState();
 }
 
@@ -41,10 +40,18 @@ class _AvisoDetalhesScreenState extends State<AvisoDetalhesScreen> {
   void _loadAviso() {
     final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
     _aviso = avisoProvider.getAvisoById(widget.id);
-    _titleController.text = _aviso.title;
-    _descriptionController.text = _aviso.description;
-    _dateController.text = _aviso.time;
-    _selectedIcon = _aviso.icon;
+
+    if (_aviso == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Aviso não encontrado.')),
+      );
+      Navigator.pop(context);
+    } else {
+      _titleController.text = _aviso.title;
+      _descriptionController.text = _aviso.description;
+      _dateController.text = _aviso.time;
+      _selectedIcon = _aviso.icon;
+    }
   }
 
   void _toggleEditing() {
@@ -189,6 +196,10 @@ class _AvisoDetalhesScreenState extends State<AvisoDetalhesScreen> {
                           avisoProvider.removeAviso(_aviso);
                           Navigator.pop(context);
                           Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Aviso excluído com sucesso!')),
+                          );
                         },
                         child: const Text('Excluir'),
                       ),
@@ -208,25 +219,6 @@ class _AvisoDetalhesScreenState extends State<AvisoDetalhesScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (_aviso.imageUrl.isNotEmpty) ...[
-                  Container(
-                    width: double.infinity,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 8.0,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Image.network(_aviso.imageUrl, fit: BoxFit.cover),
-                  ),
-                  const SizedBox(height: 16),
-                ],
                 _isEditing
                     ? GestureDetector(
                         onTap: _selectIcon,

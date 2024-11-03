@@ -102,18 +102,17 @@ class ReservaProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final reserva = _reservas.firstWhere((reserva) => reserva.id == id);
         reserva.status =
-            "aprovado"; // Ou outro valor que você use para "aprovado"
+            "aprovado"; 
         notifyListeners();
       } else {
-        // Adicionando mais detalhes ao erro
         final errorMessage =
-            response.body; // Supondo que a mensagem de erro esteja aqui
+            response.body;
         throw Exception(
             'Erro ao aprovar reserva: ${response.statusCode} - $errorMessage');
       }
     } catch (error) {
       debugPrint('Erro ao aprovar reserva: $error');
-      throw error; // Rethrow para que a tela possa tratar o erro
+      throw error; 
     }
   }
 

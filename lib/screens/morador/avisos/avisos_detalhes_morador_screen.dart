@@ -47,25 +47,7 @@ class AvisosDetalhesMoradorScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (aviso.imageUrl.isNotEmpty) ...[
-                  Container(
-                    width: double.infinity,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 8.0,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Image.network(aviso.imageUrl, fit: BoxFit.cover),
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                // Removido o bloco de exibição da imageUrl
                 Icon(
                   aviso.icon,
                   size: 40,

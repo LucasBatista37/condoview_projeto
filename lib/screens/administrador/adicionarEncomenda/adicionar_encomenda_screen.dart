@@ -1,6 +1,5 @@
 import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/components/custom_date_time_picker.dart';
-import 'package:condoview/components/custom_drop_down.dart';
 import 'package:condoview/components/custom_image_picker.dart';
 import 'package:condoview/components/custom_text_field.dart';
 import 'package:condoview/models/encomenda_model.dart';
@@ -30,8 +29,7 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
   ];
 
   void _submit() {
-    if (_selectedType == null ||
-        _titleController.text.isEmpty ||
+    if (_titleController.text.isEmpty ||
         _apartmentController.text.isEmpty ||
         _selectedDateTime == null ||
         _imageFile == null) {
@@ -46,7 +44,7 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
       apartment: _apartmentController.text,
       time: _selectedDateTime!.toIso8601String(),
       imagePath: _imageFile!.path,
-      status: _selectedType!,
+      status: _selectedType ?? 'Pendente',
     );
 
     Provider.of<EncomendasProvider>(context, listen: false)
@@ -99,15 +97,6 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
               },
               selectedImage: _imageFile,
             ),
-            const SizedBox(height: 16),
-            CustomDropDown(
-                label: "Status",
-                items: _types,
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedType = newValue;
-                  });
-                }),
             const SizedBox(height: 20),
             CustomButton(
                 label: "Adicionar Encomenda",

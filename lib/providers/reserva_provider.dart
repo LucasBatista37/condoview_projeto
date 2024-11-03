@@ -68,8 +68,8 @@ class ReservaProvider with ChangeNotifier {
             data: item['data'] != null
                 ? DateTime.parse(item['data'])
                 : DateTime.now(),
-            horarioInicio: _parseTime(item['hourStart'] ?? '00:00'),
-            horarioFim: _parseTime(item['hourEnd'] ?? '00:00'),
+            horarioInicio: _parseTime(item['horarioInicio'] ?? '00:00'),
+            horarioFim: _parseTime(item['horarioFim'] ?? '00:00'),
             status: item['status'] ?? 'Desconhecido',
           );
         }).toList();
@@ -101,18 +101,16 @@ class ReservaProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final reserva = _reservas.firstWhere((reserva) => reserva.id == id);
-        reserva.status =
-            "aprovado"; 
+        reserva.status = "Aprovada";
         notifyListeners();
       } else {
-        final errorMessage =
-            response.body;
+        final errorMessage = response.body;
         throw Exception(
             'Erro ao aprovar reserva: ${response.statusCode} - $errorMessage');
       }
     } catch (error) {
       debugPrint('Erro ao aprovar reserva: $error');
-      throw error; 
+      throw error;
     }
   }
 
@@ -131,7 +129,7 @@ class ReservaProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final reserva = _reservas.firstWhere((reserva) => reserva.id == id);
-        reserva.status = "rejeitado";
+        reserva.status = "rejeitada";
         notifyListeners();
       } else {
         throw Exception(

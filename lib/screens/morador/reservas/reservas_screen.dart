@@ -67,7 +67,7 @@ class ReservasScreen extends StatelessWidget {
                               icon: Icons.event,
                               title: reserva.area,
                               date:
-                                  '${reserva.data.day}/${reserva.data.month}/${reserva.data.year} das ${reserva.horarioInicio.format(context)} às ${reserva.horarioFim.format(context)}',
+                                  '${reserva.data.day}/${reserva.data.month}/${reserva.data.year} das ${reserva.horarioInicio.hour.toString().padLeft(2, '0')}:${reserva.horarioInicio.minute.toString().padLeft(2, '0')} às ${reserva.horarioFim.hour.toString().padLeft(2, '0')}:${reserva.horarioFim.minute.toString().padLeft(2, '0')}',
                               status: reserva.status,
                             );
                           },

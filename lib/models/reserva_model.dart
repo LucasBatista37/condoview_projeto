@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 
 class Reserva {
-  final String? id; 
+  final String? id;
   final String area;
   final String descricao;
   final DateTime data;
   final TimeOfDay horarioInicio;
   final TimeOfDay horarioFim;
-  String status; 
+  String status;
 
   Reserva({
-    this.id, 
+    this.id,
     required this.area,
     required this.descricao,
     required this.data,
     required this.horarioInicio,
     required this.horarioFim,
-    this.status = 'Pendente', 
+    this.status = 'Pendente',
   });
 
   Map<String, dynamic> toJson() {
     return {
       'area': area,
-      'descricao': descricao, 
-      'data': data.toIso8601String(), 
-      'hourStart':
-          '${horarioInicio.hour.toString().padLeft(2, '0')}:${horarioInicio.minute.toString().padLeft(2, '0')}', 
-      'hourEnd':
-          '${horarioFim.hour.toString().padLeft(2, '0')}:${horarioFim.minute.toString().padLeft(2, '0')}', 
+      'descricao': descricao,
+      'data': data.toIso8601String(),
+      'horarioInicio':
+          '${horarioInicio.hour.toString().padLeft(2, '0')}:${horarioInicio.minute.toString().padLeft(2, '0')}',
+      'horarioFim':
+          '${horarioFim.hour.toString().padLeft(2, '0')}:${horarioFim.minute.toString().padLeft(2, '0')}',
     };
   }
 

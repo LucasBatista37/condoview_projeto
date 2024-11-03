@@ -32,6 +32,9 @@ class _SolicitarReservaState extends State<SolicitarReserva> {
   String? _selectedArea;
 
   void _submit() async {
+    print('Horário de Início: $_startTime');
+    print('Horário de Término: $_endTime');
+
     if (_selectedArea == null ||
         _selectedDate == null ||
         _startTime == null ||

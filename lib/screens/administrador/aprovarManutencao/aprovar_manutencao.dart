@@ -47,7 +47,7 @@ class AprovarManutencaoScreen extends StatelessWidget {
           children: [
             _buildDetailContainer(
               label: 'ID da Manutenção',
-              value: manutencao.id ?? 'N/A', 
+              value: manutencao.id ?? 'N/A',
             ),
             const SizedBox(height: 16),
             _buildDetailContainer(
@@ -77,7 +77,7 @@ class AprovarManutencaoScreen extends StatelessWidget {
 
   Widget _buildImageSection() {
     if (manutencao.imagemPath != null && manutencao.imagemPath!.isNotEmpty) {
-      final imageUrl = 'http://10.0.1.9:5000/' +
+      final imageUrl = 'https://backend-condoview.onrender.com/' +
           manutencao.imagemPath!.replaceAll(r'\', '/');
       debugPrint('URL da imagem gerada: $imageUrl');
 

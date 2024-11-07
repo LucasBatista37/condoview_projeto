@@ -23,12 +23,8 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
   DateTime? _selectedDateTime;
   XFile? _imageFile;
   String? _selectedType;
-  final List<String> _types = [
-    'Pendente',
-    'Entregue',
-  ];
 
-  void _submit() {
+  void _submit() async {
     if (_titleController.text.isEmpty ||
         _apartmentController.text.isEmpty ||
         _selectedDateTime == null ||
@@ -47,14 +43,30 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
       status: _selectedType ?? 'Pendente',
     );
 
-    Provider.of<EncomendasProvider>(context, listen: false)
-        .addEncomenda(encomenda);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Encomenda adicionada com sucesso!')),
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return const Center(child: CircularProgressIndicator());
+      },
     );
 
-    Navigator.of(context).pop();
+    try {
+      await Provider.of<EncomendasProvider>(context, listen: false)
+          .addEncomenda(encomenda);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Encomenda adicionada com sucesso!')),
+      );
+
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    } catch (error) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao adicionar encomenda.')),
+      );
+    }
   }
 
   @override

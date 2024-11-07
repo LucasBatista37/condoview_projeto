@@ -34,10 +34,9 @@ class EncomendaDetalhesScreen extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Status atualizado para $novoStatus!')),
       );
-      // Voltar para a tela anterior
       Navigator.pop(context);
     } catch (error) {
-      print('Erro ao atualizar status: $error'); // Para rastreamento de erros
+      print('Erro ao atualizar status: $error'); 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao atualizar status: $error')),
       );

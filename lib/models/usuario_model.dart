@@ -3,7 +3,6 @@ class Usuario {
   final String nome;
   final String email;
   final String senha;
-  final String token;
   final String? profileImageUrl;
 
   Usuario({
@@ -11,17 +10,16 @@ class Usuario {
     required this.nome,
     required this.email,
     required this.senha,
-    required this.token,
     this.profileImageUrl,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json) {
+    print('Log: Mapeando dados do usuário no fromJson: $json'); // Log para verificar os dados recebidos
     return Usuario(
       id: json['_id'] ?? '',
       nome: json['nome'] ?? 'Nome não informado',
       email: json['email'] ?? '',
       senha: json['senha'] ?? '',
-      token: json['token'] ?? '',
       profileImageUrl: json['profileImageUrl'],
     );
   }
@@ -32,7 +30,6 @@ class Usuario {
       'nome': nome,
       'email': email,
       'senha': senha,
-      'token': token,
       'profileImageUrl': profileImageUrl,
     };
   }

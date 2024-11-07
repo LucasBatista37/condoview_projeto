@@ -19,8 +19,6 @@ class UsuarioProvider with ChangeNotifier {
   Future<String> createUser(String nome, String email, String senha) async {
     final url = Uri.parse('$_baseUrl/api/users/register');
 
-    print('Tentando criar usuário: nome=$nome, email=$email');
-
     try {
       final response = await http.post(
         url,
@@ -34,37 +32,25 @@ class UsuarioProvider with ChangeNotifier {
 
       if (response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        if (data['_id'] != null) {
-          _userName = nome;
-          _usuario = Usuario.fromJson(data);
-          notifyListeners();
+        _usuario = Usuario.fromJson(data);
+        _token = data['token'];
 
-          if (data['token'] != null) {
-            _token = data['token'];
-            print('Token recebido: $_token');
-            return _token!;
-          } else {
-            throw Exception(
-                'Token não encontrado na resposta: ${response.body}');
-          }
-        } else {
-          throw Exception(
-              'ID do usuário não encontrado na resposta: ${response.body}');
-        }
+        // Chame getCurrentUser para carregar os dados completos do usuário
+        await getCurrentUser();
+
+        notifyListeners();
+
+        return _token!;
       } else {
-        print('Resposta do servidor: ${response.body}');
         throw Exception('Erro ao criar conta: ${response.body}');
       }
     } catch (e) {
-      print('Erro na requisição: $e');
       throw Exception('Erro ao criar conta: $e');
     }
   }
 
   Future<void> login(String email, String senha) async {
     final url = Uri.parse('$_baseUrl/api/users/login');
-
-    print('Tentando autenticar usuário: email=$email, senha=$senha');
 
     try {
       final response = await http.post(
@@ -76,65 +62,102 @@ class UsuarioProvider with ChangeNotifier {
         }),
       );
 
-      print('Status da resposta: ${response.statusCode}');
-      print('Corpo da resposta: ${response.body}');
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        print('Dados do usuário recebidos: $data');
-        _usuario = Usuario.fromJson(data);
-        _token = data['token']; 
-        notifyListeners();
+        _token = data['token'];
 
-        if (_usuario != null) {
-          print('Usuário autenticado com sucesso: ${_usuario!.id}');
-        } else {
-          print('Usuário não autenticado.');
-        }
+        await getCurrentUser();
+
+        notifyListeners();
       } else {
-        print('Erro ao autenticar: ${response.statusCode}');
         throw Exception('Erro ao autenticar: ${response.body}');
       }
     } catch (e) {
-      print('Erro na requisição de login: $e');
       throw Exception('Erro ao autenticar: $e');
     }
   }
 
   Future<void> update(
       {String? nome, String? senha, String? profileImage}) async {
-    final url = Uri.parse('$_baseUrl/api/users/${_usuario?.id}');
-    final requestBody = <String, dynamic>{};
-
-    if (nome != null) {
-      requestBody['nome'] = nome;
+    if (_usuario == null) {
+      throw Exception('Usuário não autenticado. Não é possível atualizar.');
     }
 
-    if (senha != null) {
-      requestBody['senha'] = senha;
+    final url = Uri.parse('$_baseUrl/api/users/update');
+
+    try {
+      var request = http.MultipartRequest('PUT', url);
+      request.headers['Authorization'] = 'Bearer $_token';
+
+      if (nome != null) request.fields['nome'] = nome;
+      if (senha != null) request.fields['senha'] = senha;
+      if (profileImage != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath('profileImage', profileImage),
+        );
+      }
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        _usuario = Usuario.fromJson(data);
+        _userName = _usuario!.nome;
+        _userProfileImage = _usuario!.profileImageUrl ?? '';
+        notifyListeners();
+      } else {
+        throw Exception('Erro ao atualizar usuário: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Erro ao atualizar usuário: $e');
+    }
+  }
+
+  Future<void> getCurrentUser() async {
+    if (_token == null) {
+      throw Exception(
+          'Usuário não autenticado. Não é possível obter os dados.');
     }
 
-    if (profileImage != null) {
-      requestBody['profileImage'] = profileImage;
+    final url = Uri.parse('$_baseUrl/api/users/profile');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $_token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        _usuario = Usuario.fromJson(data);
+        _userName = _usuario!.nome;
+        _userProfileImage = _usuario!.profileImageUrl ?? '';
+        notifyListeners();
+      } else {
+        throw Exception('Erro ao obter dados do usuário: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Erro ao obter dados do usuário: $e');
     }
+  }
 
-    final response = await http.put(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $_token'
-      }, 
-      body: jsonEncode(requestBody),
-    );
+  Future<Usuario?> getUserById(String id) async {
+    final url = Uri.parse('$_baseUrl/api/users/$id');
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      _usuario = Usuario.fromJson(data);
-      _userName = data['nome'] ?? _userName;
-      _userProfileImage = data['profileImage'] ?? _userProfileImage;
-      notifyListeners();
-    } else {
-      throw Exception('Erro ao atualizar usuário: ${response.body}');
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return Usuario.fromJson(data);
+      } else {
+        throw Exception('Erro ao buscar usuário por ID: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Erro ao buscar usuário por ID: $e');
     }
   }
 }

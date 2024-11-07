@@ -87,7 +87,33 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Esqueceu a senha?',
+                        style: TextStyle(color: Color(0xFF1E88E5)),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignupScreen()),
+                        );
+                      },
+                      child: const Text(
+                        'Criar conta',
+                        style: TextStyle(color: Color(0xFF1E88E5)),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () async {
                     final usuarioProvider =
@@ -118,20 +144,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Text(
                     'ENTRAR',
                     style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SignupScreen()),
-                    );
-                  },
-                  child: const Text(
-                    'Criar conta',
-                    style: TextStyle(color: Color.fromARGB(255, 78, 20, 166)),
                   ),
                 ),
               ],

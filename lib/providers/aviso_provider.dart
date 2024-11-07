@@ -12,13 +12,18 @@ class AvisoProvider with ChangeNotifier {
   Future<void> addAviso(Aviso aviso) async {
     final url = Uri.parse('$baseUrl/api/users/admin/notices');
 
+    print('Iniciando o método addAviso com o título: ${aviso.title}');
+
     final requestBody = {
       'title': aviso.title,
       'message': aviso.description,
       'date': DateTime.now().toIso8601String(),
     };
 
+    print('Corpo da requisição: ${json.encode(requestBody)}');
+
     try {
+      print('Enviando solicitação POST para: $url');
       final response = await http.post(
         url,
         headers: {
@@ -26,6 +31,8 @@ class AvisoProvider with ChangeNotifier {
         },
         body: json.encode(requestBody),
       );
+
+      print('Resposta recebida: ${response.statusCode} - ${response.body}');
 
       if (response.statusCode == 201) {
         print('Aviso adicionado com sucesso: ${response.body}');

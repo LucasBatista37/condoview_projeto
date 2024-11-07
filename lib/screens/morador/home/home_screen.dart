@@ -11,7 +11,6 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -24,6 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final usuarioProvider = Provider.of<UsuarioProvider>(context);
     final userName = usuarioProvider.userName;
     final userProfileImage = usuarioProvider.userProfileImage;
+
+    print('Log: Nome do usuário na HomeScreen: $userName');
+    print('Log: URL da imagem de perfil do usuário: $userProfileImage');
 
     return Scaffold(
       key: _scaffoldKey,
@@ -39,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: CircleAvatar(
               backgroundColor: Colors.transparent,
               radius: 24,
-              child: userProfileImage == null || userProfileImage.isEmpty
+              child: userProfileImage.isEmpty
                   ? CircleAvatar(
                       radius: 30,
                       backgroundColor: Colors.grey.shade300,
@@ -53,7 +55,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     )
                   : CircleAvatar(
                       radius: 24,
-                      backgroundImage: FileImage(File(userProfileImage)),
+                      backgroundImage: NetworkImage(userProfileImage),
+                      onBackgroundImageError: (_, __) => CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.grey.shade300,
+                        child: Text(
+                          userName.isNotEmpty ? userName[0].toUpperCase() : '',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
                     ),
             ),
           ),
@@ -62,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              userName,
+              userName.isNotEmpty ? userName : 'Usuário',
               style: const TextStyle(
                 fontSize: 18,
                 color: Colors.white,

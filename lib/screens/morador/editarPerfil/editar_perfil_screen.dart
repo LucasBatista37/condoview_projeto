@@ -21,7 +21,8 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
   @override
   void initState() {
     super.initState();
-    final usuarioProvider = Provider.of<UsuarioProvider>(context, listen: false);
+    final usuarioProvider =
+        Provider.of<UsuarioProvider>(context, listen: false);
     _nomeController.text = usuarioProvider.userName;
     _emailController.text = usuarioProvider.usuario?.email ?? '';
   }
@@ -142,13 +143,11 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
     final usuarioProvider =
         Provider.of<UsuarioProvider>(context, listen: false);
 
-    String? profileImagePath = _profileImage?.path;
-    
     try {
       await usuarioProvider.update(
         nome: _nomeController.text,
-        senha: usuarioProvider.usuario?.senha, 
-        profileImage: profileImagePath,
+        profileImage:
+            _profileImage?.path, 
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -157,10 +156,8 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
         ),
       );
 
-      // Pop the screen to go back to the previous screen
       Navigator.pop(context);
     } catch (error) {
-      // Handle the error here (exibir mensagem de erro)
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao atualizar perfil: $error'),

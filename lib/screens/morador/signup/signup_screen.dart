@@ -1,4 +1,5 @@
 import 'package:condoview/screens/administrador/createCondo/create_condo_screen.dart';
+import 'package:condoview/screens/morador/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/usuario_provider.dart';
@@ -8,21 +9,21 @@ class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _SignupScreenState createState() => _SignupScreenState();
 }
 
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _senhaConfirmacaoController =
       TextEditingController();
 
   String _nome = '';
-  String _email = '';
 
   @override
   void dispose() {
+    _emailController.dispose();
     _senhaController.dispose();
     _senhaConfirmacaoController.dispose();
     super.dispose();
@@ -82,6 +83,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    controller: _emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
                       hintText: 'Insira seu email',
@@ -96,7 +98,6 @@ class _SignupScreenState extends State<SignupScreen> {
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
-                    onSaved: (value) => _email = value?.trim() ?? '',
                     validator: (value) {
                       if (value == null ||
                           !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
@@ -158,19 +159,36 @@ class _SignupScreenState extends State<SignupScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Já possui conta? Entrar',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 78, 20, 166),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState?.validate() ?? false) {
                         _formKey.currentState?.save();
-
                         final usuarioProvider = Provider.of<UsuarioProvider>(
                             context,
                             listen: false);
                         try {
-                          await usuarioProvider.createUser(
-                              _nome, _email, _senhaController.text);
-
+                          await usuarioProvider.createUser(_nome,
+                              _emailController.text, _senhaController.text);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
@@ -197,7 +215,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  const SizedBox(height: 16), // Espaço entre os botões
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(

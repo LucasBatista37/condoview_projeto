@@ -59,7 +59,7 @@ class VisualizarOcorrenciaScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Builder(builder: (context) {
-                final imageUrl = 'http://10.0.1.9:5000/' +
+                final imageUrl = 'https://backend-condoview.onrender.com/' +
                     ocorrencia.imagemPath!.replaceAll(r'\', '/');
                 debugPrint('Caminho da imagem: $imageUrl');
 

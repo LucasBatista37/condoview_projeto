@@ -11,30 +11,46 @@ class EncomendasProvider with ChangeNotifier {
 
   Future<void> addEncomenda(Encomenda encomenda) async {
     final url = Uri.parse('$_baseUrl/api/users/package');
-    final requestBody = encomenda.toJson();
 
-    print('Request body enviado: $requestBody');
+    print('Iniciando o envio da encomenda: ${encomenda.toJson()}');
 
     try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode(requestBody),
-      );
+      var request = http.MultipartRequest('POST', url);
+
+      request.fields['title'] = encomenda.title;
+      request.fields['apartment'] = encomenda.apartment;
+      request.fields['time'] = encomenda.time;
+      request.fields['status'] =
+          encomenda.status.isNotEmpty ? encomenda.status : 'Pendente';
+
+      print('Campos adicionados à requisição: ${request.fields}');
+
+      if (encomenda.imagePath.isNotEmpty) {
+        print('Anexando imagem do caminho: ${encomenda.imagePath}');
+        request.files.add(await http.MultipartFile.fromPath(
+          'imagePath',
+          encomenda.imagePath,
+        ));
+      } else {
+        print('Nenhuma imagem a ser anexada.');
+      }
+
+      var response = await request.send();
+      print('Resposta recebida: ${response.statusCode}');
 
       if (response.statusCode == 201) {
-        final responseData = json.decode(response.body);
-        print('Resposta do backend: $responseData'); 
+        final responseData = await response.stream.bytesToString();
+        print('Resposta do backend: $responseData');
 
-        final newEncomenda = Encomenda.fromJson(responseData['newPackage']);
+        final newEncomenda =
+            Encomenda.fromJson(json.decode(responseData)['newPackage']);
         print('Encomenda adicionada com sucesso: ${newEncomenda.id}');
         _encomendas.add(newEncomenda);
         notifyListeners();
       } else {
         print(
-            'Falha ao adicionar encomenda. Código: ${response.statusCode}, Resposta: ${response.body}');
+            'Falha ao adicionar encomenda. Código: ${response.statusCode}, Resposta: ${response.reasonPhrase}');
+        throw Exception('Erro ao adicionar encomenda');
       }
     } catch (error) {
       print('Erro ao adicionar encomenda: $error');

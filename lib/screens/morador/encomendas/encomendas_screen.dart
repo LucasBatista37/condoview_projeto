@@ -18,22 +18,35 @@ class EncomendasScreen extends StatelessWidget {
         title: const Text('Encomendas'),
         centerTitle: true,
       ),
-      body: Consumer<EncomendasProvider>(
-        builder: (context, encomendasProvider, child) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: encomendasProvider.encomendas.isEmpty
-                ? const CustomEmpty(
-                    text: "Nenhuma encomenda registrada.",
-                  )
-                : ListView.builder(
-                    itemCount: encomendasProvider.encomendas.length,
-                    itemBuilder: (context, index) {
-                      final encomenda = encomendasProvider.encomendas[index];
-                      return _buildEncomendaItem(context, encomenda);
-                    },
-                  ),
-          );
+      body: FutureBuilder(
+        future: Provider.of<EncomendasProvider>(context, listen: false)
+            .fetchEncomendas(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Erro ao carregar encomendas.'));
+          } else {
+            return Consumer<EncomendasProvider>(
+              builder: (context, encomendasProvider, child) {
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: encomendasProvider.encomendas.isEmpty
+                      ? const CustomEmpty(
+                          text: "Nenhuma encomenda registrada.",
+                        )
+                      : ListView.builder(
+                          itemCount: encomendasProvider.encomendas.length,
+                          itemBuilder: (context, index) {
+                            final encomenda =
+                                encomendasProvider.encomendas[index];
+                            return _buildEncomendaItem(context, encomenda);
+                          },
+                        ),
+                );
+              },
+            );
+          }
         },
       ),
     );
@@ -47,14 +60,27 @@ class EncomendasScreen extends StatelessWidget {
       child: ListTile(
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
-          // ignore: unnecessary_null_comparison
-          child: encomenda.imagePath != null
-              ? Image.file(
-                  File(encomenda.imagePath),
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                )
+          child: encomenda.imagePath != null && encomenda.imagePath.isNotEmpty
+              ? Builder(builder: (context) {
+                  final imageUrl = 'https://backend-condoview.onrender.com/' +
+                      encomenda.imagePath.replaceAll(r'\', '/');
+                  debugPrint('Caminho da imagem: $imageUrl');
+
+                  return Image.network(
+                    imageUrl,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      debugPrint('Erro ao carregar a imagem: $error');
+                      return const Icon(
+                        Icons.broken_image,
+                        size: 50,
+                        color: Colors.red,
+                      );
+                    },
+                  );
+                })
               : const Icon(
                   Icons.image,
                   size: 50,
@@ -71,8 +97,9 @@ class EncomendasScreen extends StatelessWidget {
             Text(
               encomenda.status,
               style: TextStyle(
-                color:
-                    encomenda.status == 'Entregue' ? Colors.green : Colors.orange,
+                color: encomenda.status == 'Entregue'
+                    ? Colors.green
+                    : Colors.orange,
                 fontWeight: FontWeight.bold,
               ),
             ),

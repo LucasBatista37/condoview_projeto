@@ -34,9 +34,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => EncomendasProvider()),
         ChangeNotifierProvider(create: (context) => AssembleiaProvider()),
         ChangeNotifierProvider(create: (context) => ChatProvider()),
-        ChangeNotifierProvider(
-            create: (context) =>
-                CondoProvider()),
+        ChangeNotifierProvider(create: (context) => CondoProvider()),
         Provider(create: (context) => SecureStorageService()),
       ],
       child: const MyApp(),
@@ -54,6 +52,7 @@ class MyApp extends StatelessWidget {
         final isAuthenticated = usuarioProvider.usuario != null;
 
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'CondoView',
           theme: ThemeData(
             primarySwatch: Colors.deepPurple,
@@ -67,8 +66,7 @@ class MyApp extends StatelessWidget {
             '/signup': (context) => const SignupScreen(),
             '/conversas': (context) => const ConversationsScreen(),
             '/condominio': (context) => const CondominioScreen(),
-            '/create_condo': (context) =>
-                const CreateCondoScreen(), 
+            '/create_condo': (context) => const CreateCondoScreen(),
             '/chat_geral': (context) => const ChatGeralScreen(),
           },
         );

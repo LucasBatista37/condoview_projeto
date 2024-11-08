@@ -4,6 +4,8 @@ class Usuario {
   final String email;
   final String senha;
   final String? profileImageUrl;
+  final String? telefone; 
+  final String? apartamento; 
 
   Usuario({
     required this.id,
@@ -11,16 +13,20 @@ class Usuario {
     required this.email,
     required this.senha,
     this.profileImageUrl,
+    this.telefone, 
+    this.apartamento, 
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json) {
-    print('Log: Mapeando dados do usuário no fromJson: $json'); // Log para verificar os dados recebidos
+    print('Log: Mapeando dados do usuário no fromJson: $json');
     return Usuario(
       id: json['_id'] ?? '',
       nome: json['nome'] ?? 'Nome não informado',
       email: json['email'] ?? '',
       senha: json['senha'] ?? '',
-      profileImageUrl: json['profileImageUrl'],
+      profileImageUrl: json['profileImage'],
+      telefone: json['telefone'],
+      apartamento: json['apartamento'], 
     );
   }
 
@@ -31,6 +37,8 @@ class Usuario {
       'email': email,
       'senha': senha,
       'profileImageUrl': profileImageUrl,
+      'telefone': telefone,
+      'apartamento': apartamento, 
     };
   }
 }

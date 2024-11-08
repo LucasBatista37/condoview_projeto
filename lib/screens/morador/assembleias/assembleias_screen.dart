@@ -5,8 +5,20 @@ import '../../../models/assembleia_model.dart';
 import '../../../providers/assembleia_provider.dart';
 import 'votar_screen.dart';
 
-class AssembleiasScreen extends StatelessWidget {
+class AssembleiasScreen extends StatefulWidget {
   const AssembleiasScreen({super.key});
+
+  @override
+  _AssembleiasScreenState createState() => _AssembleiasScreenState();
+}
+
+class _AssembleiasScreenState extends State<AssembleiasScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Chama a função fetchAssembleias para carregar as assembleias
+    Provider.of<AssembleiaProvider>(context, listen: false).fetchAssembleias();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +133,7 @@ class AssembleiasScreen extends StatelessWidget {
   Widget _buildPautasList(BuildContext context, List<Pauta> pautas) {
     if (pautas.isEmpty) {
       return const CustomEmpty(
-        text: "Nenhuma assembleias disponível.",
+        text: "Nenhuma assembleia disponível.",
       );
     }
 

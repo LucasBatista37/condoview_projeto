@@ -47,7 +47,6 @@ class AvisosDetalhesMoradorScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Removido o bloco de exibição da imageUrl
                 Icon(
                   aviso.icon,
                   size: 40,

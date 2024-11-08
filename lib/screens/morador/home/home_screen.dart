@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/components/custom_bottom_navigation_bar.dart';
@@ -25,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final userProfileImage = usuarioProvider.userProfileImage;
 
     print('Log: Nome do usuário na HomeScreen: $userName');
-    print('Log: URL da imagem de perfil do usuário: $userProfileImage');
+    print('Log: URL da imagem de perfil na HomeScreen: $userProfileImage');
 
     return Scaffold(
       key: _scaffoldKey,
@@ -56,17 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   : CircleAvatar(
                       radius: 24,
                       backgroundImage: NetworkImage(userProfileImage),
-                      onBackgroundImageError: (_, __) => CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.grey.shade300,
-                        child: Text(
-                          userName.isNotEmpty ? userName[0].toUpperCase() : '',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
+                      onBackgroundImageError: (_, __) {
+                        print('Log: Erro ao carregar imagem de perfil');
+                      },
                     ),
             ),
           ),

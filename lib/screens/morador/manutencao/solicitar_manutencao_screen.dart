@@ -33,7 +33,6 @@ class _SolicitarManutencaoScreenState extends State<SolicitarManutencaoScreen> {
   ];
 
   void _submit() {
-    // Log para verificar os dados antes de enviar
     debugPrint('Tipo selecionado: $_selectedType');
     debugPrint('Data selecionada: $_selectedDate');
     debugPrint('Descrição: ${_descriptionController.text}');

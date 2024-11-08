@@ -4,8 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/aviso_provider.dart';
 
-class AvisosScreen extends StatelessWidget {
+class AvisosScreen extends StatefulWidget {
   const AvisosScreen({super.key});
+
+  @override
+  _AvisosScreenState createState() => _AvisosScreenState();
+}
+
+class _AvisosScreenState extends State<AvisosScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<AvisoProvider>(context, listen: false).fetchAvisos();
+  }
 
   @override
   Widget build(BuildContext context) {

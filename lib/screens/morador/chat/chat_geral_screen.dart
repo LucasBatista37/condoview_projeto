@@ -1,5 +1,9 @@
 import 'dart:io';
+import 'package:condoview/models/chat_message.dart';
+import 'package:condoview/providers/chat_provider.dart';
+import 'package:condoview/providers/usuario_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -8,7 +12,6 @@ class ChatGeralScreen extends StatefulWidget {
   const ChatGeralScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ChatGeralScreenState createState() => _ChatGeralScreenState();
 }
 
@@ -16,11 +19,29 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   File? _image;
-  final List<Widget> _messages = [];
   String? _fileName;
 
   @override
+  void initState() {
+    super.initState();
+    _loadMessages();
+  }
+
+  Future<void> _loadMessages() async {
+    await Provider.of<ChatProvider>(context, listen: false).fetchMessages();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final chatProvider = Provider.of<ChatProvider>(context);
+    final usuarioProvider =
+        Provider.of<UsuarioProvider>(context, listen: false);
+    final messages = chatProvider.messages;
+
+    // Recuperando o userId e o currentName
+    final userId = usuarioProvider.userId;
+    final currentName = usuarioProvider.currentName;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 78, 20, 166),
@@ -47,9 +68,46 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  itemCount: _messages.length,
+                  itemCount: messages.length,
                   itemBuilder: (context, index) {
-                    return _messages[index];
+                    final message = messages[index];
+                    return Align(
+                      alignment: message.userId == userId
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: message.userId == userId
+                              ? Colors.deepPurple.shade200
+                              : Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (message.imageUrl != null)
+                              Image.network(message.imageUrl!),
+                            if (message.fileUrl != null)
+                              Row(
+                                children: [
+                                  const Icon(Icons.attach_file, size: 20),
+                                  const SizedBox(width: 4),
+                                  Text('Arquivo: ${message.fileUrl}'),
+                                ],
+                              ),
+                            Text(message.message),
+                            const SizedBox(height: 4),
+                            Text(
+                              message.userName,
+                              style: TextStyle(
+                                  fontSize: 12, color: Colors.grey.shade600),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   },
                 ),
               ),
@@ -79,7 +137,7 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
                     const SizedBox(width: 8),
                     IconButton(
                       icon: const Icon(Icons.send),
-                      onPressed: _sendMessage,
+                      onPressed: () => _sendMessage(userId, currentName),
                     ),
                   ],
                 ),
@@ -97,22 +155,24 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (_image != null) ...[
+                    if (_image != null)
                       Image.file(
                         _image!,
                         height: 200,
                         width: double.infinity,
                         fit: BoxFit.cover,
                       ),
-                    ] else if (_fileName != null) ...[
-                      const Icon(Icons.attach_file,
-                          color: Colors.white, size: 40),
-                      Text(
-                        'Arquivo selecionado: $_fileName',
-                        style: const TextStyle(color: Colors.white),
+                    if (_fileName != null)
+                      Row(
+                        children: [
+                          const Icon(Icons.attach_file, color: Colors.white),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Arquivo: $_fileName',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ],
                       ),
-                    ],
-                    const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
@@ -136,10 +196,8 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
 
   Future<void> _pickImageFromCamera() async {
     final status = await Permission.camera.request();
-
     if (status.isGranted) {
       final pickedFile = await _picker.pickImage(source: ImageSource.camera);
-
       if (pickedFile != null) {
         setState(() {
           _image = File(pickedFile.path);
@@ -147,7 +205,6 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
         });
       }
     } else {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Permissão para acessar a câmera negada')),
       );
@@ -156,62 +213,39 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
 
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles();
-
     if (result != null) {
       setState(() {
         _image = null;
         _fileName = result.files.single.name;
       });
     } else {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Nenhum arquivo selecionado')),
       );
     }
   }
 
-  void _sendMessage() {
+  Future<void> _sendMessage(String userId, String userName) async {
     final message = _messageController.text.trim();
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
 
-    if (message.isNotEmpty || _image != null || _fileName != null) {
+    try {
+      await chatProvider.sendMessage(
+        message,
+        _image?.path,
+        _fileName,
+        userId,
+        userName,
+      );
+      _messageController.clear();
       setState(() {
-        _messages.add(
-          Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.deepPurple.shade200,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  if (_image != null) ...[
-                    Image.file(_image!),
-                    const SizedBox(height: 8),
-                  ],
-                  if (_fileName != null) ...[
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.attach_file, size: 20),
-                        const SizedBox(width: 4),
-                        Text('$_fileName'),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                  if (message.isNotEmpty) Text(message),
-                ],
-              ),
-            ),
-          ),
-        );
-        _messageController.clear();
         _image = null;
         _fileName = null;
       });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao enviar mensagem: $error')),
+      );
     }
   }
 }

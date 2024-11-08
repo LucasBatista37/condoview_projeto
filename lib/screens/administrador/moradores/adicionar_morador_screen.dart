@@ -17,6 +17,7 @@ class _AdicionarMoradorScreenState extends State<AdicionarMoradorScreen> {
   final List<String> _funcionalidadeAdicionada = [
     'Morador',
     'Síndico',
+    'Zelador',
   ];
 
   String? _selectedFuncionalidade;

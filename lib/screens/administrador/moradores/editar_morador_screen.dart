@@ -1,14 +1,13 @@
 import 'package:condoview/components/custom_button.dart';
+import 'package:condoview/models/usuario_model.dart';
 import 'package:flutter/material.dart';
-import 'lista_moradores_screen.dart';
 
 class EditarMoradorScreen extends StatefulWidget {
-  final Morador morador;
+  final Usuario morador;
 
   const EditarMoradorScreen({super.key, required this.morador});
 
   @override
-  // ignore: library_private_types_in_public_api
   _EditarMoradorScreenState createState() => _EditarMoradorScreenState();
 }
 
@@ -22,16 +21,18 @@ class _EditarMoradorScreenState extends State<EditarMoradorScreen> {
   void initState() {
     super.initState();
     _nomeController.text = widget.morador.nome;
-    _apartamentoController.text = widget.morador.apartamento;
+    _apartamentoController.text = widget.morador.apartamento!;
     _emailController.text = widget.morador.email;
-    _telefoneController.text = widget.morador.telefone;
+    _telefoneController.text = widget.morador.telefone!;
   }
 
   void _submit() {
-    final updatedMorador = Morador(
+    final updatedMorador = Usuario(
+      id: 'id_padrão',
       nome: _nomeController.text,
-      apartamento: _apartamentoController.text,
       email: _emailController.text,
+      senha: 'senha_padrão',
+      apartamento: _apartamentoController.text,
       telefone: _telefoneController.text,
     );
     Navigator.pop(context, updatedMorador);

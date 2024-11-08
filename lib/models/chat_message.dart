@@ -19,7 +19,7 @@ class ChatMessage {
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
     return ChatMessage(
-      id: json['_id'],
+      id: json['_id'], 
       userId: json['userId'],
       userName: json['userName'],
       message: json['message'] ?? '',

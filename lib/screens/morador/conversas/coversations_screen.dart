@@ -1,7 +1,10 @@
 // screens/conversations_screen.dart
+import 'package:condoview/models/usuario_model.dart';
+import 'package:condoview/providers/usuario_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:condoview/screens/morador/conversas/chat_screen.dart';
 import 'package:condoview/components/custom_bottom_navigation_bar.dart';
+import 'package:provider/provider.dart';
 
 class ConversationsScreen extends StatefulWidget {
   const ConversationsScreen({super.key});
@@ -13,15 +16,31 @@ class ConversationsScreen extends StatefulWidget {
 
 class _ConversationsScreenState extends State<ConversationsScreen> {
   int _currentIndex = 3;
+  List<Usuario> _usuarios = [];
+  bool _isLoading = true;
 
-  // Lista de nomes fictícios
-  final List<String> _names = [
-    'Pedro Lopes',
-    'Nicholas',
-    'Adryan Alexander',
-    'Lucas',
-    'Edkarllos'
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchUsuarios();
+  }
+
+  Future<void> _fetchUsuarios() async {
+    try {
+      final usuarioProvider =
+          Provider.of<UsuarioProvider>(context, listen: false);
+      List<Usuario> usuarios = await usuarioProvider.getAllUsers();
+      setState(() {
+        _usuarios = usuarios;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      print('Erro ao buscar usuários: $e');
+    }
+  }
 
   void _onTap(int index) {
     setState(() {
@@ -64,126 +83,130 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
                 children: [
-                  Text(
-                    'Meus Vizinhos',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black.withOpacity(0.7),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: _names.map((name) {
-                  final firstLetter =
-                      name.isNotEmpty ? name[0].toUpperCase() : '';
-
-                  return Container(
-                    margin: const EdgeInsets.only(right: 16.0),
-                    child: Column(
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.grey.shade300,
-                          child: Text(
-                            firstLetter,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
                         Text(
-                          name,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600),
+                          'Meus Vizinhos',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black.withOpacity(0.7),
+                          ),
                         ),
                       ],
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Últimas Conversas',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black.withOpacity(0.7),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: _usuarios.map((usuario) {
+                        final firstLetter = usuario.nome.isNotEmpty
+                            ? usuario.nome[0].toUpperCase()
+                            : '';
+
+                        return Container(
+                          margin: const EdgeInsets.only(right: 16.0),
+                          child: Column(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.grey.shade300,
+                                child: Text(
+                                  firstLetter,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                usuario.nome,
+                                style: const TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _names.length,
-                    itemBuilder: (context, index) {
-                      final name = _names[index];
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.grey.shade300,
-                          child: Text(
-                            name[0].toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Últimas Conversas',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black.withOpacity(0.7),
                           ),
                         ),
-                        title: Text(
-                          name,
-                        ),
-                        subtitle: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Última mensagem...',
-                                style: TextStyle(color: Colors.grey.shade600),
+                        const SizedBox(height: 8),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: _usuarios.length,
+                          itemBuilder: (context, index) {
+                            final usuario = _usuarios[index];
+                            return ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.grey.shade300,
+                                child: Text(
+                                  usuario.nome[0].toUpperCase(),
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
                               ),
-                            ),
-                            Text(
-                              '12:00 PM',
-                              style: TextStyle(
-                                  color: Colors.grey.shade500, fontSize: 12),
-                            ),
-                          ],
+                              title: Text(usuario.nome),
+                              subtitle: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Última mensagem...',
+                                      style: TextStyle(
+                                          color: Colors.grey.shade600),
+                                    ),
+                                  ),
+                                  Text(
+                                    '12:00 PM',
+                                    style: TextStyle(
+                                        color: Colors.grey.shade500,
+                                        fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ChatScreen(name: usuario.nome),
+                                  ),
+                                );
+                              },
+                            );
+                          },
                         ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatScreen(name: name),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTap,

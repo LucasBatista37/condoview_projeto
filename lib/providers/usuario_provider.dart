@@ -35,7 +35,6 @@ class UsuarioProvider with ChangeNotifier {
         _usuario = Usuario.fromJson(data);
         _token = data['token'];
 
-        // Chame getCurrentUser para carregar os dados completos do usuário
         await getCurrentUser();
 
         notifyListeners();
@@ -77,8 +76,11 @@ class UsuarioProvider with ChangeNotifier {
     }
   }
 
-  Future<void> update(
-      {String? nome, String? senha, String? profileImage}) async {
+  Future<void> update({
+    String? nome,
+    String? senha,
+    String? profileImage,
+  }) async {
     if (_usuario == null) {
       throw Exception('Usuário não autenticado. Não é possível atualizar.');
     }
@@ -92,24 +94,42 @@ class UsuarioProvider with ChangeNotifier {
       if (nome != null) request.fields['nome'] = nome;
       if (senha != null) request.fields['senha'] = senha;
       if (profileImage != null) {
+        print('Log: Adicionando imagem de perfil ao request');
         request.files.add(
           await http.MultipartFile.fromPath('profileImage', profileImage),
         );
       }
 
+      print('Log: Enviando request para atualização de usuário');
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
+
+      print('Log: Status Code da resposta: ${response.statusCode}');
+      print('Log: Corpo da resposta: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         _usuario = Usuario.fromJson(data);
         _userName = _usuario!.nome;
-        _userProfileImage = _usuario!.profileImageUrl ?? '';
+
+        if (_usuario!.profileImageUrl != null &&
+            _usuario!.profileImageUrl!.isNotEmpty) {
+          _userProfileImage =
+              '$_baseUrl/uploads/users/${_usuario!.profileImageUrl}';
+        } else {
+          _userProfileImage = '';
+        }
+
+        print(
+            'Log: Atualização bem-sucedida - Nome: $_userName, Imagem: $_userProfileImage');
         notifyListeners();
       } else {
+        print(
+            'Log: Erro ao atualizar usuário - Status: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Erro ao atualizar usuário: ${response.body}');
       }
     } catch (e) {
+      print('Log: Exceção ao atualizar usuário: $e');
       throw Exception('Erro ao atualizar usuário: $e');
     }
   }
@@ -134,7 +154,15 @@ class UsuarioProvider with ChangeNotifier {
         final data = jsonDecode(response.body);
         _usuario = Usuario.fromJson(data);
         _userName = _usuario!.nome;
-        _userProfileImage = _usuario!.profileImageUrl ?? '';
+
+        if (_usuario!.profileImageUrl != null &&
+            _usuario!.profileImageUrl!.isNotEmpty) {
+          _userProfileImage =
+              '$_baseUrl/uploads/users/${_usuario!.profileImageUrl}';
+        } else {
+          _userProfileImage = '';
+        }
+
         notifyListeners();
       } else {
         throw Exception('Erro ao obter dados do usuário: ${response.body}');
@@ -160,4 +188,50 @@ class UsuarioProvider with ChangeNotifier {
       throw Exception('Erro ao buscar usuário por ID: $e');
     }
   }
+
+  Future<List<Usuario>> getAllUsers() async {
+    final url = Uri.parse('$_baseUrl/api/users/admin/all');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $_token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        List<Usuario> users =
+            data.map((json) => Usuario.fromJson(json)).toList();
+        return users;
+      } else {
+        throw Exception('Erro ao buscar todos os usuários: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Erro ao buscar todos os usuários: $e');
+    }
+  }
+
+  Future<void> deleteUser(String id) async {
+    final url = Uri.parse('$_baseUrl/api/users/admin/$id');
+
+    try {
+      final response = await http.delete(
+        url,
+        headers: {
+          'Authorization': 'Bearer $_token',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Erro ao excluir o usuário: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Erro ao excluir o usuário: $e');
+    }
+  }
+
+  String get userId => _usuario?.id ?? '';
+  String get currentName => _usuario?.nome ?? 'Usuário';
 }

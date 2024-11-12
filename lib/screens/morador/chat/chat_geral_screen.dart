@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:condoview/models/chat_message.dart';
 import 'package:condoview/providers/chat_provider.dart';
 import 'package:condoview/providers/usuario_provider.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +27,17 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
   }
 
   Future<void> _loadMessages() async {
-    await Provider.of<ChatProvider>(context, listen: false).fetchMessages();
+    try {
+      print("Tentando carregar mensagens...");
+      await Provider.of<ChatProvider>(context, listen: false)
+          .fetchMessages(context);
+      print("Mensagens carregadas com sucesso.");
+    } catch (error) {
+      print("Erro ao carregar mensagens: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao carregar mensagens: $error')),
+      );
+    }
   }
 
   @override
@@ -38,9 +47,10 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
         Provider.of<UsuarioProvider>(context, listen: false);
     final messages = chatProvider.messages;
 
-    // Recuperando o userId e o currentName
     final userId = usuarioProvider.userId;
     final currentName = usuarioProvider.currentName;
+
+    print("Usuário atual: ID = $userId, Nome = $currentName");
 
     return Scaffold(
       appBar: AppBar(
@@ -229,20 +239,30 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
     final message = _messageController.text.trim();
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
 
+    print("Enviando mensagem...");
+    print("userId: $userId");
+    print("userName: $userName");
+    print("message: $message");
+    print("imagePath: ${_image?.path}");
+    print("fileName: $_fileName");
+
     try {
       await chatProvider.sendMessage(
+        context,
         message,
         _image?.path,
         _fileName,
         userId,
         userName,
       );
+      print("Mensagem enviada com sucesso.");
       _messageController.clear();
       setState(() {
         _image = null;
         _fileName = null;
       });
     } catch (error) {
+      print("Erro ao enviar mensagem: $error");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao enviar mensagem: $error')),
       );

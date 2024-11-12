@@ -19,13 +19,15 @@ class ChatMessage {
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
     return ChatMessage(
-      id: json['_id'], 
-      userId: json['userId'],
-      userName: json['userName'],
+      id: json['_id'] ?? '',
+      userId: json['userId'] ?? '',
+      userName: json['userName'] ?? 'Usuário desconhecido',
       message: json['message'] ?? '',
-      imageUrl: json['imageUrl'],
-      fileUrl: json['fileUrl'],
-      timestamp: DateTime.parse(json['createdAt']),
+      imageUrl: json['imageUrl'] as String?,
+      fileUrl: json['fileUrl'] as String?,
+      timestamp: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(), 
     );
   }
 }

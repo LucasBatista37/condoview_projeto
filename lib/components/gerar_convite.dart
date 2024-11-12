@@ -112,7 +112,9 @@ class _GerarConviteState extends State<GerarConvite> {
         final qrCode = qrValidationResult.qrCode!;
         final qrPainter = QrPainter.withQr(
           qr: qrCode,
+          // ignore: deprecated_member_use
           color: const Color(0xFF000000),
+          // ignore: deprecated_member_use
           emptyColor: const Color(0xFFFFFFFF),
         );
 

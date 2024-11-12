@@ -2,6 +2,7 @@ import 'package:condoview/models/usuario_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UsuarioProvider with ChangeNotifier {
   final String _baseUrl = 'https://backend-condoview.onrender.com';
@@ -15,6 +16,31 @@ class UsuarioProvider with ChangeNotifier {
   String get userProfileImage => _userProfileImage;
   Usuario? get usuario => _usuario;
   String? get token => _token;
+
+  UsuarioProvider() {
+    _loadTokenFromStorage();
+  }
+
+  Future<void> _loadTokenFromStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString('authToken');
+    if (_token != null) {
+      print("Log: Token carregado do armazenamento: $_token");
+      await getCurrentUser();
+    }
+  }
+
+  Future<void> _saveTokenToStorage(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('authToken', token);
+    print("Log: Token salvo no armazenamento: $token");
+  }
+
+  Future<void> _removeTokenFromStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('authToken');
+    print("Log: Token removido do armazenamento.");
+  }
 
   Future<String> createUser(String nome, String email, String senha) async {
     final url = Uri.parse('$_baseUrl/api/users/register');
@@ -35,8 +61,10 @@ class UsuarioProvider with ChangeNotifier {
         _usuario = Usuario.fromJson(data);
         _token = data['token'];
 
-        await getCurrentUser();
+        print("Log: Token definido após o registro: $_token");
+        await _saveTokenToStorage(_token!);
 
+        await getCurrentUser();
         notifyListeners();
 
         return _token!;
@@ -65,14 +93,26 @@ class UsuarioProvider with ChangeNotifier {
         final data = jsonDecode(response.body);
         _token = data['token'];
 
-        await getCurrentUser();
+        print("Log: Token definido após o login: $_token");
+        await _saveTokenToStorage(_token!);
 
+        await getCurrentUser();
         notifyListeners();
       } else {
         throw Exception('Erro ao autenticar: ${response.body}');
       }
     } catch (e) {
       throw Exception('Erro ao autenticar: $e');
+    }
+  }
+
+  Future<String> getToken() async {
+    if (_token != null) {
+      print("Log: Token encontrado: $_token");
+      return _token!;
+    } else {
+      print("Log: Token não encontrado. O usuário não está autenticado.");
+      throw Exception("Token não encontrado. O usuário não está autenticado.");
     }
   }
 
@@ -136,6 +176,7 @@ class UsuarioProvider with ChangeNotifier {
 
   Future<void> getCurrentUser() async {
     if (_token == null) {
+      print("Log: Tentativa de obter dados do usuário sem token.");
       throw Exception(
           'Usuário não autenticado. Não é possível obter os dados.');
     }

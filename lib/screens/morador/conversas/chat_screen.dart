@@ -23,6 +23,7 @@ class _ChatScreenState extends State<ChatScreen> {
   File? _image;
   String? _fileName;
   List<ChatMessage> _messages = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -46,11 +47,15 @@ class _ChatScreenState extends State<ChatScreen> {
                   fileName: messageModel.fileName,
                 ))
             .toList();
+        _isLoading = false;
       });
 
       print("Log: Mensagens carregadas e exibidas na UI");
     } catch (error) {
       print("Log: Erro ao buscar mensagens: $error");
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -147,140 +152,142 @@ class _ChatScreenState extends State<ChatScreen> {
         title: Text(widget.name),
         centerTitle: true,
       ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _messages.length,
-                  itemBuilder: (context, index) {
-                    final message = _messages[index];
-                    return Align(
-                      alignment: message.isMe
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: Container(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Stack(
+              children: [
+                Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: message.isMe
-                              ? Colors.deepPurple.shade200
-                              : Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            if (message.image != null) ...[
-                              Image.file(
-                                message.image!,
-                                height: 200,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (message.fileName != null) ...[
-                              const Icon(Icons.attach_file, size: 40),
-                              Text(
-                                'Arquivo selecionado: ${message.fileName}',
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            Text(
-                              message.text,
-                              style: TextStyle(
+                        itemCount: _messages.length,
+                        itemBuilder: (context, index) {
+                          final message = _messages[index];
+                          return Align(
+                            alignment: message.isMe
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
                                 color: message.isMe
-                                    ? const Color.fromARGB(255, 0, 0, 0)
-                                    : Colors.black,
+                                    ? Colors.deepPurple.shade200
+                                    : Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  if (message.image != null) ...[
+                                    Image.file(
+                                      message.image!,
+                                      height: 200,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    const SizedBox(height: 8),
+                                  ],
+                                  if (message.fileName != null) ...[
+                                    const Icon(Icons.attach_file, size: 40),
+                                    Text(
+                                      'Arquivo selecionado: ${message.fileName}',
+                                    ),
+                                    const SizedBox(height: 8),
+                                  ],
+                                  Text(
+                                    message.text,
+                                    style: TextStyle(
+                                      color: message.isMe
+                                          ? const Color.fromARGB(255, 0, 0, 0)
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.camera_alt),
-                      onPressed: _pickImageFromCamera,
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.attach_file),
-                      onPressed: _pickFile,
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: _messageController,
-                        decoration: InputDecoration(
-                          hintText: 'Mensagem',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: _sendMessage,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          if (_image != null || _fileName != null)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 80,
-              child: Container(
-                color: Colors.black.withOpacity(0.5),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_image != null) ...[
-                      Image.file(
-                        _image!,
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    ] else if (_fileName != null) ...[
-                      const Icon(Icons.attach_file,
-                          color: Colors.white, size: 40),
-                      Text(
-                        'Arquivo selecionado: $_fileName',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ],
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _image = null;
-                            _fileName = null;
-                          });
+                          );
                         },
-                        child: const Text('Remover'),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.camera_alt),
+                            onPressed: _pickImageFromCamera,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.attach_file),
+                            onPressed: _pickFile,
+                          ),
+                          Expanded(
+                            child: TextField(
+                              controller: _messageController,
+                              decoration: InputDecoration(
+                                hintText: 'Mensagem',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.send),
+                            onPressed: _sendMessage,
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
+                if (_image != null || _fileName != null)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 80,
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (_image != null) ...[
+                            Image.file(
+                              _image!,
+                              height: 200,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ] else if (_fileName != null) ...[
+                            const Icon(Icons.attach_file,
+                                color: Colors.white, size: 40),
+                            Text(
+                              'Arquivo selecionado: $_fileName',
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ],
+                          const SizedBox(height: 8),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  _image = null;
+                                  _fileName = null;
+                                });
+                              },
+                              child: const Text('Remover'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
             ),
-        ],
-      ),
     );
   }
 }

@@ -12,10 +12,24 @@ class AvisosScreen extends StatefulWidget {
 }
 
 class _AvisosScreenState extends State<AvisosScreen> {
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    Provider.of<AvisoProvider>(context, listen: false).fetchAvisos();
+    _fetchAvisos();
+  }
+
+  Future<void> _fetchAvisos() async {
+    try {
+      await Provider.of<AvisoProvider>(context, listen: false).fetchAvisos();
+    } catch (error) {
+      print("Log: Erro ao buscar avisos: $error");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -39,38 +53,40 @@ class _AvisosScreenState extends State<AvisosScreen> {
         ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Consumer<AvisoProvider>(
-                builder: (context, avisoProvider, child) {
-                  if (avisoProvider.avisos.isEmpty) {
-                    return const CustomEmpty(
-                      text: "Nenhum aviso disponível.",
-                    );
-                  }
-                  return ListView.builder(
-                    itemCount: avisoProvider.avisos.length,
-                    itemBuilder: (context, index) {
-                      final aviso = avisoProvider.avisos[index];
-                      return _buildAvisoItem(
-                        context,
-                        aviso.id,
-                        aviso.icon,
-                        aviso.title,
-                        aviso.description,
-                        aviso.time,
-                      );
-                    },
-                  );
-                },
-              ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Consumer<AvisoProvider>(
+                      builder: (context, avisoProvider, child) {
+                        if (avisoProvider.avisos.isEmpty) {
+                          return const CustomEmpty(
+                            text: "Nenhum aviso disponível.",
+                          );
+                        }
+                        return ListView.builder(
+                          itemCount: avisoProvider.avisos.length,
+                          itemBuilder: (context, index) {
+                            final aviso = avisoProvider.avisos[index];
+                            return _buildAvisoItem(
+                              context,
+                              aviso.id,
+                              aviso.icon,
+                              aviso.title,
+                              aviso.description,
+                              aviso.time,
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 

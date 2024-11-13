@@ -14,11 +14,43 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _senhaController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final usuarioProvider =
+        Provider.of<UsuarioProvider>(context, listen: false);
+    try {
+      await usuarioProvider.login(_emailController.text, _senhaController.text);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao fazer login: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<UsuarioProvider>(context, listen: false);
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -103,7 +135,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SignupScreen()),
+                            builder: (context) => const SignupScreen(),
+                          ),
                         );
                       },
                       child: const Text(
@@ -114,38 +147,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () async {
-                    final usuarioProvider =
-                        Provider.of<UsuarioProvider>(context, listen: false);
-                    try {
-                      await usuarioProvider.login(
-                          _emailController.text, _senhaController.text);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
+                _isLoading
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: _login,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 78, 20, 166),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 100, vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                         ),
-                      );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Erro ao fazer login: $e')),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 100, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  child: const Text(
-                    'ENTRAR',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                        child: const Text(
+                          'ENTRAR',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
               ],
             ),
           ),

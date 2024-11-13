@@ -18,7 +18,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _senhaConfirmacaoController =
       TextEditingController();
-
+  bool _isLoading = false;
   String _nome = '';
 
   @override
@@ -27,6 +27,36 @@ class _SignupScreenState extends State<SignupScreen> {
     _senhaController.dispose();
     _senhaConfirmacaoController.dispose();
     super.dispose();
+  }
+
+  Future<void> _createAccount() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      _formKey.currentState?.save();
+      setState(() {
+        _isLoading = true;
+      });
+
+      final usuarioProvider =
+          Provider.of<UsuarioProvider>(context, listen: false);
+      try {
+        await usuarioProvider.createUser(
+            _nome, _emailController.text, _senhaController.text);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao criar conta: $e')),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -179,42 +209,24 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        _formKey.currentState?.save();
-                        final usuarioProvider = Provider.of<UsuarioProvider>(
-                            context,
-                            listen: false);
-                        try {
-                          await usuarioProvider.createUser(_nome,
-                              _emailController.text, _senhaController.text);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HomeScreen(),
+                  _isLoading
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton(
+                          onPressed: _createAccount,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 78, 20, 166),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 100, vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
-                          );
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Erro ao criar conta: $e')),
-                          );
-                        }
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 78, 20, 166),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 100, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'CRIAR CONTA',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+                          ),
+                          child: const Text(
+                            'CRIAR CONTA',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {

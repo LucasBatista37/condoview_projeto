@@ -13,11 +13,25 @@ class AssembleiasScreen extends StatefulWidget {
 }
 
 class _AssembleiasScreenState extends State<AssembleiasScreen> {
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    // Chama a função fetchAssembleias para carregar as assembleias
-    Provider.of<AssembleiaProvider>(context, listen: false).fetchAssembleias();
+    _fetchAssembleias();
+  }
+
+  Future<void> _fetchAssembleias() async {
+    try {
+      await Provider.of<AssembleiaProvider>(context, listen: false)
+          .fetchAssembleias();
+    } catch (error) {
+      print("Log: Erro ao buscar assembleias: $error");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -41,99 +55,101 @@ class _AssembleiasScreenState extends State<AssembleiasScreen> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Consumer<AssembleiaProvider>(
-          builder: (context, assembleiaProvider, _) {
-            final assembleias = assembleiaProvider.assembleia;
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Consumer<AssembleiaProvider>(
+                builder: (context, assembleiaProvider, _) {
+                  final assembleias = assembleiaProvider.assembleia;
 
-            if (assembleias.isEmpty) {
-              return const CustomEmpty(
-                text: "Nenhuma assembleia disponível.",
-              );
-            }
+                  if (assembleias.isEmpty) {
+                    return const CustomEmpty(
+                      text: "Nenhuma assembleia disponível.",
+                    );
+                  }
 
-            return ListView.builder(
-              itemCount: assembleias.length,
-              itemBuilder: (context, index) {
-                final assembleia = assembleias[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                  color: assembleia.status == 'Em andamento'
-                      ? Colors.green[50]
-                      : Colors.grey[100],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          assembleia.titulo,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                  return ListView.builder(
+                    itemCount: assembleias.length,
+                    itemBuilder: (context, index) {
+                      final assembleia = assembleias[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        color: assembleia.status == 'Em andamento'
+                            ? Colors.green[50]
+                            : Colors.grey[100],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                assembleia.titulo,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Assunto: ${assembleia.assunto}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Data: ${assembleia.data.day}/${assembleia.data.month}/${assembleia.data.year}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Horário: ${assembleia.horario.format(context)}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  assembleia.status,
+                                  style: TextStyle(
+                                    color: assembleia.status == 'Em andamento'
+                                        ? Colors.green
+                                        : Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              const Divider(
+                                height: 20,
+                                thickness: 1,
+                              ),
+                              _buildPautasList(context, assembleia.pautas),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Assunto: ${assembleia.assunto}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Data: ${assembleia.data.day}/${assembleia.data.month}/${assembleia.data.year}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Horário: ${assembleia.horario.format(context)}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            assembleia.status,
-                            style: TextStyle(
-                              color: assembleia.status == 'Em andamento'
-                                  ? Colors.green
-                                  : Colors.orange,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                        const Divider(
-                          height: 20,
-                          thickness: 1,
-                        ),
-                        _buildPautasList(context, assembleia.pautas),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
     );
   }
 
   Widget _buildPautasList(BuildContext context, List<Pauta> pautas) {
     if (pautas.isEmpty) {
       return const CustomEmpty(
-        text: "Nenhuma assembleia disponível.",
+        text: "Nenhuma pauta disponível.",
       );
     }
 

@@ -28,7 +28,7 @@ class CustomDrawer extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (profileImageUrl == null || profileImageUrl.isEmpty)
+                    if (profileImageUrl.isEmpty)
                       CircleAvatar(
                         radius: 30,
                         backgroundColor: Colors.grey.shade300,

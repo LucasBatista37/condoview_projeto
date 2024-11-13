@@ -1,16 +1,19 @@
 import 'dart:io';
+import 'package:condoview/providers/personal_chat_provider.dart';
+import 'package:condoview/providers/usuario_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class ChatScreen extends StatefulWidget {
   final String name;
+  final String receiverId;
 
-  const ChatScreen({super.key, required this.name});
+  const ChatScreen({super.key, required this.name, required this.receiverId});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ChatScreenState createState() => _ChatScreenState();
 }
 
@@ -19,7 +22,37 @@ class _ChatScreenState extends State<ChatScreen> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
   String? _fileName;
-  final List<ChatMessage> _messages = [];
+  List<ChatMessage> _messages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMessages();
+  }
+
+  Future<void> _fetchMessages() async {
+    try {
+      final personalChatProvider =
+          Provider.of<PersonalChatProvider>(context, listen: false);
+
+      await personalChatProvider.fetchMessages(context, widget.receiverId);
+
+      setState(() {
+        _messages = personalChatProvider.messages
+            .map((messageModel) => ChatMessage(
+                  text: messageModel.text,
+                  isMe: messageModel.isMe,
+                  image: messageModel.image,
+                  fileName: messageModel.fileName,
+                ))
+            .toList();
+      });
+
+      print("Log: Mensagens carregadas e exibidas na UI");
+    } catch (error) {
+      print("Log: Erro ao buscar mensagens: $error");
+    }
+  }
 
   Future<void> _pickImageFromCamera() async {
     final status = await Permission.camera.request();
@@ -34,7 +67,6 @@ class _ChatScreenState extends State<ChatScreen> {
         });
       }
     } else {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Permissão para acessar a câmera negada')),
       );
@@ -50,28 +82,54 @@ class _ChatScreenState extends State<ChatScreen> {
         _fileName = result.files.single.name;
       });
     } else {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Nenhum arquivo selecionado')),
       );
     }
   }
 
-  void _sendMessage() {
+  void _sendMessage() async {
     final messageText = _messageController.text.trim();
-    if (messageText.isNotEmpty || _image != null || _fileName != null) {
-      setState(() {
-        _messages.add(ChatMessage(
-          text: messageText,
-          isMe: true,
-          image: _image,
-          fileName: _fileName,
-        ));
-        _messageController.clear();
-        _image = null;
-        _fileName = null;
-      });
+    if (messageText.isEmpty) {
+      print("Log: Mensagem está vazia. Por favor, digite uma mensagem.");
+      return;
     }
+
+    print("Log: Texto da mensagem: $messageText");
+    print("Log: Caminho da imagem: ${_image?.path}");
+    print("Log: Nome do arquivo: $_fileName");
+
+    final personalChatProvider =
+        Provider.of<PersonalChatProvider>(context, listen: false);
+    final usuarioProvider =
+        Provider.of<UsuarioProvider>(context, listen: false);
+    final userName = usuarioProvider.usuario?.nome ?? "Desconhecido";
+
+    print("Log: Chamando sendMessage no PersonalChatProvider");
+    print("Log: Nome do destinatário: ${widget.name}");
+    print("Log: ID do destinatário: ${widget.receiverId}");
+    print("Log: Nome do usuário atual: $userName");
+
+    await personalChatProvider.sendMessage(
+      context,
+      messageText,
+      _image?.path,
+      null,
+      widget.receiverId,
+      userName,
+    );
+
+    setState(() {
+      _messages.add(ChatMessage(
+        text: messageText,
+        isMe: true,
+        image: _image,
+        fileName: _fileName,
+      ));
+      _messageController.clear();
+      _image = null;
+      _fileName = null;
+    });
   }
 
   @override

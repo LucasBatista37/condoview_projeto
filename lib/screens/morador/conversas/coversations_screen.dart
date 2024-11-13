@@ -1,4 +1,3 @@
-// screens/conversations_screen.dart
 import 'package:condoview/models/usuario_model.dart';
 import 'package:condoview/providers/usuario_provider.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ class ConversationsScreen extends StatefulWidget {
   const ConversationsScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ConversationsScreenState createState() => _ConversationsScreenState();
 }
 
@@ -159,6 +157,12 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                           itemCount: _usuarios.length,
                           itemBuilder: (context, index) {
                             final usuario = _usuarios[index];
+
+                            print(
+                                "Log: Nome do usuário selecionado: ${usuario.nome}");
+                            print(
+                                "Log: ID do usuário selecionado: ${usuario.id}");
+
                             return ListTile(
                               leading: CircleAvatar(
                                 backgroundColor: Colors.grey.shade300,
@@ -190,11 +194,17 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                                 ],
                               ),
                               onTap: () {
+                                print("Log: Navegando para ChatScreen com:");
+                                print("Log: Nome: ${usuario.nome}");
+                                print("Log: ID: ${usuario.id}");
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        ChatScreen(name: usuario.nome),
+                                    builder: (context) => ChatScreen(
+                                      name: usuario.nome,
+                                      receiverId: usuario.id,
+                                    ),
                                   ),
                                 );
                               },

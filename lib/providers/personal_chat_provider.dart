@@ -1,24 +1,31 @@
 import 'dart:convert';
-import 'package:condoview/models/chat_message.dart';
-import 'package:condoview/providers/usuario_provider.dart';
+import 'package:condoview/models/personal_chat_message_model.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:condoview/providers/usuario_provider.dart';
 
-class ChatProvider with ChangeNotifier {
+class PersonalChatProvider with ChangeNotifier {
   final String _baseUrl = 'https://backend-condoview.onrender.com';
 
-  List<ChatMessage> _messages = [];
+  List<PersonalChatMessageModel> _messages = [];
 
-  List<ChatMessage> get messages => _messages;
+  List<PersonalChatMessageModel> get messages => _messages;
 
-  Future<void> fetchMessages(BuildContext context) async {
+  Future<void> fetchMessages(BuildContext context, String userId) async {
     try {
-      final usuarioProvider = Provider.of<UsuarioProvider>(context, listen: false);
+      final usuarioProvider =
+          Provider.of<UsuarioProvider>(context, listen: false);
       final token = await usuarioProvider.getToken();
-      print("Log: Token usado para buscar mensagens: $token");
+      final currentUserId = usuarioProvider.userId;
 
-      final url = Uri.parse('$_baseUrl/api/users/admin/chat');
+      print("Log: Token usado para buscar mensagens: $token");
+      print("Log: ID do usuário atual: $currentUserId");
+
+      // Inclui o userId na URL conforme esperado pelo backend
+      final url = Uri.parse('$_baseUrl/api/users/personal-chat/$userId');
+
+      print("Log: URL para buscar mensagens: $url");
 
       final response = await http.get(
         url,
@@ -34,7 +41,14 @@ class ChatProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        _messages = data.map((json) => ChatMessage.fromJson(json)).toList();
+        print("Log: Dados decodificados: $data");
+
+        _messages = data
+            .map((json) =>
+                PersonalChatMessageModel.fromJson(json, currentUserId))
+            .cast<PersonalChatMessageModel>()
+            .toList();
+
         print("Log: Mensagens carregadas com sucesso: $_messages");
         notifyListeners();
       } else {
@@ -49,26 +63,34 @@ class ChatProvider with ChangeNotifier {
   }
 
   Future<void> sendMessage(
-      BuildContext context,
-      String message,
-      String? imagePath,
-      String? filePath,
-      String userId,
-      String userName) async {
-    final url = Uri.parse('$_baseUrl/api/users/chat');
+    BuildContext context,
+    String message,
+    String? imagePath,
+    String? filePath,
+    String receiverId,
+    String userName,
+  ) async {
+    final url = Uri.parse('$_baseUrl/api/users/personal-chat');
 
     try {
-      final usuarioProvider = Provider.of<UsuarioProvider>(context, listen: false);
+      final usuarioProvider =
+          Provider.of<UsuarioProvider>(context, listen: false);
       final token = await usuarioProvider.getToken();
+
       print("Log: Token usado para enviar mensagem: $token");
+      print("Log: Dados enviados na mensagem:");
+      print("Log: message: $message");
+      print("Log: receiverId (ID do destinatário): $receiverId");
+      print("Log: userName: $userName");
+      print("Log: imagePath: $imagePath");
+      print("Log: filePath: $filePath");
 
       var request = http.MultipartRequest('POST', url);
       request.fields['message'] = message;
-      request.fields['userId'] = userId;
+      request.fields['receiver'] = receiverId;
       request.fields['userName'] = userName;
 
       request.headers['Authorization'] = 'Bearer $token';
-      request.headers['Content-Type'] = 'application/json';
 
       if (imagePath != null) {
         print("Log: Adicionando imagem ao request: $imagePath");
@@ -81,8 +103,6 @@ class ChatProvider with ChangeNotifier {
         request.files.add(await http.MultipartFile.fromPath('file', filePath));
       }
 
-      print("Log: Enviando mensagem com request: ${request.fields}");
-
       final response = await request.send();
       print(
           "Log: Status Code da resposta de sendMessage: ${response.statusCode}");
@@ -90,7 +110,9 @@ class ChatProvider with ChangeNotifier {
       if (response.statusCode == 201) {
         final respStr = await response.stream.bytesToString();
         final jsonResponse = json.decode(respStr);
-        final newMessage = ChatMessage.fromJson(jsonResponse);
+
+        final newMessage = PersonalChatMessageModel.fromJson(
+            jsonResponse, usuarioProvider.userId);
 
         print("Log: Mensagem enviada com sucesso: $newMessage");
 

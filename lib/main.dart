@@ -3,6 +3,7 @@ import 'package:condoview/providers/chat_provider.dart';
 import 'package:condoview/providers/encomenda_provider.dart';
 import 'package:condoview/providers/manutencao_provider.dart';
 import 'package:condoview/providers/ocorrencia_provider.dart';
+import 'package:condoview/providers/personal_chat_provider.dart';
 import 'package:condoview/screens/administrador/createCondo/create_condo_screen.dart';
 import 'package:condoview/screens/morador/chat/chat_geral_screen.dart';
 import 'package:condoview/screens/morador/condominio/condominio_screen.dart';
@@ -17,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/screens/administrador/avisos/adicionar_avisos_screen.dart';
 import 'package:condoview/screens/morador/home/home_screen.dart';
-import 'package:condoview/screens/morador/conversas/chat_screen.dart';
 import 'package:condoview/screens/morador/search/search_screen.dart';
 
 void main() async {
@@ -35,6 +35,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => AssembleiaProvider()),
         ChangeNotifierProvider(create: (context) => ChatProvider()),
         ChangeNotifierProvider(create: (context) => CondoProvider()),
+        ChangeNotifierProvider(create: (context) => PersonalChatProvider()),
         Provider(create: (context) => SecureStorageService()),
       ],
       child: const MyApp(),
@@ -60,7 +61,6 @@ class MyApp extends StatelessWidget {
           initialRoute: isAuthenticated ? '/home' : '/signup',
           routes: {
             '/home': (context) => const HomeScreen(),
-            '/chat': (context) => const ChatScreen(name: 'Nome'),
             '/search': (context) => const SearchScreen(),
             '/adicionar': (context) => const AdicionarAvisoScreen(),
             '/signup': (context) => const SignupScreen(),

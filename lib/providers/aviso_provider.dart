@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:condoview/models/aviso_model.dart';
 class AvisoProvider with ChangeNotifier {
   final String baseUrl = 'https://backend-condoview.onrender.com';
   List<Aviso> _avisos = [];
+  Timer? _pollingTimer;
 
   List<Aviso> get avisos => _avisos;
 
@@ -45,13 +47,27 @@ class AvisoProvider with ChangeNotifier {
     }
   }
 
+    void startPolling() {
+    _pollingTimer?.cancel(); 
+    _pollingTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      fetchAvisos(); 
+    });
+  }
+
+  void stopPolling() {
+    _pollingTimer?.cancel();
+  }
+
+   void dispose() {
+    _pollingTimer?.cancel();
+    super.dispose();
+  }
+
   Future<void> fetchAvisos() async {
     final url = Uri.parse('$baseUrl/api/users/admin/notices');
 
     try {
-      final response = await http.get(
-        url,
-      );
+      final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);

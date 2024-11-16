@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +8,7 @@ class AssembleiaProvider with ChangeNotifier {
   final String _baseUrl = 'https://backend-condoview.onrender.com';
 
   List<Assembleia> _assembleias = [];
+  Timer? _pollingTimer;
 
   List<Assembleia> get assembleia => _assembleias;
 
@@ -65,17 +67,17 @@ class AssembleiaProvider with ChangeNotifier {
   }
 
   Future<void> fetchAssembleias() async {
+    print('Fetching assembleias...');
     try {
       final response = await http.get(
         Uri.parse('$_baseUrl/api/users/admin/assemblies'),
       );
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-
-        data.forEach((item) {
-          print('Item recebido: $item');
-        });
+        print('Data received: $data');
 
         List<Assembleia> fetchedAssembleias = data.map((item) {
           return Assembleia.fromJson(item);
@@ -90,6 +92,23 @@ class AssembleiaProvider with ChangeNotifier {
     } catch (error) {
       print('Erro ao buscar assembleias: $error');
     }
+  }
+
+  void startPolling() {
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      fetchAssembleias();
+    });
+  }
+
+  void stopPolling() {
+    _pollingTimer?.cancel();
+  }
+
+  @override
+  void dispose() {
+    _pollingTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> updateAssembleia(Assembleia assembleia) async {

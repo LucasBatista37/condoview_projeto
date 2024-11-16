@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:condoview/models/ocorrencia_model.dart';
@@ -8,6 +9,7 @@ class OcorrenciaProvider with ChangeNotifier {
   List<Ocorrencia> _ocorrencias = [];
   Ocorrencia? _selectedOcorrencia;
   bool _isLoading = false;
+  Timer? _pollingTimer;
 
   List<Ocorrencia> get ocorrencias => _ocorrencias;
   Ocorrencia? get selectedOcorrencia => _selectedOcorrencia;
@@ -52,7 +54,7 @@ class OcorrenciaProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchOcorrencias() async {
+    Future<void> fetchOcorrencias() async {
     final url = Uri.parse('$_baseUrl/api/users/admin/ocorrencias');
     print('Iniciando a busca de ocorrências...');
 
@@ -87,6 +89,23 @@ class OcorrenciaProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  void startPolling() {
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      fetchOcorrencias();
+    });
+  }
+
+  void stopPolling() {
+    _pollingTimer?.cancel();
+  }
+
+  @override
+  void dispose() {
+    _pollingTimer?.cancel();
+    super.dispose();
   }
 
   void selectOcorrencia(Ocorrencia ocorrencia) {

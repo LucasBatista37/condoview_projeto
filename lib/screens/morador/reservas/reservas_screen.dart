@@ -5,14 +5,47 @@ import 'package:provider/provider.dart';
 import 'package:condoview/providers/reserva_provider.dart';
 import 'package:condoview/screens/morador/reservas/solicitar_reserva.dart';
 
-class ReservasScreen extends StatelessWidget {
+class ReservasScreen extends StatefulWidget {
   const ReservasScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  _ReservasScreenState createState() => _ReservasScreenState();
+}
+
+class _ReservasScreenState extends State<ReservasScreen> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchReservas();
+  }
+
+  Future<void> _fetchReservas() async {
+    try {
+      final reservaProvider =
+          Provider.of<ReservaProvider>(context, listen: false);
+      await reservaProvider.fetchReservas();
+      reservaProvider.startPolling();
+    } catch (error) {
+      print("Erro ao buscar reservas: $error");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
     final reservaProvider =
         Provider.of<ReservaProvider>(context, listen: false);
+    reservaProvider.stopPolling();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 78, 20, 166),
@@ -32,15 +65,9 @@ class ReservasScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: FutureBuilder(
-        future: reservaProvider.fetchReservas(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Erro ao carregar reservas.'));
-          } else {
-            return Padding(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,10 +117,7 @@ class ReservasScreen extends StatelessWidget {
                   ),
                 ],
               ),
-            );
-          }
-        },
-      ),
+            ),
     );
   }
 

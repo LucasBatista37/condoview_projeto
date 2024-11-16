@@ -23,8 +23,10 @@ class _AssembleiasScreenState extends State<AssembleiasScreen> {
 
   Future<void> _fetchAssembleias() async {
     try {
-      await Provider.of<AssembleiaProvider>(context, listen: false)
-          .fetchAssembleias();
+      final assembleiaProvider =
+          Provider.of<AssembleiaProvider>(context, listen: false);
+      await assembleiaProvider.fetchAssembleias();
+      assembleiaProvider.startPolling();
     } catch (error) {
       print("Log: Erro ao buscar assembleias: $error");
     } finally {
@@ -32,6 +34,14 @@ class _AssembleiasScreenState extends State<AssembleiasScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    final assembleiaProvider =
+        Provider.of<AssembleiaProvider>(context, listen: false);
+    assembleiaProvider.stopPolling();
+    super.dispose();
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:condoview/models/chat_message.dart';
 import 'package:condoview/providers/usuario_provider.dart';
@@ -9,17 +10,33 @@ class ChatProvider with ChangeNotifier {
   final String _baseUrl = 'https://backend-condoview.onrender.com';
 
   List<ChatMessage> _messages = [];
+  final StreamController<List<ChatMessage>> _messagesStreamController =
+      StreamController<List<ChatMessage>>.broadcast();
+  Timer? _pollingTimer;
 
   List<ChatMessage> get messages => _messages;
+  Stream<List<ChatMessage>> get messagesStream =>
+      _messagesStreamController.stream;
+
+  void startPolling(BuildContext context) {
+    _pollingTimer?.cancel(); 
+    _pollingTimer = Timer.periodic(Duration(seconds: 5), (timer) {
+      fetchMessages(context);
+    });
+  }
+
+  void stopPolling() {
+    _pollingTimer?.cancel();
+  }
 
   Future<void> fetchMessages(BuildContext context) async {
     try {
-      final usuarioProvider = Provider.of<UsuarioProvider>(context, listen: false);
+      final usuarioProvider =
+          Provider.of<UsuarioProvider>(context, listen: false);
       final token = await usuarioProvider.getToken();
       print("Log: Token usado para buscar mensagens: $token");
 
       final url = Uri.parse('$_baseUrl/api/users/admin/chat');
-
       final response = await http.get(
         url,
         headers: {
@@ -36,6 +53,8 @@ class ChatProvider with ChangeNotifier {
         final List<dynamic> data = json.decode(response.body);
         _messages = data.map((json) => ChatMessage.fromJson(json)).toList();
         print("Log: Mensagens carregadas com sucesso: $_messages");
+
+        _messagesStreamController.add(_messages);
         notifyListeners();
       } else {
         print(
@@ -58,7 +77,8 @@ class ChatProvider with ChangeNotifier {
     final url = Uri.parse('$_baseUrl/api/users/chat');
 
     try {
-      final usuarioProvider = Provider.of<UsuarioProvider>(context, listen: false);
+      final usuarioProvider =
+          Provider.of<UsuarioProvider>(context, listen: false);
       final token = await usuarioProvider.getToken();
       print("Log: Token usado para enviar mensagem: $token");
 
@@ -95,6 +115,7 @@ class ChatProvider with ChangeNotifier {
         print("Log: Mensagem enviada com sucesso: $newMessage");
 
         _messages.add(newMessage);
+        _messagesStreamController.add(_messages);
         notifyListeners();
       } else {
         print(
@@ -105,5 +126,12 @@ class ChatProvider with ChangeNotifier {
       print("Log: Erro ao enviar mensagem: $error");
       throw Exception('Erro ao enviar mensagem: $error');
     }
+  }
+
+  @override
+  void dispose() {
+    _pollingTimer?.cancel(); 
+    _messagesStreamController.close();
+    super.dispose();
   }
 }

@@ -83,9 +83,10 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
+          : SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
@@ -139,80 +140,71 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Últimas Conversas',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black.withOpacity(0.7),
+                  Text(
+                    'Últimas Conversas',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black.withOpacity(0.7),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _usuarios.length,
+                    itemBuilder: (context, index) {
+                      final usuario = _usuarios[index];
+
+                      print(
+                          "Log: Nome do usuário selecionado: ${usuario.nome}");
+                      print("Log: ID do usuário selecionado: ${usuario.id}");
+
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.grey.shade300,
+                          child: Text(
+                            usuario.nome[0].toUpperCase(),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _usuarios.length,
-                          itemBuilder: (context, index) {
-                            final usuario = _usuarios[index];
-
-                            print(
-                                "Log: Nome do usuário selecionado: ${usuario.nome}");
-                            print(
-                                "Log: ID do usuário selecionado: ${usuario.id}");
-
-                            return ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.grey.shade300,
-                                child: Text(
-                                  usuario.nome[0].toUpperCase(),
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
+                        title: Text(usuario.nome),
+                        subtitle: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Última mensagem...',
+                                style: TextStyle(color: Colors.grey.shade600),
                               ),
-                              title: Text(usuario.nome),
-                              subtitle: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'Última mensagem...',
-                                      style: TextStyle(
-                                          color: Colors.grey.shade600),
-                                    ),
-                                  ),
-                                  Text(
-                                    '12:00 PM',
-                                    style: TextStyle(
-                                        color: Colors.grey.shade500,
-                                        fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                              onTap: () {
-                                print("Log: Navegando para ChatScreen com:");
-                                print("Log: Nome: ${usuario.nome}");
-                                print("Log: ID: ${usuario.id}");
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ChatScreen(
-                                      name: usuario.nome,
-                                      receiverId: usuario.id,
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
+                            ),
+                            Text(
+                              '12:00 PM',
+                              style: TextStyle(
+                                  color: Colors.grey.shade500, fontSize: 12),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                        onTap: () {
+                          print("Log: Navegando para ChatScreen com:");
+                          print("Log: Nome: ${usuario.nome}");
+                          print("Log: ID: ${usuario.id}");
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatScreen(
+                                name: usuario.nome,
+                                receiverId: usuario.id,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ],
               ),

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:condoview/models/chat_message.dart';
 import 'package:condoview/providers/chat_provider.dart';
 import 'package:condoview/providers/usuario_provider.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,13 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
   void initState() {
     super.initState();
     _loadMessages();
+    Provider.of<ChatProvider>(context, listen: false).startPolling(context);
+  }
+
+  @override
+  void dispose() {
+    Provider.of<ChatProvider>(context, listen: false).stopPolling();
+    super.dispose();
   }
 
   Future<void> _loadMessages() async {
@@ -45,8 +53,6 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
     final chatProvider = Provider.of<ChatProvider>(context);
     final usuarioProvider =
         Provider.of<UsuarioProvider>(context, listen: false);
-    final messages = chatProvider.messages;
-
     final userId = usuarioProvider.userId;
     final currentName = usuarioProvider.currentName;
 
@@ -76,47 +82,62 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
           Column(
             children: [
               Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-                    return Align(
-                      alignment: message.userId == userId
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        margin: const EdgeInsets.only(bottom: 8),
-                        decoration: BoxDecoration(
-                          color: message.userId == userId
-                              ? Colors.deepPurple.shade200
-                              : Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (message.imageUrl != null)
-                              Image.network(message.imageUrl!),
-                            if (message.fileUrl != null)
-                              Row(
-                                children: [
-                                  const Icon(Icons.attach_file, size: 20),
-                                  const SizedBox(width: 4),
-                                  Text('Arquivo: ${message.fileUrl}'),
-                                ],
-                              ),
-                            Text(message.message),
-                            const SizedBox(height: 4),
-                            Text(
-                              message.userName,
-                              style: TextStyle(
-                                  fontSize: 12, color: Colors.grey.shade600),
+                child: StreamBuilder<List<ChatMessage>>(
+                  stream: chatProvider.messagesStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Erro ao carregar mensagens'));
+                    }
+
+                    final messages = snapshot.data ?? [];
+
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final message = messages[index];
+                        return Align(
+                          alignment: message.userId == userId
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            margin: const EdgeInsets.only(bottom: 8),
+                            decoration: BoxDecoration(
+                              color: message.userId == userId
+                                  ? Colors.deepPurple.shade200
+                                  : Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          ],
-                        ),
-                      ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (message.imageUrl != null)
+                                  Image.network(message.imageUrl!),
+                                if (message.fileUrl != null)
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.attach_file, size: 20),
+                                      const SizedBox(width: 4),
+                                      Text('Arquivo: ${message.fileUrl}'),
+                                    ],
+                                  ),
+                                Text(message.message),
+                                const SizedBox(height: 4),
+                                Text(
+                                  message.userName,
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade600),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
@@ -204,6 +225,7 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
     );
   }
 
+  // Função para pegar uma imagem da câmera
   Future<void> _pickImageFromCamera() async {
     final status = await Permission.camera.request();
     if (status.isGranted) {
@@ -221,6 +243,7 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
     }
   }
 
+  // Função para selecionar um arquivo
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles();
     if (result != null) {
@@ -235,6 +258,7 @@ class _ChatGeralScreenState extends State<ChatGeralScreen> {
     }
   }
 
+  // Função para enviar a mensagem
   Future<void> _sendMessage(String userId, String userName) async {
     final message = _messageController.text.trim();
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);

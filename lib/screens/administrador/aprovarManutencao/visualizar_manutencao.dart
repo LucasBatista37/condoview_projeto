@@ -14,14 +14,35 @@ class VisualizarManutencoesScreen extends StatefulWidget {
 
 class _VisualizarManutencoesScreenState
     extends State<VisualizarManutencoesScreen> {
-  late Future<void> _fetchManutencoesFuture;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _fetchManutencoes();
+  }
+
+  Future<void> _fetchManutencoes() async {
+    try {
+      final manutencaoProvider =
+          Provider.of<ManutencaoProvider>(context, listen: false);
+      await manutencaoProvider.fetchManutencoes();
+      manutencaoProvider.startPolling(); // Inicie o polling
+    } catch (error) {
+      print("Erro ao buscar manutenções: $error");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
     final manutencaoProvider =
         Provider.of<ManutencaoProvider>(context, listen: false);
-    _fetchManutencoesFuture = manutencaoProvider.fetchManutencoes();
+    manutencaoProvider.stopPolling(); 
+    super.dispose();
   }
 
   @override
@@ -41,16 +62,9 @@ class _VisualizarManutencoesScreenState
         ),
         centerTitle: true,
       ),
-      body: FutureBuilder<void>(
-        future: _fetchManutencoesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-                child: Text('Erro ao carregar manutenções: ${snapshot.error}'));
-          } else {
-            return Padding(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,10 +109,7 @@ class _VisualizarManutencoesScreenState
                   ),
                 ],
               ),
-            );
-          }
-        },
-      ),
+            ),
     );
   }
 
@@ -120,7 +131,7 @@ class _VisualizarManutencoesScreenState
         break;
       case 'pendente':
       default:
-        statusColor = Colors.orange; 
+        statusColor = Colors.orange;
         break;
     }
 

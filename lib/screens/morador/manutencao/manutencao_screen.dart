@@ -13,14 +13,35 @@ class ManutencaoScreen extends StatefulWidget {
 }
 
 class _ManutencaoScreenState extends State<ManutencaoScreen> {
-  late Future<void> _fetchManutencoesFuture;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _fetchManutencoes();
+  }
+
+  Future<void> _fetchManutencoes() async {
+    try {
+      final manutencaoProvider =
+          Provider.of<ManutencaoProvider>(context, listen: false);
+      await manutencaoProvider.fetchManutencoes();
+      manutencaoProvider.startPolling(); 
+    } catch (error) {
+      print("Erro ao buscar manutenções: $error");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
     final manutencaoProvider =
         Provider.of<ManutencaoProvider>(context, listen: false);
-    _fetchManutencoesFuture = manutencaoProvider.fetchManutencoes();
+    manutencaoProvider.stopPolling();
+    super.dispose();
   }
 
   @override
@@ -46,15 +67,9 @@ class _ManutencaoScreenState extends State<ManutencaoScreen> {
         ),
         centerTitle: true,
       ),
-      body: FutureBuilder(
-        future: _fetchManutencoesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Erro ao carregar manutenções'));
-          } else {
-            return Padding(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,10 +117,7 @@ class _ManutencaoScreenState extends State<ManutencaoScreen> {
                   )
                 ],
               ),
-            );
-          }
-        },
-      ),
+            ),
     );
   }
 

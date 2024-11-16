@@ -20,6 +20,14 @@ class _VisualizarAvisosScreenState extends State<VisualizarAvisosScreen> {
     super.initState();
     final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
     avisoProvider.fetchAvisos();
+    avisoProvider.startPolling();
+  }
+
+  @override
+  void dispose() {
+    final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
+    avisoProvider.stopPolling();
+    super.dispose();
   }
 
   @override

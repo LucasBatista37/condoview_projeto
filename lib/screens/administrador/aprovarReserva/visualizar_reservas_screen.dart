@@ -20,7 +20,16 @@ class _VisualizarReservasScreenState extends State<VisualizarReservasScreen> {
       final reservaProvider =
           Provider.of<ReservaProvider>(context, listen: false);
       reservaProvider.fetchReservas();
+      reservaProvider.startPolling(); 
     });
+  }
+
+  @override
+  void dispose() {
+    final reservaProvider =
+        Provider.of<ReservaProvider>(context, listen: false);
+    reservaProvider.stopPolling(); 
+    super.dispose();
   }
 
   @override
@@ -69,8 +78,7 @@ class _VisualizarReservasScreenState extends State<VisualizarReservasScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AprovarReservaScreen(
-                                  reserva:
-                                      reserva, 
+                                  reserva: reserva,
                                   reservaIndex: index,
                                 ),
                               ),

@@ -12,10 +12,35 @@ class ListaOcorrenciasScreen extends StatefulWidget {
 }
 
 class _ListaOcorrenciasScreenState extends State<ListaOcorrenciasScreen> {
+  bool _isInitialLoading = true;
+
   @override
   void initState() {
     super.initState();
-    Provider.of<OcorrenciaProvider>(context, listen: false).fetchOcorrencias();
+    _fetchOcorrencias();
+  }
+
+  Future<void> _fetchOcorrencias() async {
+    try {
+      final ocorrenciaProvider =
+          Provider.of<OcorrenciaProvider>(context, listen: false);
+      await ocorrenciaProvider.fetchOcorrencias();
+      ocorrenciaProvider.startPolling();
+    } catch (error) {
+      print("Erro ao buscar ocorrências: $error");
+    } finally {
+      setState(() {
+        _isInitialLoading = false; 
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    final ocorrenciaProvider =
+        Provider.of<OcorrenciaProvider>(context, listen: false);
+    ocorrenciaProvider.stopPolling(); 
+    super.dispose();
   }
 
   @override
@@ -29,7 +54,7 @@ class _ListaOcorrenciasScreenState extends State<ListaOcorrenciasScreen> {
         title: const Text('Ocorrências'),
         centerTitle: true,
       ),
-      body: ocorrenciaProvider.isLoading
+      body: _isInitialLoading
           ? const Center(child: CircularProgressIndicator())
           : ocorrenciaProvider.ocorrencias.isEmpty
               ? const CustomEmpty(text: 'Nenhuma ocorrência pendente.')

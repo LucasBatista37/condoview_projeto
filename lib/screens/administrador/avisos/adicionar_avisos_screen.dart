@@ -9,7 +9,6 @@ class AdicionarAvisoScreen extends StatefulWidget {
   const AdicionarAvisoScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _AdicionarAvisoScreenState createState() => _AdicionarAvisoScreenState();
 }
 
@@ -31,6 +30,17 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
     Icons.group,
   ];
 
+  final List<String> _iconLabels = [
+    'Informação',
+    'Aviso',
+    'Erro',
+    'Ajuda',
+    'Notificação',
+    'Favorito',
+    'Evento',
+    'Grupo',
+  ];
+
   void _selectIcon() async {
     final IconData? icon = await showDialog<IconData>(
       context: context,
@@ -48,11 +58,28 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
               itemCount: _icons.length,
               itemBuilder: (context, index) {
                 final IconData icon = _icons[index];
+                final String label = _iconLabels[index];
+
                 return GestureDetector(
                   onTap: () {
                     Navigator.of(context).pop(icon);
                   },
-                  child: Icon(icon, size: 40),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, size: 40),
+                      const SizedBox(height: 4),
+                      Flexible(
+                        child: Text(
+                          label,
+                          style: const TextStyle(fontSize: 12),
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2, 
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
@@ -75,7 +102,7 @@ class _AdicionarAvisoScreenState extends State<AdicionarAvisoScreen> {
       title: _titleController.text,
       description: _descriptionController.text,
       time:
-          'Enviado dia ${DateTime.now().toLocal().toString().split(' ')[0]} às ${DateTime.now().toLocal().toString().split(' ')[1].split('.')[0]}', 
+          'Enviado dia ${DateTime.now().toLocal().toString().split(' ')[0]} às ${DateTime.now().toLocal().toString().split(' ')[1].split('.')[0]}',
     );
 
     try {

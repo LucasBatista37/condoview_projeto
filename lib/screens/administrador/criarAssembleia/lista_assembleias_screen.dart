@@ -15,13 +15,35 @@ class ListaAssembleiasScreen extends StatefulWidget {
 }
 
 class _ListaAssembleiasScreenState extends State<ListaAssembleiasScreen> {
-  late Future<void> _fetchAssembleiasFuture;
+  bool _isInitialLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // Carregar as assembleias ao iniciar a tela
-    _fetchAssembleiasFuture = Provider.of<AssembleiaProvider>(context, listen: false).fetchAssembleias();
+    _fetchAssembleias();
+  }
+
+  Future<void> _fetchAssembleias() async {
+    try {
+      final assembleiaProvider =
+          Provider.of<AssembleiaProvider>(context, listen: false);
+      await assembleiaProvider.fetchAssembleias();
+      assembleiaProvider.startPolling();
+    } catch (error) {
+      print('Erro ao buscar assembleias: $error');
+    } finally {
+      setState(() {
+        _isInitialLoading = false; 
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    final assembleiaProvider =
+        Provider.of<AssembleiaProvider>(context, listen: false);
+    assembleiaProvider.stopPolling(); 
+    super.dispose();
   }
 
   @override
@@ -39,17 +61,9 @@ class _ListaAssembleiasScreenState extends State<ListaAssembleiasScreen> {
         ),
         centerTitle: true,
       ),
-      body: FutureBuilder(
-        future: _fetchAssembleiasFuture,
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Exibir um indicador de carregamento enquanto espera
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.error != null) {
-            // Tratar erros de carregamento
-            return const Center(child: Text('Erro ao carregar assembleias'));
-          } else {
-            return Consumer<AssembleiaProvider>(
+      body: _isInitialLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Consumer<AssembleiaProvider>(
               builder: (context, assembleiaProvider, child) {
                 if (assembleiaProvider.assembleia.isEmpty) {
                   return const CustomEmpty(text: "Nenhuma assembleia criada.");
@@ -106,10 +120,7 @@ class _ListaAssembleiasScreenState extends State<ListaAssembleiasScreen> {
                   },
                 );
               },
-            );
-          }
-        },
-      ),
+            ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromARGB(255, 78, 20, 166),
         onPressed: () {
@@ -152,4 +163,3 @@ class _ListaAssembleiasScreenState extends State<ListaAssembleiasScreen> {
     );
   }
 }
-

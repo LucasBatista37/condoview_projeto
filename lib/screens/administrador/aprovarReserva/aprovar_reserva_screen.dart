@@ -18,7 +18,7 @@ class AprovarReservaScreen extends StatefulWidget {
 }
 
 class _AprovarReservaScreenState extends State<AprovarReservaScreen> {
-  bool _isLoading = false; // Estado de carregamento
+  bool _isLoading = false; 
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +141,7 @@ class _AprovarReservaScreenState extends State<AprovarReservaScreen> {
     final reserva = widget.reserva;
 
     if (reserva.id != null) {
-      setState(() => _isLoading = true); // Ativa o carregador
+      setState(() => _isLoading = true);
 
       try {
         debugPrint('Aprovando reserva com ID: ${reserva.id}');
@@ -156,7 +156,7 @@ class _AprovarReservaScreenState extends State<AprovarReservaScreen> {
           const SnackBar(content: Text('Erro ao aprovar reserva.')),
         );
       } finally {
-        setState(() => _isLoading = false); // Desativa o carregador
+        setState(() => _isLoading = false);
       }
     } else {
       debugPrint('Erro: ID da reserva é nulo.');
@@ -171,7 +171,7 @@ class _AprovarReservaScreenState extends State<AprovarReservaScreen> {
     final reserva = widget.reserva;
 
     if (reserva.id != null) {
-      setState(() => _isLoading = true); // Ativa o carregador
+      setState(() => _isLoading = true); 
 
       try {
         debugPrint('Rejeitando reserva com ID: ${reserva.id}');
@@ -186,7 +186,7 @@ class _AprovarReservaScreenState extends State<AprovarReservaScreen> {
           const SnackBar(content: Text('Erro ao rejeitar reserva.')),
         );
       } finally {
-        setState(() => _isLoading = false); // Desativa o carregador
+        setState(() => _isLoading = false);
       }
     } else {
       debugPrint('Erro: ID da reserva é nulo.');

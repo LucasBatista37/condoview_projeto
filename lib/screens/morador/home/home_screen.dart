@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uni_links3/uni_links.dart';
+import 'package:http/http.dart' as http;
 import 'package:condoview/components/custom_bottom_navigation_bar.dart';
 import 'package:condoview/components/custom_drawer.dart';
 import 'package:condoview/components/admin_grid.dart';
@@ -16,6 +18,53 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initUniLinks();
+  }
+
+  Future<void> _initUniLinks() async {
+    try {
+      print("Log: _initUniLinks chamado");
+
+      final initialLink = await getInitialLink();
+      print("Log: initialLink = $initialLink");
+
+      if (initialLink != null) {
+        final token = extractTokenFromLink(initialLink);
+        print("Log: Token extraído = $token");
+
+        if (token != null) {
+          await confirmEmail(token);
+        } else {
+          print("Log: Nenhum token foi extraído do link");
+        }
+      } else {
+        print("Log: Nenhum initialLink foi encontrado");
+      }
+    } catch (e) {
+      print("Erro ao processar o link: $e");
+    }
+  }
+
+  String? extractTokenFromLink(String link) {
+    final uri = Uri.parse(link);
+    return uri.pathSegments.length > 1 ? uri.pathSegments.last : null;
+  }
+
+  Future<void> confirmEmail(String token) async {
+    final response = await http.get(
+      Uri.parse('https://backend-condoview.onrender.com/confirm/$token'),
+    );
+
+    if (response.statusCode == 200) {
+      print("E-mail confirmado com sucesso!");
+    } else {
+      print("Erro ao confirmar o e-mail: ${response.body}");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

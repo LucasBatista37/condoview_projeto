@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:condoview/models/reserva_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +9,7 @@ class ReservaProvider with ChangeNotifier {
   List<Reserva> _reservas = [];
 
   List<Reserva> get reservas => _reservas;
+  Timer? _pollingTimer;
 
   final String _baseUrl = 'https://backend-condoview.onrender.com';
 
@@ -84,6 +87,31 @@ class ReservaProvider with ChangeNotifier {
     }
   }
 
+  void startPolling() {
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      fetchReservas();
+    });
+  }
+
+  void stopPolling() {
+    _pollingTimer?.cancel();
+  }
+
+  @override
+  void dispose() {
+    _pollingTimer?.cancel();
+    super.dispose();
+  }
+
+  // Helper method to parse time strings
+  TimeOfDay _parseTime(String time) {
+    final parts = time.split(':');
+    final hour = int.parse(parts[0]);
+    final minute = int.parse(parts[1]);
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
   Future<void> aprovarReserva(String id) async {
     final url = '$_baseUrl/api/users/admin/reserve/approve/$id';
     try {
@@ -147,10 +175,5 @@ class ReservaProvider with ChangeNotifier {
       return reserva.id;
     }
     return null;
-  }
-
-  TimeOfDay _parseTime(String timeString) {
-    final parts = timeString.split(':');
-    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
   }
 }

@@ -14,22 +14,19 @@ class AvisosScreen extends StatefulWidget {
 class _AvisosScreenState extends State<AvisosScreen> {
   bool _isLoading = true;
 
-  @override
+    @override
   void initState() {
     super.initState();
-    _fetchAvisos();
+    final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
+    avisoProvider.fetchAvisos();
+    avisoProvider.startPolling();
   }
 
-  Future<void> _fetchAvisos() async {
-    try {
-      await Provider.of<AvisoProvider>(context, listen: false).fetchAvisos();
-    } catch (error) {
-      print("Log: Erro ao buscar avisos: $error");
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  @override
+  void dispose() {
+    final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
+    avisoProvider.stopPolling();
+    super.dispose();
   }
 
   @override

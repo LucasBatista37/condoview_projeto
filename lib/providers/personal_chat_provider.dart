@@ -22,7 +22,6 @@ class PersonalChatProvider with ChangeNotifier {
       print("Log: Token usado para buscar mensagens: $token");
       print("Log: ID do usuário atual: $currentUserId");
 
-      // Inclui o userId na URL conforme esperado pelo backend
       final url = Uri.parse('$_baseUrl/api/users/personal-chat/$userId');
 
       print("Log: URL para buscar mensagens: $url");

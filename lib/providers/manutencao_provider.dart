@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -6,6 +7,7 @@ import 'package:condoview/models/manutencao_model.dart';
 class ManutencaoProvider with ChangeNotifier {
   final String _baseUrl = 'https://backend-condoview.onrender.com';
   List<Manutencao> _manutencoes = [];
+  Timer? _pollingTimer;
 
   List<Manutencao> get manutencoes => _manutencoes;
 
@@ -55,6 +57,23 @@ class ManutencaoProvider with ChangeNotifier {
       print(error);
       throw error;
     }
+  }
+
+  void startPolling() {
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      fetchManutencoes();
+    });
+  }
+
+  void stopPolling() {
+    _pollingTimer?.cancel();
+  }
+
+  @override
+  void dispose() {
+    _pollingTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> atualizarManutencao(

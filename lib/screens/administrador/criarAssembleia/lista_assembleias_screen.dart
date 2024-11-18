@@ -28,7 +28,7 @@ class _ListaAssembleiasScreenState extends State<ListaAssembleiasScreen> {
       final assembleiaProvider =
           Provider.of<AssembleiaProvider>(context, listen: false);
       await assembleiaProvider.fetchAssembleias();
-      assembleiaProvider.startPolling();
+      assembleiaProvider.startPolling(); 
     } catch (error) {
       print('Erro ao buscar assembleias: $error');
     } finally {
@@ -42,7 +42,7 @@ class _ListaAssembleiasScreenState extends State<ListaAssembleiasScreen> {
   void dispose() {
     final assembleiaProvider =
         Provider.of<AssembleiaProvider>(context, listen: false);
-    assembleiaProvider.stopPolling(); 
+    assembleiaProvider.stopPolling(); // Para o polling ao sair da tela
     super.dispose();
   }
 

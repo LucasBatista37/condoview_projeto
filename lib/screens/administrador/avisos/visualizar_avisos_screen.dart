@@ -15,19 +15,40 @@ class VisualizarAvisosScreen extends StatefulWidget {
 }
 
 class _VisualizarAvisosScreenState extends State<VisualizarAvisosScreen> {
+  final ScrollController _scrollController = ScrollController();
+  int _previousAvisoCount = 0;
+
   @override
   void initState() {
     super.initState();
     final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
     avisoProvider.fetchAvisos();
     avisoProvider.startPolling();
+
+    avisoProvider.addListener(_scrollToBottomIfNeeded);
   }
 
   @override
   void dispose() {
     final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
+    avisoProvider.removeListener(_scrollToBottomIfNeeded);
     avisoProvider.stopPolling();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToBottomIfNeeded() {
+    final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
+    if (avisoProvider.avisos.length > _previousAvisoCount) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
+      _previousAvisoCount = avisoProvider.avisos.length;
+    }
   }
 
   @override
@@ -62,6 +83,7 @@ class _VisualizarAvisosScreenState extends State<VisualizarAvisosScreen> {
                     return const CustomEmpty(text: "Nenhum aviso disponível.");
                   }
                   return ListView.builder(
+                    controller: _scrollController,
                     itemCount: avisoProvider.avisos.length,
                     itemBuilder: (context, index) {
                       final aviso = avisoProvider.avisos[index];
@@ -86,7 +108,7 @@ class _VisualizarAvisosScreenState extends State<VisualizarAvisosScreen> {
                 );
               },
             ),
-          )
+          ),
         ],
       ),
     );

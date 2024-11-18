@@ -12,21 +12,55 @@ class AvisosScreen extends StatefulWidget {
 }
 
 class _AvisosScreenState extends State<AvisosScreen> {
+  final ScrollController _scrollController = ScrollController();
   bool _isLoading = true;
+  int _previousAvisoCount = 0;
 
-    @override
+  @override
   void initState() {
     super.initState();
+    _fetchAvisos();
+  }
+
+  Future<void> _fetchAvisos() async {
+    try {
+      final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
+      await avisoProvider.fetchAvisos();
+      avisoProvider.startPolling();
+    } catch (error) {
+      print("Erro ao buscar avisos: $error");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
     final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
-    avisoProvider.fetchAvisos();
-    avisoProvider.startPolling();
+    avisoProvider.addListener(_scrollToBottomIfNeeded);
   }
 
   @override
   void dispose() {
     final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
+    avisoProvider.removeListener(_scrollToBottomIfNeeded);
     avisoProvider.stopPolling();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToBottomIfNeeded() {
+    final avisoProvider = Provider.of<AvisoProvider>(context, listen: false);
+    if (avisoProvider.avisos.length > _previousAvisoCount) {
+      // Rola para o final da lista se houver novos avisos
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
+      _previousAvisoCount = avisoProvider.avisos.length;
+    }
   }
 
   @override
@@ -65,6 +99,7 @@ class _AvisosScreenState extends State<AvisosScreen> {
                           );
                         }
                         return ListView.builder(
+                          controller: _scrollController,
                           itemCount: avisoProvider.avisos.length,
                           itemBuilder: (context, index) {
                             final aviso = avisoProvider.avisos[index];

@@ -66,35 +66,25 @@ class AssembleiaProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchAssembleias() async {
-    print('Fetching assembleias...');
+    Future<void> fetchAssembleias() async {
     try {
       final response = await http.get(
         Uri.parse('$_baseUrl/api/users/admin/assemblies'),
       );
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        print('Data received: $data');
-
-        List<Assembleia> fetchedAssembleias = data.map((item) {
-          return Assembleia.fromJson(item);
-        }).toList();
-
-        _assembleias = fetchedAssembleias;
+        _assembleias = data.map((item) => Assembleia.fromJson(item)).toList();
         notifyListeners();
       } else {
         print('Erro ao carregar assembleias: ${response.statusCode}');
-        print('Corpo da resposta: ${response.body}');
       }
     } catch (error) {
       print('Erro ao buscar assembleias: $error');
     }
   }
 
-  void startPolling() {
+    void startPolling() {
     _pollingTimer?.cancel();
     _pollingTimer = Timer.periodic(Duration(seconds: 10), (timer) {
       fetchAssembleias();

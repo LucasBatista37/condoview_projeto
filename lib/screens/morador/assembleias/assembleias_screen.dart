@@ -13,7 +13,7 @@ class AssembleiasScreen extends StatefulWidget {
 }
 
 class _AssembleiasScreenState extends State<AssembleiasScreen> {
-  bool _isLoading = true;
+  bool _isInitialLoading = true;
 
   @override
   void initState() {
@@ -26,12 +26,12 @@ class _AssembleiasScreenState extends State<AssembleiasScreen> {
       final assembleiaProvider =
           Provider.of<AssembleiaProvider>(context, listen: false);
       await assembleiaProvider.fetchAssembleias();
-      assembleiaProvider.startPolling();
+      assembleiaProvider.startPolling(); // Inicia o polling
     } catch (error) {
       print("Log: Erro ao buscar assembleias: $error");
     } finally {
       setState(() {
-        _isLoading = false;
+        _isInitialLoading = false; // Carregamento inicial concluído
       });
     }
   }
@@ -40,7 +40,7 @@ class _AssembleiasScreenState extends State<AssembleiasScreen> {
   void dispose() {
     final assembleiaProvider =
         Provider.of<AssembleiaProvider>(context, listen: false);
-    assembleiaProvider.stopPolling();
+    assembleiaProvider.stopPolling(); // Para o polling ao sair da tela
     super.dispose();
   }
 
@@ -65,7 +65,7 @@ class _AssembleiasScreenState extends State<AssembleiasScreen> {
         ),
         centerTitle: true,
       ),
-      body: _isLoading
+      body: _isInitialLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),

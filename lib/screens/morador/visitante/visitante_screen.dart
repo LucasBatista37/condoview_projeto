@@ -1,5 +1,7 @@
 import 'package:condoview/components/gerar_convite.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:condoview/providers/usuario_provider.dart';
 
 class VisitanteScreen extends StatefulWidget {
   const VisitanteScreen({super.key});
@@ -16,7 +18,7 @@ class _VisitanteScreenState extends State<VisitanteScreen> {
   final TextEditingController _unidadeController = TextEditingController();
   final String condominioFicticio = "Condomínio Atlas";
   final String enderecoFicticio = "Rua da Praia, 123 - Centro";
-  final String anfitriaoFicticio = "João Pedro";
+
   @override
   void dispose() {
     _dataController.dispose();
@@ -57,6 +59,8 @@ class _VisitanteScreenState extends State<VisitanteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final String anfitriao = Provider.of<UsuarioProvider>(context).userName;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 78, 20, 166),
@@ -133,6 +137,7 @@ class _VisitanteScreenState extends State<VisitanteScreen> {
                         setState(() {});
                       },
                     ),
+                    const SizedBox(height: 10),
                     TextField(
                       controller: _unidadeController,
                       decoration: const InputDecoration(
@@ -154,8 +159,8 @@ class _VisitanteScreenState extends State<VisitanteScreen> {
                 unidade: _unidadeController.text,
                 condominio: condominioFicticio,
                 endereco: enderecoFicticio,
-                anfitriao: anfitriaoFicticio,
-              )
+                anfitriao: anfitriao,
+              ),
             ],
           ),
         ),

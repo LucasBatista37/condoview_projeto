@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:condoview/models/encomenda_model.dart';
@@ -8,10 +9,10 @@ class EncomendasProvider with ChangeNotifier {
   final String _baseUrl = 'https://backend-condoview.onrender.com';
   List<Encomenda> _encomendas = [];
   Timer? _pollingTimer;
-  bool _isLoading = false; 
+  bool _isLoading = false;
 
   List<Encomenda> get encomendas => _encomendas;
-  bool get isLoading => _isLoading; 
+  bool get isLoading => _isLoading;
 
   Future<void> addEncomenda(Encomenda encomenda) async {
     final url = Uri.parse('$_baseUrl/api/users/package');
@@ -24,11 +25,15 @@ class EncomendasProvider with ChangeNotifier {
       request.fields['status'] =
           encomenda.status.isNotEmpty ? encomenda.status : 'Pendente';
 
-      if (encomenda.imagePath.isNotEmpty) {
+      if (encomenda.imagePath.isNotEmpty &&
+          File(encomenda.imagePath).existsSync()) {
         request.files.add(await http.MultipartFile.fromPath(
           'imagePath',
           encomenda.imagePath,
         ));
+      } else {
+        debugPrint(
+            "Caminho da imagem inválido ou arquivo não encontrado: ${encomenda.imagePath}");
       }
 
       var response = await request.send();
@@ -61,15 +66,18 @@ class EncomendasProvider with ChangeNotifier {
   Future<void> fetchEncomendas() async {
     final url = Uri.parse('$_baseUrl/api/users/admin/package');
     _isLoading = true;
-    notifyListeners(); // Notifica que o carregamento começou
-
+    notifyListeners();
     try {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        _encomendas =
-            data.map((encomenda) => Encomenda.fromJson(encomenda)).toList();
+        debugPrint("Resposta da API: $data"); 
+
+        _encomendas = data.map((encomenda) {
+          debugPrint("Encomenda recebida: $encomenda");
+          return Encomenda.fromJson(encomenda);
+        }).toList();
       } else {
         throw Exception('Falha ao carregar encomendas: ${response.body}');
       }
@@ -78,7 +86,7 @@ class EncomendasProvider with ChangeNotifier {
       throw error;
     } finally {
       _isLoading = false;
-      notifyListeners(); // Notifica que o carregamento terminou
+      notifyListeners();
     }
   }
 

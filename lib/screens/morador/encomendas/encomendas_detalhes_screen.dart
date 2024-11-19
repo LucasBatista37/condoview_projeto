@@ -36,7 +36,7 @@ class EncomendaDetalhesScreen extends StatelessWidget {
       );
       Navigator.pop(context);
     } catch (error) {
-      print('Erro ao atualizar status: $error'); 
+      print('Erro ao atualizar status: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao atualizar status: $error')),
       );
@@ -45,6 +45,37 @@ class EncomendaDetalhesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(
+        "Detalhes da encomenda - Caminho da imagem: ${encomenda.imagePath}");
+
+    final String baseUrl = 'https://backend-condoview.onrender.com/';
+    final String fullImageUrl =
+        baseUrl + encomenda.imagePath.replaceAll(r'\', '/');
+
+    Widget imageWidget;
+    if (encomenda.imagePath.isNotEmpty) {
+      debugPrint("Usando Image.network para carregar a imagem: $fullImageUrl");
+      imageWidget = Image.network(
+        fullImageUrl,
+        height: 200,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          debugPrint("Erro ao carregar a imagem da URL: $error");
+          return const Icon(
+            Icons.broken_image,
+            size: 50,
+            color: Colors.red,
+          );
+        },
+      );
+    } else {
+      imageWidget = const Icon(
+        Icons.image,
+        size: 200,
+        color: Colors.grey,
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 78, 20, 166),
@@ -59,11 +90,7 @@ class EncomendaDetalhesScreen extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
-              child: Image.file(
-                File(encomenda.imagePath),
-                height: 200,
-                fit: BoxFit.cover,
-              ),
+              child: imageWidget,
             ),
             const SizedBox(height: 16),
             Text(

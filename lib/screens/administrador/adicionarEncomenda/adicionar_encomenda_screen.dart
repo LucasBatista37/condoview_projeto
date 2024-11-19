@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:condoview/components/custom_button.dart';
 import 'package:condoview/components/custom_date_time_picker.dart';
 import 'package:condoview/components/custom_image_picker.dart';
@@ -33,6 +35,16 @@ class _AdicionarEncomendaScreenState extends State<AdicionarEncomendaScreen> {
         const SnackBar(content: Text('Por favor, preencha todos os campos.')),
       );
       return;
+    }
+
+    if (!await File(_imageFile!.path).exists()) {
+      debugPrint("Arquivo de imagem não existe: ${_imageFile!.path}");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Arquivo de imagem inválido.')),
+      );
+      return;
+    } else {
+      debugPrint("Arquivo de imagem válido: ${_imageFile!.path}");
     }
 
     final encomenda = Encomenda(

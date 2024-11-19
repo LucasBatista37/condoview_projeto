@@ -32,9 +32,11 @@ class _EncomendasScreenState extends State<EncomendasScreen> {
     final encomendasProvider =
         Provider.of<EncomendasProvider>(context, listen: false);
 
+    debugPrint("Iniciando a busca por encomendas...");
     encomendasProvider.fetchEncomendas();
 
-    _pollingTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+    _pollingTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      debugPrint("Executando polling para buscar encomendas...");
       encomendasProvider.fetchEncomendas();
     });
   }
@@ -50,18 +52,25 @@ class _EncomendasScreenState extends State<EncomendasScreen> {
       ),
       body: Consumer<EncomendasProvider>(
         builder: (context, encomendasProvider, child) {
+          debugPrint("Status de carregamento: ${encomendasProvider.isLoading}");
           if (encomendasProvider.encomendas.isEmpty &&
               encomendasProvider.isLoading) {
+            debugPrint("Carregando encomendas...");
             return const Center(child: CircularProgressIndicator());
           } else if (encomendasProvider.encomendas.isEmpty) {
+            debugPrint("Nenhuma encomenda registrada.");
             return const CustomEmpty(text: "Nenhuma encomenda registrada.");
           } else {
+            debugPrint(
+                "Encomendas carregadas: ${encomendasProvider.encomendas.length}");
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: ListView.builder(
                 itemCount: encomendasProvider.encomendas.length,
                 itemBuilder: (context, index) {
                   final encomenda = encomendasProvider.encomendas[index];
+                  debugPrint(
+                      "Processando encomenda: ${encomenda.title}, Caminho da imagem: ${encomenda.imagePath}");
                   return _buildEncomendaItem(context, encomenda);
                 },
               ),
@@ -81,26 +90,37 @@ class _EncomendasScreenState extends State<EncomendasScreen> {
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: encomenda.imagePath != null && encomenda.imagePath.isNotEmpty
-              ? Builder(builder: (context) {
-                  final imageUrl = 'https://backend-condoview.onrender.com/' +
-                      encomenda.imagePath.replaceAll(r'\', '/');
-                  debugPrint('Caminho da imagem: $imageUrl');
+              ? Builder(
+                  builder: (context) {
+                    final imageUrl = 'https://backend-condoview.onrender.com/' +
+                        encomenda.imagePath.replaceAll(r'\', '/');
+                    debugPrint('Caminho da imagem da encomenda: $imageUrl');
 
-                  return Image.network(
-                    imageUrl,
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      debugPrint('Erro ao carregar a imagem: $error');
-                      return const Icon(
-                        Icons.broken_image,
-                        size: 50,
-                        color: Colors.red,
-                      );
-                    },
-                  );
-                })
+                    return Image.network(
+                      imageUrl,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        debugPrint(
+                            'Carregando imagem... Progresso: ${loadingProgress.expectedTotalBytes != null ? (loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!) * 100 : 'indefinido'}%');
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        debugPrint(
+                            'Erro ao carregar a imagem da encomenda: $error');
+                        return const Icon(
+                          Icons.broken_image,
+                          size: 50,
+                          color: Colors.red,
+                        );
+                      },
+                    );
+                  },
+                )
               : const Icon(
                   Icons.image,
                   size: 50,

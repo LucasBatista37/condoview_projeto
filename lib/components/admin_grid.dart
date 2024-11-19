@@ -1,4 +1,5 @@
 import 'package:condoview/screens/administrador/adicionarEncomenda/adicionar_encomenda_screen.dart';
+import 'package:condoview/screens/administrador/aprovarEntrada/qr_code_scanner_screen.dart';
 import 'package:condoview/screens/administrador/aprovarManutencao/visualizar_manutencao.dart';
 import 'package:condoview/screens/administrador/aprovarReserva/visualizar_reservas_screen.dart';
 import 'package:condoview/screens/administrador/avisos/visualizar_avisos_screen.dart';
@@ -52,6 +53,12 @@ class AdminGrid extends StatelessWidget {
               Icons.build,
               'Manutenção',
               const VisualizarManutencoesScreen(),
+              context,
+            ),
+            _buildAdminItem(
+              Icons.qr_code_scanner,
+              'Entrada',
+              QRCodeScannerScreen(),
               context,
             ),
           ],

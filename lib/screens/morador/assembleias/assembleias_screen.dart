@@ -26,12 +26,12 @@ class _AssembleiasScreenState extends State<AssembleiasScreen> {
       final assembleiaProvider =
           Provider.of<AssembleiaProvider>(context, listen: false);
       await assembleiaProvider.fetchAssembleias();
-      assembleiaProvider.startPolling(); // Inicia o polling
+      assembleiaProvider.startPolling();
     } catch (error) {
       print("Log: Erro ao buscar assembleias: $error");
     } finally {
       setState(() {
-        _isInitialLoading = false; // Carregamento inicial concluído
+        _isInitialLoading = false; 
       });
     }
   }
@@ -40,7 +40,7 @@ class _AssembleiasScreenState extends State<AssembleiasScreen> {
   void dispose() {
     final assembleiaProvider =
         Provider.of<AssembleiaProvider>(context, listen: false);
-    assembleiaProvider.stopPolling(); // Para o polling ao sair da tela
+    assembleiaProvider.stopPolling(); 
     super.dispose();
   }
 

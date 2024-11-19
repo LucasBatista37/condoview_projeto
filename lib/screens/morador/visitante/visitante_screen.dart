@@ -129,14 +129,19 @@ class _VisitanteScreenState extends State<VisitanteScreen> {
                         icon: Icon(Icons.person),
                         labelText: 'Nome do Visitante',
                       ),
+                      onChanged: (value) {
+                        setState(() {});
+                      },
                     ),
-                    const SizedBox(height: 10),
                     TextField(
                       controller: _unidadeController,
                       decoration: const InputDecoration(
                         icon: Icon(Icons.home),
                         labelText: 'Unidade',
                       ),
+                      onChanged: (value) {
+                        setState(() {});
+                      },
                     ),
                   ],
                 ),

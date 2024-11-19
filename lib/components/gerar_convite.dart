@@ -1,10 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:qr_flutter/qr_flutter.dart'; // QR Code package
+import 'package:qr_flutter/qr_flutter.dart';
 
 class GerarConvite extends StatefulWidget {
   final String data;
@@ -33,13 +34,9 @@ class GerarConvite extends StatefulWidget {
 class _GerarConviteState extends State<GerarConvite> {
   Future<String> _generateInvitationImage() async {
     try {
-      print('Loading image card_template.png');
-
       final ByteData imageData =
           await rootBundle.load('assets/images/card_template.png');
       final Uint8List bytes = imageData.buffer.asUint8List();
-
-      print('Image loaded successfully');
 
       final recorder = ui.PictureRecorder();
       final canvas = Canvas(recorder, const Rect.fromLTWH(0, 0, 1004, 591));
@@ -103,11 +100,19 @@ class _GerarConviteState extends State<GerarConvite> {
       hostTextPainter.paint(canvas, const Offset(200, 385));
 
       final qrValidationResult = QrValidator.validate(
-        data:
-            'Data: ${widget.data}, Hora: ${widget.hora}, Nome: ${widget.nome}, Unidade: ${widget.unidade}, Condomínio: ${widget.condominio}, Endereço: ${widget.endereco}, Anfitrião: ${widget.anfitriao}',
+        data: jsonEncode({
+          'data': widget.data,
+          'hora': widget.hora,
+          'nome': widget.nome,
+          'unidade': widget.unidade,
+          'condominio': widget.condominio,
+          'endereco': widget.endereco,
+          'anfitriao': widget.anfitriao,
+        }),
         version: QrVersions.auto,
         errorCorrectionLevel: QrErrorCorrectLevel.L,
       );
+
       if (qrValidationResult.status == QrValidationStatus.valid) {
         final qrCode = qrValidationResult.qrCode!;
         final qrPainter = QrPainter.withQr(
@@ -127,17 +132,12 @@ class _GerarConviteState extends State<GerarConvite> {
       final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
       final buffer = byteData!.buffer.asUint8List();
 
-      print('Image generated successfully');
-
       final tempDir = await getTemporaryDirectory();
       final file = File('${tempDir.path}/invitation_image.png');
       await file.writeAsBytes(buffer);
 
-      print('Image saved at path: ${file.path}');
-
       return file.path;
     } catch (e) {
-      print('Error generating the image: $e');
       rethrow;
     }
   }
@@ -150,7 +150,7 @@ class _GerarConviteState extends State<GerarConvite> {
         text: 'Aqui está o seu convite de visitante.',
       );
     } catch (e) {
-      print('Error sharing the invitation: $e');
+      print('Erro ao gerar imagem: $e');
     }
   }
 

@@ -119,28 +119,42 @@ class UsuarioProvider with ChangeNotifier {
   Future<void> update({
     String? nome,
     String? senha,
+    String? telefone,
     String? profileImage,
   }) async {
     if (_usuario == null) {
+      print('Log: Tentativa de atualizar sem autenticação');
       throw Exception('Usuário não autenticado. Não é possível atualizar.');
     }
 
     final url = Uri.parse('$_baseUrl/api/users/update');
 
     try {
+      print('Log: Iniciando requisição de atualização');
       var request = http.MultipartRequest('PUT', url);
+
       request.headers['Authorization'] = 'Bearer $_token';
 
-      if (nome != null) request.fields['nome'] = nome;
-      if (senha != null) request.fields['senha'] = senha;
+      if (nome != null && nome.isNotEmpty) {
+        print('Log: Adicionando nome ao request: $nome');
+        request.fields['nome'] = nome;
+      }
+      if (senha != null && senha.isNotEmpty) {
+        print('Log: Adicionando senha ao request');
+        request.fields['senha'] = senha;
+      }
+      if (telefone != null && telefone.isNotEmpty) {
+        print('Log: Adicionando telefone ao request: $telefone');
+        request.fields['telefone'] = telefone;
+      }
       if (profileImage != null) {
-        print('Log: Adicionando imagem de perfil ao request');
+        print('Log: Adicionando imagem de perfil ao request: $profileImage');
         request.files.add(
           await http.MultipartFile.fromPath('profileImage', profileImage),
         );
       }
 
-      print('Log: Enviando request para atualização de usuário');
+      print('Log: Enviando requisição para $_baseUrl/api/users/update');
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
@@ -149,6 +163,8 @@ class UsuarioProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        print('Log: Dados recebidos após atualização: $data');
+
         _usuario = Usuario.fromJson(data);
         _userName = _usuario!.nome;
 
@@ -156,16 +172,17 @@ class UsuarioProvider with ChangeNotifier {
             _usuario!.profileImageUrl!.isNotEmpty) {
           _userProfileImage =
               '$_baseUrl/uploads/users/${_usuario!.profileImageUrl}';
+          print('Log: URL da imagem de perfil atualizada: $_userProfileImage');
         } else {
           _userProfileImage = '';
+          print('Log: Imagem de perfil não encontrada ou removida.');
         }
 
-        print(
-            'Log: Atualização bem-sucedida - Nome: $_userName, Imagem: $_userProfileImage');
+        print('Log: Atualização de perfil concluída com sucesso.');
         notifyListeners();
       } else {
         print(
-            'Log: Erro ao atualizar usuário - Status: ${response.statusCode}, Body: ${response.body}');
+            'Log: Falha na atualização - Status Code: ${response.statusCode}, Body: ${response.body}');
         throw Exception('Erro ao atualizar usuário: ${response.body}');
       }
     } catch (e) {

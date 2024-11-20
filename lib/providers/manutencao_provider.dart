@@ -138,8 +138,11 @@ class ManutencaoProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        _manutencoes.firstWhere((m) => m.id == manutencaoId).status =
-            'aprovado';
+        final index = _manutencoes.indexWhere((m) => m.id == manutencaoId);
+        if (index != -1) {
+          _manutencoes[index].status = 'Aprovada';
+          _manutencoes[index].statusColor = Colors.green;
+        }
         notifyListeners();
       } else {
         print('Erro ao aprovar manutenção: ${response.body}');
@@ -164,8 +167,11 @@ class ManutencaoProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        _manutencoes.firstWhere((m) => m.id == manutencaoId).status =
-            'rejeitado';
+        final index = _manutencoes.indexWhere((m) => m.id == manutencaoId);
+        if (index != -1) {
+          _manutencoes[index].status = 'Rejeitada';
+          _manutencoes[index].statusColor = Colors.red;
+        }
         notifyListeners();
       } else {
         print('Erro ao rejeitar manutenção: ${response.body}');

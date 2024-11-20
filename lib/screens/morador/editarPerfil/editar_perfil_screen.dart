@@ -8,13 +8,11 @@ class EditarPerfilScreen extends StatefulWidget {
   const EditarPerfilScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _EditarPerfilScreenState createState() => _EditarPerfilScreenState();
 }
 
 class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
   final TextEditingController _nomeController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
   XFile? _profileImage;
 
@@ -24,7 +22,7 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
     final usuarioProvider =
         Provider.of<UsuarioProvider>(context, listen: false);
     _nomeController.text = usuarioProvider.userName;
-    _emailController.text = usuarioProvider.usuario?.email ?? '';
+    _telefoneController.text = usuarioProvider.usuario?.telefone ?? '';
   }
 
   @override
@@ -87,8 +85,6 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
             const SizedBox(height: 24),
             _buildTextField(label: 'Nome', controller: _nomeController),
             const SizedBox(height: 16),
-            _buildTextField(label: 'E-mail', controller: _emailController),
-            const SizedBox(height: 16),
             _buildTextField(label: 'Telefone', controller: _telefoneController),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -146,8 +142,8 @@ class _EditarPerfilScreenState extends State<EditarPerfilScreen> {
     try {
       await usuarioProvider.update(
         nome: _nomeController.text,
-        profileImage:
-            _profileImage?.path, 
+        telefone: _telefoneController.text,
+        profileImage: _profileImage?.path,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(

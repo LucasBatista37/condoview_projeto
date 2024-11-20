@@ -123,13 +123,13 @@ class _VisualizarManutencoesScreenState
     Color statusColor;
 
     switch (status) {
-      case 'aprovado':
+      case 'Aprovada':
         statusColor = Colors.green;
         break;
-      case 'rejeitado':
+      case 'Rejeitada':
         statusColor = Colors.red;
         break;
-      case 'pendente':
+      case 'Pendente':
       default:
         statusColor = Colors.orange;
         break;

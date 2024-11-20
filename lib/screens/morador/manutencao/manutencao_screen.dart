@@ -26,7 +26,7 @@ class _ManutencaoScreenState extends State<ManutencaoScreen> {
       final manutencaoProvider =
           Provider.of<ManutencaoProvider>(context, listen: false);
       await manutencaoProvider.fetchManutencoes();
-      manutencaoProvider.startPolling(); 
+      manutencaoProvider.startPolling();
     } catch (error) {
       print("Erro ao buscar manutenções: $error");
     } finally {
@@ -133,13 +133,13 @@ class _ManutencaoScreenState extends State<ManutencaoScreen> {
 
     Color statusColor;
     switch (status) {
-      case 'aprovado':
+      case 'Aprovada':
         statusColor = Colors.green;
         break;
-      case 'rejeitado':
+      case 'Rejeitada':
         statusColor = Colors.red;
         break;
-      case 'pendente':
+      case 'Pendente':
         statusColor = Colors.orange;
         break;
       default:

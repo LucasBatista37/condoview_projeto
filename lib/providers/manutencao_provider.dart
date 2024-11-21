@@ -20,6 +20,7 @@ class ManutencaoProvider with ChangeNotifier {
       request.fields['type'] = manutencao.tipo;
       request.fields['descriptionMaintenance'] = manutencao.descricao;
       request.fields['dataMaintenance'] = manutencao.data.toIso8601String();
+      request.fields['usuarioNome'] = manutencao.usuarioNome; 
 
       if (manutencao.imagemPath != null) {
         request.files.add(await http.MultipartFile.fromPath(

@@ -27,7 +27,7 @@ class _VisualizarManutencoesScreenState
       final manutencaoProvider =
           Provider.of<ManutencaoProvider>(context, listen: false);
       await manutencaoProvider.fetchManutencoes();
-      manutencaoProvider.startPolling(); // Inicie o polling
+      manutencaoProvider.startPolling(); 
     } catch (error) {
       print("Erro ao buscar manutenções: $error");
     } finally {

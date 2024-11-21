@@ -3,6 +3,7 @@ import 'package:condoview/components/custom_data_picker.dart';
 import 'package:condoview/components/custom_drop_down.dart';
 import 'package:condoview/components/custom_image_picker.dart';
 import 'package:condoview/components/custom_text_field.dart';
+import 'package:condoview/providers/usuario_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -52,14 +53,18 @@ class _SolicitarManutencaoScreenState extends State<SolicitarManutencaoScreen> {
     final manutencaoProvider =
         Provider.of<ManutencaoProvider>(context, listen: false);
 
+    final usuarioProvider =
+        Provider.of<UsuarioProvider>(context, listen: false);
+    final nomeUsuario = usuarioProvider.userName;
+
     final novaManutencao = Manutencao(
       tipo: _selectedType!,
       descricao: _descriptionController.text,
       data: _selectedDate!,
       imagemPath: _imageFile?.path,
+      usuarioNome: nomeUsuario,
     );
 
-    // Log para verificar o objeto de manutenção criado
     debugPrint('Nova manutenção: ${novaManutencao.toString()}');
 
     manutencaoProvider.adicionarManutencao(novaManutencao);

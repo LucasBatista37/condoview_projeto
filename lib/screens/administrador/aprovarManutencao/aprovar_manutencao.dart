@@ -46,11 +46,6 @@ class AprovarManutencaoScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildDetailContainer(
-              label: 'ID da Manutenção',
-              value: manutencao.id ?? 'N/A',
-            ),
-            const SizedBox(height: 16),
-            _buildDetailContainer(
               label: 'Tipo de Manutenção',
               value: manutencao.tipo,
             ),
@@ -64,6 +59,10 @@ class AprovarManutencaoScreen extends StatelessWidget {
               label: 'Data',
               value:
                   '${manutencao.data.day}/${manutencao.data.month}/${manutencao.data.year}',
+            ),
+            _buildDetailContainer(
+              label: 'Nome do Usuário',
+              value: manutencao.usuarioNome,
             ),
             const SizedBox(height: 16),
             _buildImageSection(),

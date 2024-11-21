@@ -6,8 +6,9 @@ class Manutencao {
   final String descricao;
   final DateTime data;
   final String? imagemPath;
-  String status; 
+  String status;
   Color statusColor;
+  final String usuarioNome;
 
   Manutencao({
     this.id,
@@ -16,15 +17,16 @@ class Manutencao {
     required this.data,
     this.imagemPath,
     this.status = "Pendente",
+    required this.usuarioNome, 
   }) : statusColor = _getStatusColor(status);
 
   static Color _getStatusColor(String status) {
     switch (status) {
-      case 'Aprovada': 
+      case 'Aprovada':
         return Colors.green;
       case 'Rejeitada':
         return Colors.red;
-      default: 
+      default:
         return Colors.yellow;
     }
   }
@@ -49,7 +51,8 @@ class Manutencao {
       descricao: json['descriptionMaintenance'],
       data: DateTime.parse(json['dataMaintenance']),
       imagemPath: json['imagePath'],
-      status: json['status'], 
+      status: json['status'],
+      usuarioNome: json['usuarioNome'] ?? 'Usuário desconhecido', 
     );
   }
 
@@ -61,6 +64,7 @@ class Manutencao {
       'dataMaintenance': data.toIso8601String(),
       'imagePath': imagemPath,
       'status': status,
+      'usuarioNome': usuarioNome, 
     };
   }
 }

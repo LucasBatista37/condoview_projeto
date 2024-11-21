@@ -121,11 +121,13 @@ class _ReservasScreenState extends State<ReservasScreen> {
     );
   }
 
-  Widget _buildReservaCard(BuildContext context,
-      {required IconData icon,
-      required String title,
-      required String date,
-      required String status}) {
+  Widget _buildReservaCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String date,
+    required String status,
+  }) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       elevation: 2,
@@ -136,7 +138,11 @@ class _ReservasScreenState extends State<ReservasScreen> {
         trailing: Text(
           status,
           style: TextStyle(
-            color: status == 'Aprovada' ? Colors.green : Colors.red,
+            color: status == 'Aprovada'
+                ? Colors.green
+                : status == 'Pendente'
+                    ? Colors.orange
+                    : Colors.red,
             fontWeight: FontWeight.bold,
           ),
         ),

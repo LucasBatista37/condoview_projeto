@@ -3,6 +3,7 @@ import 'package:condoview/components/custom_data_picker.dart';
 import 'package:condoview/components/custom_drop_down.dart';
 import 'package:condoview/components/custom_text_field.dart';
 import 'package:condoview/components/custom_time_picker.dart';
+import 'package:condoview/providers/usuario_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:condoview/providers/reserva_provider.dart';
@@ -32,6 +33,8 @@ class _SolicitarReservaState extends State<SolicitarReserva> {
   String? _selectedArea;
 
   void _submit() async {
+    debugPrint('Iniciando submissão da reserva.');
+
     print('Horário de Início: $_startTime');
     print('Horário de Término: $_endTime');
 
@@ -40,6 +43,7 @@ class _SolicitarReservaState extends State<SolicitarReserva> {
         _startTime == null ||
         _endTime == null ||
         _descricaoController.text.isEmpty) {
+      debugPrint('Erro: Alguns campos obrigatórios não foram preenchidos.');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor, preencha todos os campos!'),
@@ -49,6 +53,7 @@ class _SolicitarReservaState extends State<SolicitarReserva> {
     }
 
     if (_descricaoController.text.length < 5) {
+      debugPrint('Erro: A descrição tem menos de 5 caracteres.');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('A descrição deve ter pelo menos 5 caracteres.'),
@@ -57,8 +62,10 @@ class _SolicitarReservaState extends State<SolicitarReserva> {
       return;
     }
 
-    final manutencaoProvider =
-        Provider.of<ReservaProvider>(context, listen: false);
+    final usuarioProvider =
+        Provider.of<UsuarioProvider>(context, listen: false);
+    final userName = usuarioProvider.userName;
+    debugPrint('Nome do usuário obtido: $userName');
 
     final novaReserva = Reserva(
       area: _selectedArea!,
@@ -66,24 +73,26 @@ class _SolicitarReservaState extends State<SolicitarReserva> {
       data: _selectedDate!,
       horarioInicio: _startTime!,
       horarioFim: _endTime!,
+      nomeUsuario: userName, 
     );
 
-    print('Tentando adicionar reserva: ${novaReserva.toJson()}');
+    debugPrint('Nova reserva criada: ${novaReserva.toJson()}');
+
+    final reservaProvider =
+        Provider.of<ReservaProvider>(context, listen: false);
 
     try {
-      await manutencaoProvider.adicionarReserva(novaReserva);
+      debugPrint('Enviando reserva ao provider...');
+      await reservaProvider.adicionarReserva(context, novaReserva);
+      debugPrint('Reserva enviada com sucesso.');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Reserva enviada com sucesso!'),
-        ),
+        const SnackBar(content: Text('Reserva adicionada com sucesso!')),
       );
-
       Navigator.pop(context);
     } catch (error) {
+      debugPrint('Erro ao adicionar reserva: $error');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro ao enviar reserva: $error'),
-        ),
+        const SnackBar(content: Text('Erro ao adicionar reserva.')),
       );
     }
   }

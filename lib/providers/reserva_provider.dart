@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:condoview/models/reserva_model.dart';
+import 'package:condoview/providers/usuario_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:provider/provider.dart';
 
 class ReservaProvider with ChangeNotifier {
   List<Reserva> _reservas = [];
@@ -13,17 +16,27 @@ class ReservaProvider with ChangeNotifier {
 
   final String _baseUrl = 'https://backend-condoview.onrender.com';
 
-  Future<void> adicionarReserva(Reserva reserva) async {
+  Future<void> adicionarReserva(BuildContext context, Reserva reserva) async {
+    final usuarioProvider =
+        Provider.of<UsuarioProvider>(context, listen: false);
+    final userName = usuarioProvider.userName;
     final url = '$_baseUrl/api/users/reserve';
+
     print('Dados a serem enviados: ${reserva.toJson()}');
     try {
+      final reservaComUsuario = {
+        ...reserva.toJson(),
+        'usuario': userName,
+      };
+
       final response = await http.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
         },
-        body: json.encode(reserva.toJson()),
+        body: json.encode(reservaComUsuario),
       );
+
       if (response.statusCode == 201) {
         final data = json.decode(response.body);
 
@@ -35,6 +48,7 @@ class ReservaProvider with ChangeNotifier {
           horarioInicio: reserva.horarioInicio,
           horarioFim: reserva.horarioFim,
           status: reserva.status,
+          nomeUsuario: userName,
         );
         _reservas.add(novaReserva);
         notifyListeners();
@@ -58,23 +72,15 @@ class ReservaProvider with ChangeNotifier {
         },
       );
 
-      print('Status da resposta: ${response.statusCode}');
-      print('Corpo da resposta: ${response.body}');
+      debugPrint('Status da resposta: ${response.statusCode}');
+      debugPrint('Corpo da resposta: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as List;
         _reservas = data.map((item) {
-          return Reserva(
-            id: item['_id'] ?? '',
-            area: item['area'] ?? '',
-            descricao: item['descricao'] ?? 'Descrição não disponível',
-            data: item['data'] != null
-                ? DateTime.parse(item['data'])
-                : DateTime.now(),
-            horarioInicio: _parseTime(item['horarioInicio'] ?? '00:00'),
-            horarioFim: _parseTime(item['horarioFim'] ?? '00:00'),
-            status: item['status'] ?? 'Desconhecido',
-          );
+          final reserva = Reserva.fromJson(item);
+          debugPrint('Reserva carregada: ${reserva.toJson()}');
+          return reserva;
         }).toList();
         notifyListeners();
       } else {
@@ -82,7 +88,7 @@ class ReservaProvider with ChangeNotifier {
             'Erro ao buscar reservas: ${response.statusCode} - ${response.body}');
       }
     } catch (error) {
-      print('Erro ao buscar reservas: $error');
+      debugPrint('Erro ao buscar reservas: $error');
       throw error;
     }
   }
@@ -104,7 +110,6 @@ class ReservaProvider with ChangeNotifier {
     super.dispose();
   }
 
-  // Helper method to parse time strings
   TimeOfDay _parseTime(String time) {
     final parts = time.split(':');
     final hour = int.parse(parts[0]);
@@ -157,7 +162,7 @@ class ReservaProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final reserva = _reservas.firstWhere((reserva) => reserva.id == id);
-        reserva.status = "rejeitada";
+        reserva.status = "Rejeitada";
         notifyListeners();
       } else {
         throw Exception(

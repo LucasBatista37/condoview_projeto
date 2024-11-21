@@ -18,8 +18,9 @@ class AprovarReservaScreen extends StatefulWidget {
 }
 
 class _AprovarReservaScreenState extends State<AprovarReservaScreen> {
-  bool _isLoading = false; 
+  bool _isLoading = false;
 
+  @override
   @override
   Widget build(BuildContext context) {
     final reserva = widget.reserva;
@@ -30,6 +31,8 @@ class _AprovarReservaScreenState extends State<AprovarReservaScreen> {
     debugPrint('Data: ${reserva.data}');
     debugPrint('Horário de Início: ${reserva.horarioInicio}');
     debugPrint('Horário de Fim: ${reserva.horarioFim}');
+    debugPrint(
+        'Nome do Usuário: ${reserva.nomeUsuario}');
 
     return Scaffold(
       appBar: AppBar(
@@ -56,10 +59,6 @@ class _AprovarReservaScreenState extends State<AprovarReservaScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildDetailContainer(
-              label: 'ID da Reserva',
-              value: reserva.id ?? 'N/A',
-            ),
-            _buildDetailContainer(
               label: 'Área Solicitada',
               value: reserva.area,
             ),
@@ -82,10 +81,13 @@ class _AprovarReservaScreenState extends State<AprovarReservaScreen> {
               value:
                   '${reserva.horarioFim.hour}:${reserva.horarioFim.minute.toString().padLeft(2, '0')}',
             ),
+            _buildDetailContainer(
+              label: 'Nome do Usuário',
+              value: reserva.nomeUsuario,
+            ),
             const SizedBox(height: 16),
             _buildActionButtons(context),
-            if (_isLoading)
-              const Center(child: CircularProgressIndicator()), // Carregador
+            if (_isLoading) const Center(child: CircularProgressIndicator()),
           ],
         ),
       ),
@@ -171,7 +173,7 @@ class _AprovarReservaScreenState extends State<AprovarReservaScreen> {
     final reserva = widget.reserva;
 
     if (reserva.id != null) {
-      setState(() => _isLoading = true); 
+      setState(() => _isLoading = true);
 
       try {
         debugPrint('Rejeitando reserva com ID: ${reserva.id}');

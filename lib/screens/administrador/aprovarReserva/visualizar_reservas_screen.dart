@@ -20,7 +20,7 @@ class _VisualizarReservasScreenState extends State<VisualizarReservasScreen> {
       final reservaProvider =
           Provider.of<ReservaProvider>(context, listen: false);
       reservaProvider.fetchReservas();
-      reservaProvider.startPolling(); 
+      reservaProvider.startPolling();
     });
   }
 
@@ -28,7 +28,7 @@ class _VisualizarReservasScreenState extends State<VisualizarReservasScreen> {
   void dispose() {
     final reservaProvider =
         Provider.of<ReservaProvider>(context, listen: false);
-    reservaProvider.stopPolling(); 
+    reservaProvider.stopPolling();
     super.dispose();
   }
 
@@ -110,7 +110,11 @@ class _VisualizarReservasScreenState extends State<VisualizarReservasScreen> {
         trailing: Text(
           status,
           style: TextStyle(
-            color: status == 'Aprovada' ? Colors.green : Colors.red,
+            color: status == 'Aprovada'
+                ? Colors.green
+                : status == 'Pendente'
+                    ? Colors.orange
+                    : Colors.red,
             fontWeight: FontWeight.bold,
           ),
         ),

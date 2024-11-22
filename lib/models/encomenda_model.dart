@@ -5,6 +5,8 @@ class Encomenda {
   final String time;
   final String status;
   final String imagePath;
+  final String usuarioId;
+  final String usuarioNome;
 
   Encomenda({
     this.id,
@@ -13,6 +15,8 @@ class Encomenda {
     required this.time,
     required this.status,
     required this.imagePath,
+    required this.usuarioId,
+    required this.usuarioNome, 
   });
 
   factory Encomenda.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,8 @@ class Encomenda {
       time: json['time'],
       status: json['status'] ?? 'Pendente',
       imagePath: json['imagePath'] ?? '',
+      usuarioId: json['usuarioId'] ?? '',
+      usuarioNome: json['usuarioNome'] ?? '', 
     );
   }
 
@@ -33,6 +39,8 @@ class Encomenda {
       'time': time,
       'status': status.isNotEmpty ? status : 'Pendente',
       'imagePath': imagePath,
+      'usuarioId': usuarioId,
+      'usuarioNome': usuarioNome,
     };
   }
 }

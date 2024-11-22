@@ -92,9 +92,11 @@ class _EncomendasScreenState extends State<EncomendasScreen> {
           child: encomenda.imagePath != null && encomenda.imagePath.isNotEmpty
               ? Builder(
                   builder: (context) {
-                    final imageUrl = 'https://backend-condoview.onrender.com/' +
-                        encomenda.imagePath.replaceAll(r'\', '/');
-                    debugPrint('Caminho da imagem da encomenda: $imageUrl');
+                    final imageUrl =
+                        'https://backend-condoview.onrender.com/uploads/package/' +
+                            encomenda.imagePath.replaceAll(r'\', '/');
+                    debugPrint(
+                        'Caminho da imagem da encomenda corrigido: $imageUrl');
 
                     return Image.network(
                       imageUrl,

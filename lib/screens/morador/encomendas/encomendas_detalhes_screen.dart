@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:condoview/models/encomenda_model.dart';
 import 'package:condoview/providers/encomenda_provider.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +26,8 @@ class EncomendaDetalhesScreen extends StatelessWidget {
       time: encomenda.time,
       imagePath: encomenda.imagePath,
       status: novoStatus,
+      usuarioId: encomenda.usuarioId,
+      usuarioNome: encomenda.usuarioNome, 
     );
 
     try {
@@ -34,7 +35,7 @@ class EncomendaDetalhesScreen extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Status atualizado para $novoStatus!')),
       );
-      Navigator.pop(context);
+      Navigator.pop(context, encomendaAtualizada);
     } catch (error) {
       print('Erro ao atualizar status: $error');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -48,7 +49,8 @@ class EncomendaDetalhesScreen extends StatelessWidget {
     debugPrint(
         "Detalhes da encomenda - Caminho da imagem: ${encomenda.imagePath}");
 
-    final String baseUrl = 'https://backend-condoview.onrender.com/';
+    final String baseUrl =
+        'https://backend-condoview.onrender.com/uploads/package/';
     final String fullImageUrl =
         baseUrl + encomenda.imagePath.replaceAll(r'\', '/');
 
@@ -99,6 +101,11 @@ class EncomendaDetalhesScreen extends StatelessWidget {
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Usuário: ${encomenda.usuarioNome}',
+              style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 8),
             Text(

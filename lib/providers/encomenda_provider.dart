@@ -19,11 +19,15 @@ class EncomendasProvider with ChangeNotifier {
 
     try {
       var request = http.MultipartRequest('POST', url);
+
       request.fields['title'] = encomenda.title;
       request.fields['apartment'] = encomenda.apartment;
       request.fields['time'] = encomenda.time;
-      request.fields['status'] =
-          encomenda.status.isNotEmpty ? encomenda.status : 'Pendente';
+      request.fields['status'] = encomenda.status;
+      request.fields['usuarioId'] = encomenda.usuarioId;
+      request.fields['usuarioNome'] = encomenda.usuarioNome;
+
+      debugPrint("Campos enviados na requisição: ${request.fields}");
 
       if (encomenda.imagePath.isNotEmpty &&
           File(encomenda.imagePath).existsSync()) {
@@ -31,23 +35,29 @@ class EncomendasProvider with ChangeNotifier {
           'imagePath',
           encomenda.imagePath,
         ));
+        debugPrint("Imagem anexada: ${encomenda.imagePath}");
       } else {
         debugPrint(
-            "Caminho da imagem inválido ou arquivo não encontrado: ${encomenda.imagePath}");
+            "Arquivo de imagem inválido ou não encontrado: ${encomenda.imagePath}");
       }
 
       var response = await request.send();
 
       if (response.statusCode == 201) {
+        debugPrint("Encomenda adicionada com sucesso.");
         final responseData = await response.stream.bytesToString();
         final newEncomenda =
             Encomenda.fromJson(json.decode(responseData)['newPackage']);
         _encomendas.add(newEncomenda);
         notifyListeners();
       } else {
-        throw Exception('Erro ao adicionar encomenda');
+        final errorResponse = await response.stream.bytesToString();
+        debugPrint("Erro ao adicionar encomenda: $errorResponse");
+        throw Exception(
+            'Erro ao adicionar encomenda. Código: ${response.statusCode}');
       }
     } catch (error) {
+      debugPrint("Erro ao adicionar encomenda: $error");
       throw error;
     }
   }
@@ -72,7 +82,7 @@ class EncomendasProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        debugPrint("Resposta da API: $data"); 
+        debugPrint("Resposta da API: $data");
 
         _encomendas = data.map((encomenda) {
           debugPrint("Encomenda recebida: $encomenda");
@@ -91,35 +101,35 @@ class EncomendasProvider with ChangeNotifier {
   }
 
   Future<void> updateEncomenda(Encomenda encomenda) async {
-    final url = Uri.parse('$_baseUrl/api/users/admin/package/${encomenda.id}');
-
-    final requestBody = {
-      'title': encomenda.title,
-      'apartment': encomenda.apartment,
-      'time': encomenda.time,
-      'imagePath': encomenda.imagePath,
-      'status': encomenda.status,
-    };
+    final url = Uri.parse(
+        'https://backend-condoview.onrender.com/api/users/admin/package/${encomenda.id}');
 
     try {
       final response = await http.put(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: json.encode(requestBody),
+        body: json.encode(encomenda.toJson()),
       );
 
       if (response.statusCode == 200) {
-        int index = _encomendas.indexWhere((e) => e.id == encomenda.id);
+        debugPrint("Encomenda atualizada com sucesso: ${response.body}");
+
+        final updatedEncomenda =
+            Encomenda.fromJson(json.decode(response.body)['updatedPackage']);
+
+        final index =
+            _encomendas.indexWhere((element) => element.id == encomenda.id);
         if (index != -1) {
-          _encomendas[index] = encomenda;
+          _encomendas[index] = updatedEncomenda;
+          notifyListeners();
         }
-        notifyListeners();
       } else {
-        throw Exception('Falha ao atualizar encomenda: ${response.body}');
+        debugPrint("Erro ao atualizar encomenda: ${response.body}");
+        throw Exception("Erro ao atualizar encomenda: ${response.body}");
       }
     } catch (error) {
-      print('Erro ao atualizar encomenda: $error');
-      throw error;
+      debugPrint("Erro ao enviar atualização para o backend: $error");
+      rethrow;
     }
   }
 
